@@ -67,11 +67,7 @@ Here are some of my exciting projects in robotics and automation:
 
 ---
 
-<!-- Contributions Graph -->
-### 🔥 My Contribution Graph
-<p align="center">
-  <img src="https://activity-graph.herokuapp.com/graph?username=siddarth09&theme=react-dark" width="700px">
-</p>
+[![My github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=siddarth090&theme=github-dark-dimmed)](https://github.com/ashutosh00710/github-readme-activity-graph)
 
 ---
 
