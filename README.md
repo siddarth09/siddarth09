@@ -67,7 +67,7 @@ Here are some of my exciting projects in robotics and automation:
 
 ---
 
-[![My github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=siddarth090&theme=github-dark-dimmed)](https://github.com/ashutosh00710/github-readme-activity-graph)
+[![My github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=siddarth09&theme=github-dark-dimmed)](https://github.com/ashutosh00710/github-readme-activity-graph)
 
 ---
 
