@@ -88,110 +88,63 @@
     </section>
 
 
-    <!-- Projects -->
-       
+        <!-- Projects -->
     <section id="projects" class="px-10 py-20 bg-background-dark text-white">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <h2 class="text-3xl font-bold mb-8">Featured Projects</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Horizontal scroll wrapper -->
+        <div class="flex overflow-x-auto space-x-8 snap-x snap-mandatory pb-4 scrollbar-hide">
 
-        <!-- Project 6 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
+        <!-- Project 1 -->
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/space_station.jpg" alt="Space Station OS" class="w-full h-56 object-cover"/>
+            <div class="p-6">
             <h3 class="text-xl font-bold">Space Station OS</h3>
             <p class="text-gray-300 mt-2">
                 An autonomous operating system for space stations built on ROS 2. 
-                Integrates ECLSS, Thermal, EPS, GNC, and Comms subsystems with AI agents, 
-                diagnostics, and astronaut-facing GUIs.
+                Integrates ECLSS, Thermal, EPS, GNC, and Comms subsystems with AI agents and astronaut-facing GUIs.
             </p>
-            </div>
-            <a href="projects/space-station-os.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
+            <a href="projects/space-station-os.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
             </a>
-        </div>
-
-        <!-- Project 5 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
-            <h3 class="text-xl font-bold">F1TENTH Autonomous Driving</h3>
-            <p class="text-gray-300 mt-2">
-                Implemented MPC, MPCC, and neural network architectures for real-time autonomous racing. 
-                Focused on trajectory optimization, obstacle avoidance, and safety verification.
-            </p>
             </div>
-            <a href="projects/f1tenth.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
-            </a>
-        </div>
-
-        <!-- Project 4 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
-            <h3 class="text-xl font-bold">GuidanceCore – MAVERICK</h3>
-            <p class="text-gray-300 mt-2">
-                Developed an MPC-based missile autopilot technology enabling accurate target engagement. 
-                Emphasized high-speed dynamics, guidance laws, and precision demolition.
-            </p>
-            </div>
-            <a href="projects/maverick.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
-            </a>
-        </div>
-
-        <!-- Project 3 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
-            <h3 class="text-xl font-bold">Pickster</h3>
-            <p class="text-gray-300 mt-2">
-                Real-world implementation of basic robotic manipulation using MATLAB and the PincherX-100 arm. 
-                Explored kinematics, grasping strategies, and pick-and-place tasks.
-            </p>
-            </div>
-            <a href="projects/pickster.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
-            </a>
         </div>
 
         <!-- Project 2 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
-            <h3 class="text-xl font-bold">DITTO</h3>
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/f1tenth.jpg" alt="F1TENTH" class="w-full h-56 object-cover"/>
+            <div class="p-6">
+            <h3 class="text-xl font-bold">F1TENTH Autonomous Driving</h3>
             <p class="text-gray-300 mt-2">
-                Outdoor delivery robot agent for last-mile delivery in gated communities and hospitals. 
-                Focused on navigation, safety, and human-robot interaction.
+                Implemented MPC, MPCC, and neural network architectures for real-time racing. 
+                Focused on trajectory optimization, obstacle avoidance, and safety.
             </p>
-            </div>
-            <a href="projects/ditto.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
+            <a href="projects/f1tenth.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
             </a>
+            </div>
         </div>
 
-        <!-- Project 1 -->
-        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
-            <div>
-            <h3 class="text-xl font-bold">RUSTY</h3>
+        <!-- Project 3 -->
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/maverick.jpg" alt="GuidanceCore" class="w-full h-56 object-cover"/>
+            <div class="p-6">
+            <h3 class="text-xl font-bold">GuidanceCore – MAVERICK</h3>
             <p class="text-gray-300 mt-2">
-                Indoor warehouse robot using ROS 1 to act as a pickup assistant. 
-                Designed for inventory management, task automation, and safe navigation in cluttered spaces.
+                MPC-based missile autopilot technology enabling accurate target engagement with precision guidance.
             </p>
-            </div>
-            <a href="projects/rusty.html" 
-            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
-            View Project
+            <a href="projects/maverick.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
             </a>
+            </div>
         </div>
+
+        <!-- Add more projects here in same style -->
 
         </div>
     </div>
     </section>
-
-
 
     <!-- Skills -->
     <section id="skills" class="px-10 py-20 flex justify-center bg-background-light dark:bg-background-dark">
