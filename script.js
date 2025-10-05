@@ -3,11 +3,12 @@ console.log("Portfolio loaded!");
 
 document.addEventListener("DOMContentLoaded", () => {
   const taglines = [
-    "Building operating systems for future space stations.",
-    "Designing intelligent humanoids for the next generation of exploration.",
-    "Blending robotics, AI, and mathematics for space and humanity.",
-    "Driven to push the boundaries of what’s possible."
-  ];
+    "Building across autonomy, space systems, and robotics.",
+    "From F1TENTH racing to Space Station OS.",
+    "Bridging robotics research with real-world systems.",
+    "Engineering autonomy: from warehouse robots to humanoid locomotion."
+    ];
+
 
   let index = 0;
   const taglineElement = document.getElementById("hero-tagline");
