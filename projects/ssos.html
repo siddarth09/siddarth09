@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Station OS (SSOS)</title>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <header class="header">
+    <h1>
+      Space Station OS (SSOS)
+      <a href="https://github.com/space-station-os/space_station_os" target="_blank" class="github-link" aria-label="GitHub">
+        <img src="../assets/github-mark-white.svg" alt="GitHub" class="github-icon">
+      </a>
+    </h1>
+    <p><em>Open-Source ROS 2 Platform for Modular Space Station Subsystems</em></p>
+  </header>
+
+  <section class="video-banner">
+    <video autoplay loop muted playsinline>
+      <source src="../assets/ssos/ssos_vid.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    
+    
+  </section>
+
+
+  <section id="overview">
+    <h2>Overview</h2>
+    <p>
+      Space Station OS (SSOS) is an open-source platform built on <strong>ROS 2</strong> to unify 
+      the development, simulation, and real-time control of modular space station subsystems. 
+      By simulating critical life support, thermal regulation, and power systems, SSOS provides 
+      an accessible environment for testing autonomous behaviors, validating hardware interfaces, 
+      and developing future space infrastructure software.
+    </p>
+    <p>
+      SSOS draws inspiration from the International Space Station (ISS) and adopts a 
+      <strong>software-defined space station</strong> philosophy. Each subsystem is modularized 
+      into ROS 2 nodes with standardized interfaces, allowing flexibility, scalability, and reusability. 
+      While SSOS is a simulation, its architecture is hardware-ready, enabling integration with 
+      future testbeds and research facilities.
+    </p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills and Contributions</h2>
+    <ul>
+      <li>ROS 2 middleware design with publishers, services, and action servers</li>
+      <li>C++ and Python development for subsystem logic and GUI integration</li>
+      <li>ISS-inspired system modeling: ECLSS, Thermal Control, EPS</li>
+      <li>Project management: GitHub maintenance, Docker-based reproducibility, documentation</li>
+      <li>PyQt5 GUI development for astronauts and mission control panels</li>
+      <li>Diagnostics, telemetry, and failure injection for robust simulation</li>
+    </ul>
+  </section>
+
+  <section id="eclss">
+    <h2> Environmental Control and Life Support System (ECLSS)</h2>
+    <p>
+      The ECLSS simulation models the core processes needed to sustain life aboard a spacecraft:
+      air revitalization, oxygen generation, and water recovery. Implemented as ROS 2 action servers 
+      and services, these subsystems replicate ISS-inspired closed-loop functionality.
+    </p>
+    <h3>Key Subsystems</h3>
+    <ul>
+      <li><strong>Air Revitalisation System (ARS):</strong> Simulates the Carbon Dioxide Removal Assembly (CDRA), 
+      handling CO₂ scrubbing, contaminant management, and diagnostics. Publishes CO₂ storage telemetry 
+      and supports a service interface for CO₂ requests.</li>
+      <li><strong>Oxygen Generation System (OGS):</strong> Models electrolysis and Sabatier reaction, 
+      generating O₂ from water and recycling hydrogen with CO₂. Integrates with ARS and WRS subsystems, 
+      publishing diagnostics and handling failure modes.</li>
+      <li><strong>Water Recovery System (WRS):</strong> Inspired by the Urine Processor and Water Processor Assemblies, 
+      this subsystem purifies wastewater into product water. Implements staged purification, grey water handling, 
+      and provides a service for water requests.</li>
+    </ul>
+    <img src="../assets/ssos/eclss.png" alt="ECLSS Screenshot" width="800">
+  </section>
+
+  <section id="thermal">
+    <h2> Thermal Control System (TCS)</h2>
+    <p>
+      The Thermal Control System simulation abstracts the ISS Active Thermal Control System (ATCS), 
+      modeling heat transfer across avionics, tanks, and environmental hardware. It uses configurable 
+      YAML files to define thermal nodes and links, with an <strong>RK4-based solver</strong> for accurate 
+      numerical integration.
+    </p>
+    <h3>Core Features</h3>
+    <ul>
+      <li>Thermal nodes represent equipment with temperature, heat capacity, and internal power.</li>
+      <li>Thermal links define conduction-based heat flow between nodes.</li>
+      <li>RK4 integration simulates dynamic thermal evolution over time.</li>
+      <li>Cooling logic triggers when thresholds are exceeded, simulating water/ammonia loop behavior.</li>
+      <li>Diagnostics publish overheating, loop failures, and FDIR (Fault Detection, Isolation, Recovery) events.</li>
+    </ul>
+    <img src="../assets/ssos/thermals.png" alt="Thermal Control Screenshot" width="800">
+  </section>
+
+  <section id="eps">
+    <h2> Electrical Power System (EPS)</h2>
+    <p>
+      The EPS simulation models ISS-style primary and secondary power distribution, including solar arrays, 
+      battery ORUs, bus switching, and regulated DC-to-DC conversion. Each component is abstracted as a ROS 2 node, 
+      reflecting real hardware operations.
+    </p>
+    <h3>Core Components</h3>
+    <ul>
+      <li><strong>SARJ Mock:</strong> Simulates solar array tracking and publishes solar voltage.</li>
+      <li><strong>Battery Manager:</strong> Models 24 Orbital Replacement Unit (ORU) batteries with charging, 
+      discharging, and voltage safety limits.</li>
+      <li><strong>BCDU:</strong> Action server that coordinates parallel charging/discharging of all healthy batteries. 
+      Monitors current/voltage thresholds and enters safe mode on fault.</li>
+      <li><strong>MBSU:</strong> Routes power from healthy channels, averages voltage, and provides input to DDCU.</li>
+      <li><strong>DDCU (Planned):</strong> Converts high-voltage bus to 124.5 V regulated output for station loads.</li>
+    </ul>
+    <img src="../assets/ssos/EPS.png" alt="EPS Screenshot" width="800">
+  </section>
+
+  <section id="conclusion">
+    <h2> Conclusion</h2>
+    <p>
+      SSOS demonstrates how complex, safety-critical space systems can be translated into modular 
+      ROS 2 simulations for better testing, integration, and research. By blending 
+      <strong>systems engineering, software architecture, and collaborative open-source development</strong>, 
+      SSOS lowers the barrier for space station software innovation and provides a foundation 
+      for autonomous, sustainable space habitats.
+    </p>
+  </section>
+
+  <footer>
+    <p>© 2025 Space Station OS Contributors. Built with ROS 2, C++, Python, and a passion for space systems.</p>
+  </footer>
+</body>
+</html>
