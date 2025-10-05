@@ -35,26 +35,61 @@
 
   <!-- Header -->
   <header class="sticky top-0 z-50 flex items-center justify-between px-10 py-4 bg-background-dark border-b border-primary/20">
-    <h2 class="text-xl font-bold text-white">AstroRobotics</h2>
-    <a href="assets/resume.pdf" target="_blank"
-       class="rounded-lg px-4 py-2 bg-primary text-white font-bold shadow hover:bg-primary/80 transition">
-       Resume
-    </a>
-  </header>
+    <!-- Left side: Name + tagline -->
+    <div class="flex flex-col">
+        <h2 class="text-xl font-bold text-white">Siddarth Dayasagar</h2>
+        <p class="text-xs text-gray-400">Robotics • Space Systems • Research</p>
+    </div>
+
+    <!-- Right side: Socials + Resume -->
+    <div class="flex items-center gap-4">
+        <!-- GitHub -->
+        <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub">
+        <img src="assets/github-mark-white.svg" alt="GitHub" class="h-6 w-6 hover:opacity-80 transition"/>
+        </a>
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn">
+        <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn" class="h-6 w-6 hover:opacity-80 transition"/>
+        </a>
+
+        <!-- Dark/Light toggle -->
+        <button onclick="document.documentElement.classList.toggle('dark')" 
+                class="p-2 rounded-full border border-primary/30 text-gray-400 hover:text-white">
+        🌙
+        </button>
+
+        <!-- Resume Button -->
+        <a href="assets/Siddarth_Robotics.pdf" target="_blank"
+        class="rounded-lg px-4 py-2 bg-primary text-white font-bold shadow hover:bg-primary/80 transition glow-button">
+        Resume
+        </a>
+    </div>
+    </header>
+
 
   <main class="flex-1">
 
     <!-- Hero -->
-    <section id="hero" class="px-10 py-20 flex justify-center">
-      <div class="max-w-5xl w-full">
-        <div class="rounded-xl bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center min-h-[480px] gap-6 p-8 text-center"
-          style='background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url("assets/rover.jpg");'>
-          <h1 class="text-white text-4xl md:text-5xl font-bold">Exploring the Frontiers of Robotics</h1>
-          <h2 class="text-gray-200 text-lg max-w-2xl">Driven by a passion for space exploration and robotics, I design and build innovative solutions for the challenges of tomorrow.</h2>
-          <a href="#projects" class="rounded-lg h-12 px-6 bg-primary text-white font-bold shadow-lg hover:bg-primary/80 transition">View Projects</a>
-        </div>
-      </div>
+    <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+    <!-- Video background -->
+    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+        <source src="assets/life-trailer.mp4" type="video/mp4">
+    </video>
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/50"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 text-center px-6">
+        <h1 id="hero-tagline" class="text-white text-4xl md:text-5xl font-bold mb-6">
+        Building operating systems for future space stations.
+        </h1>
+        <a href="#projects" 
+        class="rounded-lg h-12 px-6 bg-primary text-white font-bold shadow-lg hover:bg-primary/80 transition">
+        View Projects
+        </a>
+    </div>
     </section>
+
 
     <!-- Projects -->
     <section id="projects" class="px-10 py-20 flex justify-center">

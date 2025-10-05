@@ -21,3 +21,15 @@ html {
   font-weight: bold;
   text-align: center;
 }
+
+.glow-button {
+  box-shadow: 0 0 10px #ec5413;
+  transition: 0.3s;
+}
+.glow-button:hover {
+  box-shadow: 0 0 20px #ff6a2e;
+}
+
+#hero-tagline {
+  transition: opacity 1s ease-in-out;
+}
