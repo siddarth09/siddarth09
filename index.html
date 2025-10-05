@@ -88,14 +88,16 @@
     </section>
 
 
-        <!-- Projects -->
+        
+    <!-- Projects -->
     <section id="projects" class="px-10 py-20 bg-background-dark text-white">
     <div class="max-w-7xl mx-auto">
         <h2 class="text-3xl font-bold mb-8">Featured Projects</h2>
 
         <!-- Horizontal scroll wrapper -->
-        <div class="flex overflow-x-auto space-x-8 snap-x snap-mandatory pb-4 scrollbar-hide">
-
+        <div id="projects-carousel" 
+            class="flex overflow-x-auto space-x-8 snap-x snap-mandatory pb-4 scrollbar-hide scroll-smooth">
+        
         <!-- Project 1 -->
         <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
             <img src="assets/space_station.jpg" alt="Space Station OS" class="w-full h-56 object-cover"/>
@@ -140,109 +142,52 @@
             </div>
         </div>
 
-        <!-- Add more projects here in same style -->
-
-        </div>
-    </div>
-    </section>
-
-    <!-- Skills -->
-    <section id="skills" class="px-10 py-20 flex justify-center bg-background-light dark:bg-background-dark">
-    <div class="max-w-5xl w-full">
-        <h2 class="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Skills</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-
-        <!-- Robotics -->
-        <div class="skill-card">🤖 Robotics & Autonomous Systems</div>
-
-        <!-- Mechanical/Hardware -->
-        <div class="skill-card">⚙️ Mechanical Design (SolidWorks, CAD)</div>
-
-        <!-- Software/Programming -->
-        <div class="skill-card">💻 Software Development (C++, Python, ROS 2)</div>
-
-        <!-- Controls & Planning -->
-        <div class="skill-card">📐 Control Theory & Motion Planning</div>
-
-        <!-- AI & Machine Learning -->
-        <div class="skill-card">🧠 AI/ML (PyTorch, Transformers, RL)</div>
-
-        <!-- Data & Simulation -->
-        <div class="skill-card">📊 Simulation (Gazebo, Isaac Sim)</div>
-
-        <!-- Communication & Systems -->
-        <div class="skill-card">🛰️ Space Systems (CCSDS, Telemetry, GNC)</div>
-
-        <!-- Experimentation & Research -->
-        <div class="skill-card">🔬 Experimentation & Research</div>
-
-        <!-- Problem Solving -->
-        <div class="skill-card">🧩 Problem Solving & Team Collaboration</div>
-
-        </div>
-    </div>
-    </section>
-
-
-    <!-- About -->
-    <section id="about" class="px-10 py-20 flex justify-center bg-background-dark text-gray-200">
-    <div class="max-w-5xl w-full">
-        <h2 class="text-2xl font-bold mb-6 text-white">About Me</h2>
-        <p class="leading-relaxed max-w-3xl text-lg">
-        I am <span class="text-primary font-semibold">Siddarth Dayasagar</span>, a Robotics Engineer driven by the vision of building intelligent systems that will shape the future of 
-        <span class="font-semibold">space exploration and humanoid robotics</span>.  
-        </p>
-        <p class="leading-relaxed max-w-3xl mt-4 text-gray-300">
-        My work bridges cutting-edge research and practical engineering: from designing 
-        <span class="font-semibold">life support and power systems for next-generation space stations</span>, 
-        to developing <span class="font-semibold">humanoid locomotion controllers, AI-driven agents, and autonomous racing systems</span>.  
-        </p>
-        <p class="leading-relaxed max-w-3xl mt-4 text-gray-300">
-        Skilled in <span class="font-semibold">ROS 2, C++, Python, AI/ML, and hardware-software integration</span>, I thrive at building full-stack robotics solutions that 
-        combine mechanical design, software, and control theory. My goal is to create technologies that are 
-        <span class="italic">modular, autonomous, and resilient</span> — ready to operate in the most extreme environments.  
-        </p>
-        <p class="leading-relaxed max-w-3xl mt-4 text-gray-300">
-        Beyond engineering, I am passionate about <span class="font-semibold">research, open-source development, and collaboration</span>. 
-        I believe robotics is not just about solving technical challenges, but also about 
-        <span class="italic">expanding human potential</span> — from Earth to space.
-        </p>
-    </div>
-    </section>
-
-
-    <!-- Contact -->
-    <section id="contact" class="px-10 py-20 flex justify-center bg-background-dark text-gray-200">
-    <div class="max-w-5xl w-full text-center">
-        <h2 class="text-2xl font-bold mb-6 text-white">Let’s Connect</h2>
-        <p class="text-gray-300 mb-8 text-lg">
-        Interested in my work or want to collaborate?  
-        Let’s grab a <span class="text-primary font-semibold">coffee chat</span> or schedule a <span class="text-primary font-semibold">call</span> to talk about robotics, space, or future opportunities.
-        </p>
-
-        <div class="flex justify-center gap-6 mb-10">
-        <!-- Coffee Chat -->
-        <a href="mailto:siddarth.dayasagar@gmail.com?subject=Coffee Chat with Siddarth" 
-            class="rounded-lg h-14 px-8 bg-primary text-white font-bold flex items-center justify-center shadow-lg hover:bg-primary/80 transition">
-            ☕ Coffee Chat
-        </a>
-
-        <!-- Schedule Call -->
-        <a href="https://calendly.com/siddarth-dayasagar" target="_blank" 
-            class="rounded-lg h-14 px-8 bg-primary text-white font-bold flex items-center justify-center shadow-lg hover:bg-primary/80 transition">
-            📞 Schedule a Call about Robots or just Life!
-        </a>
+        <!-- Project 4 -->
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/pickster.jpg" alt="Pickster" class="w-full h-56 object-cover"/>
+            <div class="p-6">
+            <h3 class="text-xl font-bold">Pickster</h3>
+            <p class="text-gray-300 mt-2">
+                Real-world implementation of robotic manipulation using MATLAB and the PincherX-100 arm. 
+                Explored kinematics, grasping strategies, and pick-and-place tasks.
+            </p>
+            <a href="projects/pickster.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
+            </a>
+            </div>
         </div>
 
-        <form class="flex flex-col gap-4 max-w-md mx-auto">
-        <input type="text" placeholder="Name" class="input"/>
-        <input type="email" placeholder="Email" class="input"/>
-        <textarea rows="5" placeholder="Your Message" class="input"></textarea>
-        <button type="submit" 
-                class="rounded-lg h-12 px-6 bg-primary text-white font-bold hover:bg-primary/80">
-            Send Message
-        </button>
-        </form>
+        <!-- Project 5 -->
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/ditto.jpg" alt="DITTO" class="w-full h-56 object-cover"/>
+            <div class="p-6">
+            <h3 class="text-xl font-bold">DITTO</h3>
+            <p class="text-gray-300 mt-2">
+                Outdoor delivery robot agent for last-mile delivery in gated communities and hospitals. 
+                Focused on navigation, safety, and human-robot interaction.
+            </p>
+            <a href="projects/ditto.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
+            </a>
+            </div>
+        </div>
+
+        <!-- Project 6 -->
+        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
+            <img src="assets/rusty.jpg" alt="RUSTY" class="w-full h-56 object-cover"/>
+            <div class="p-6">
+            <h3 class="text-xl font-bold">RUSTY</h3>
+            <p class="text-gray-300 mt-2">
+                Indoor warehouse robot using ROS 1 as a pickup assistant. 
+                Designed for inventory management, task automation, and safe navigation in cluttered spaces.
+            </p>
+            <a href="projects/rusty.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
+                View Project →
+            </a>
+            </div>
+        </div>
+
+        </div>
     </div>
     </section>
 
