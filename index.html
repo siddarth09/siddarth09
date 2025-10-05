@@ -23,208 +23,156 @@
       }
     }
   </script>
-
-  <!-- Google Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css"/>
 </head>
 
-<body class="bg-background-dark text-gray-200 font-display">
+<body class="bg-background-dark text-gray-200 font-display flex flex-col min-h-screen">
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 flex items-center justify-between px-10 py-4 bg-background-dark border-b border-primary/20">
-
+  <header class="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-10 py-4 bg-background-dark border-b border-primary/20">
+    <div class="flex items-center gap-3">
       <!-- Profile Picture -->
-    <img src="assets/profile.jpeg" alt="Siddarth Dayasagar" 
-         class="w-12 h-12 rounded-full border-2 border-primary object-cover"/>
-
-    <div class="flex flex-col">
-        <h2 class="text-xl font-bold text-white">Siddarth Dayasagar</h2>
-        <p class="text-xs text-gray-400">Robotics • Space Systems • Research</p>
+      <img src="assets/profile.jpeg" alt="Siddarth Dayasagar" 
+           class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-primary object-cover"/>
+      <div>
+        <h2 class="text-base sm:text-lg md:text-xl font-bold text-white">Siddarth Dayasagar</h2>
+        <p class="text-[10px] sm:text-xs md:text-sm text-gray-400">Robotics • Space Systems • Research</p>
+      </div>
     </div>
 
-    <!-- Right side: Socials + Resume -->
-    <div class="flex items-center gap-4">
-        <!-- GitHub -->
-        <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub">
-        <img src="assets/github-mark-white.svg" alt="GitHub" class="h-6 w-6 hover:opacity-80 transition"/>
-        </a>
-        <!-- LinkedIn -->
-        <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn">
-        <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn" class="h-6 w-6 hover:opacity-80 transition"/>
-        </a>
-
-        <!-- Dark/Light toggle -->
-        <button onclick="document.documentElement.classList.toggle('dark')" 
-                class="p-2 rounded-full border border-primary/30 text-gray-400 hover:text-white">
+    <!-- Right side -->
+    <div class="flex items-center gap-3 sm:gap-4">
+      <!-- GitHub -->
+      <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub">
+        <img src="assets/github-mark-white.svg" alt="GitHub" class="h-5 w-5 sm:h-6 sm:w-6 hover:opacity-80 transition"/>
+      </a>
+      <!-- LinkedIn -->
+      <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn">
+        <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn" class="h-5 w-5 sm:h-6 sm:w-6 hover:opacity-80 transition"/>
+      </a>
+      <!-- Dark/Light toggle -->
+      <button onclick="document.documentElement.classList.toggle('dark')" 
+              class="p-1 sm:p-2 rounded-full border border-primary/30 text-gray-400 hover:text-white">
         🌙
-        </button>
-
-        <!-- Resume Button -->
-        <a href="assets/Siddarth_Robotics.pdf" target="_blank"
-        class="rounded-lg px-4 py-2 bg-primary text-white font-bold shadow hover:bg-primary/80 transition glow-button">
-        Resume
-        </a>
+      </button>
+      <!-- Resume -->
+      <a href="assets/Siddarth_Robotics.pdf" target="_blank"
+         class="hidden sm:inline-block rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-white text-xs sm:text-sm md:text-base font-bold shadow hover:bg-primary/80 transition">
+         Resume
+      </a>
     </div>
-    </header>
-
+  </header>
 
   <main class="flex-1">
 
     <!-- Hero -->
-    <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
-    <!-- Video background -->
-    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+    <section id="hero" class="relative h-[80vh] sm:h-screen flex items-center justify-center overflow-hidden">
+      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
         <source src="assets/life-trailer.mp4" type="video/mp4">
-    </video>
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-black/50"></div>
-
-    <!-- Content -->
-    <div class="relative z-10 text-center px-6">
-        <h1 id="hero-tagline" class="text-white text-4xl md:text-5xl font-bold mb-6">
-        Building operating systems for future space stations.
+      </video>
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="relative z-10 text-center px-4 sm:px-6 md:px-10">
+        <h1 id="hero-tagline" class="text-white text-2xl sm:text-4xl md:text-5xl font-bold mb-6">
+          Building across autonomy, space systems, and robotics
         </h1>
-        <a href="#projects" class="btn-primary">View Projects</a>
-    </div>
+        <a href="#projects" class="inline-block rounded-lg h-10 sm:h-12 px-4 sm:px-6 bg-primary text-white text-sm sm:text-base font-bold shadow-lg hover:bg-primary/80 transition">
+          View Projects
+        </a>
+      </div>
     </section>
 
-
-        
     <!-- Projects -->
-    <section id="projects" class="px-10 py-20 bg-background-dark text-white">
-    <div class="max-w-7xl mx-auto">
-        <h2 class="text-3xl font-bold mb-8">Featured Projects</h2>
+    <section id="projects" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Featured Projects</h2>
 
-        <!-- Horizontal scroll wrapper -->
-        <div id="projects-carousel" 
-            class="flex overflow-x-auto space-x-8 snap-x snap-mandatory pb-4 scrollbar-hide scroll-smooth">
-        
-        <!-- Project 1 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/space_station.jpg" alt="Space Station OS" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">Space Station OS</h3>
-            <p class="text-gray-300 mt-2">
-                An autonomous operating system for space stations built on ROS 2. 
-                Integrates ECLSS, Thermal, EPS, GNC, and Comms subsystems with AI agents and astronaut-facing GUIs.
-            </p>
-            <a href="projects/space-station-os.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+        <div id="projects-carousel" class="flex overflow-x-auto space-x-6 sm:space-x-8 snap-x snap-mandatory pb-4 scrollbar-hide scroll-smooth">
+          
+          <!-- Project 1 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/space_station.jpg" alt="Space Station OS" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">Space Station OS</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">An autonomous OS for space stations built on ROS 2.</p>
+              <a href="projects/space-station-os.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
-        <!-- Project 2 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/f1tenth.jpg" alt="F1TENTH" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">F1TENTH Autonomous Driving</h3>
-            <p class="text-gray-300 mt-2">
-                Implemented MPC, MPCC, and neural network architectures for real-time racing. 
-                Focused on trajectory optimization, obstacle avoidance, and safety.
-            </p>
-            <a href="projects/f1tenth.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+          <!-- Project 2 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/f1tenth.jpg" alt="F1TENTH" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">F1TENTH Autonomous Driving</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">Implemented MPC, MPCC, and NN architectures for real-time racing.</p>
+              <a href="projects/f1tenth.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
-        <!-- Project 3 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/maverick.jpg" alt="GuidanceCore" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">GuidanceCore – MAVERICK</h3>
-            <p class="text-gray-300 mt-2">
-                MPC-based missile autopilot technology enabling accurate target engagement with precision guidance.
-            </p>
-            <a href="projects/maverick.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+          <!-- Project 3 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/maverick.jpg" alt="GuidanceCore" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">GuidanceCore – MAVERICK</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">MPC-based missile autopilot enabling accurate target engagement.</p>
+              <a href="projects/maverick.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
-        <!-- Project 4 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/pickster.jpg" alt="Pickster" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">Pickster</h3>
-            <p class="text-gray-300 mt-2">
-                Real-world implementation of robotic manipulation using MATLAB and the PincherX-100 arm. 
-                Explored kinematics, grasping strategies, and pick-and-place tasks.
-            </p>
-            <a href="projects/pickster.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+          <!-- Project 4 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/pickster.jpg" alt="Pickster" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">Pickster</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">Robotic manipulation with MATLAB + PincherX-100 arm.</p>
+              <a href="projects/pickster.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
-        <!-- Project 5 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/ditto.jpg" alt="DITTO" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">DITTO</h3>
-            <p class="text-gray-300 mt-2">
-                Outdoor delivery robot agent for last-mile delivery in gated communities and hospitals. 
-                Focused on navigation, safety, and human-robot interaction.
-            </p>
-            <a href="projects/ditto.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+          <!-- Project 5 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/ditto.jpg" alt="DITTO" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">DITTO</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">Outdoor delivery robot for last-mile logistics in communities.</p>
+              <a href="projects/ditto.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
-        <!-- Project 6 -->
-        <div class="min-w-[400px] snap-center rounded-lg border border-primary/30 overflow-hidden bg-background-light">
-            <img src="assets/rusty.jpg" alt="RUSTY" class="w-full h-56 object-cover"/>
-            <div class="p-6">
-            <h3 class="text-xl font-bold">RUSTY</h3>
-            <p class="text-gray-300 mt-2">
-                Indoor warehouse robot using ROS 1 as a pickup assistant. 
-                Designed for inventory management, task automation, and safe navigation in cluttered spaces.
-            </p>
-            <a href="projects/rusty.html" class="mt-4 inline-block text-primary font-semibold hover:underline">
-                View Project →
-            </a>
+          <!-- Project 6 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/rusty.jpg" alt="RUSTY" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">RUSTY</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">Indoor warehouse robot using ROS 1 for pickup assistance.</p>
+              <a href="projects/rusty.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
             </div>
-        </div>
+          </div>
 
         </div>
-    </div>
+      </div>
     </section>
+
     <!-- Contact -->
-    <section id="contact" class="px-10 py-20 flex justify-center bg-background-dark text-white">
-    <div class="max-w-5xl w-full">
-        <h2 class="text-3xl font-bold mb-6">Let’s Connect</h2>
-        <p class="text-gray-300 mb-6">
-        Interested in robotics, autonomy, or space systems?  
-        Let’s grab a <span class="text-primary font-semibold">coffee chat</span> or schedule a quick <span class="text-primary font-semibold">call</span>.  
-        I’d love to hear from you!
+    <section id="contact" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white text-center">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Let’s Connect</h2>
+        <p class="text-gray-300 mb-6 text-sm sm:text-base md:text-lg">
+          Interested in robotics, autonomy, or space systems?  
+          Let’s grab a <span class="text-primary font-semibold">coffee chat</span> or schedule a quick <span class="text-primary font-semibold">call</span>.  
         </p>
-
-        <!-- Options -->
-        <div class="flex flex-col md:flex-row gap-6 mb-8">
         <a href="https://calendly.com/siddarth-dayasagar" target="_blank"
-            class="rounded-lg px-6 py-4 bg-primary text-white font-bold text-center hover:bg-primary/80 transition">
-            ☕ Schedule Coffee Chat
-        </a>       
-       </div>
-
-        <div class="text-gray-400 text-sm">
-        Alternatively, you can reach me at <a href="mailto:siddarth.dayasagar@gmail.com">siddarth.dayasagar@gmail.com</a>.
-    </div>
+           class="block sm:inline-block rounded-lg px-6 py-3 sm:py-4 bg-primary text-white font-bold text-base hover:bg-primary/80 transition mb-4 sm:mb-0">
+           ☕ Schedule Coffee Chat
+        </a>
+        <div class="text-gray-400 text-xs sm:text-sm mt-4">
+          Or email me at <a href="mailto:siddarth.dayasagar@gmail.com" class="text-primary hover:underline">siddarth.dayasagar@gmail.com</a>
+        </div>
+      </div>
     </section>
-
-
   </main>
 
-  <!-- Footer -->
-  <footer class="text-center py-6 border-t border-primary/20 text-gray-400 text-sm">
+  <footer class="text-center py-4 sm:py-6 border-t border-primary/20 text-gray-400 text-xs sm:text-sm">
     © 2025 Siddarth. All rights reserved.
   </footer>
 
-  <script src="script.js"></script>
 </body>
 </html>
