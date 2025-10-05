@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siddarth Portfolio</title>
+  
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-[Space Grotesk]">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 flex justify-end px-8 py-4 bg-gray-50 dark:bg-gray-900 shadow">
+    <a href="assets/resume.pdf" target="_blank"
+       class="rounded-lg px-4 py-2 bg-orange-600 text-white font-bold shadow hover:bg-orange-500">
+       Resume
+    </a>
+  </header>
+
+  <!-- About Me -->
+  <section id="about" class="min-h-screen flex flex-col md:flex-row items-center justify-center px-10 gap-10">
+    <div class="flex-1 text-center md:text-left">
+      <h1 class="text-4xl font-bold mb-4">Hi, I’m Siddarth</h1>
+      <p class="text-lg">
+        Robotics graduate passionate about building operating systems for future space stations. 
+        I design intelligent robotic systems for extreme environments.
+      </p>
+    </div>
+    <div class="flex-1 flex justify-center">
+      <img src="assets/me.jpg" alt="Siddarth" class="rounded-full shadow-lg w-64 h-64 object-cover"/>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="min-h-screen flex flex-col items-center justify-center px-10">
+    <h2 class="text-2xl font-bold mb-8">Projects</h2>
+    <div class="space-y-10 w-full max-w-4xl">
+      <div class="rounded-lg overflow-hidden shadow-lg">
+        <video autoplay loop muted playsinline class="w-full h-80 object-cover">
+          <source src="assets/mars_rover.mp4" type="video/mp4">
+        </video>
+        <div class="p-4">
+          <h3 class="text-xl font-bold">Autonomous Navigation on Mars</h3>
+          <p class="text-sm">Path planning and obstacle avoidance in Martian terrain.</p>
+        </div>
+      </div>
+      <!-- Add more projects the same way -->
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="min-h-screen flex flex-col items-center justify-center px-10">
+    <h2 class="text-2xl font-bold mb-8">Skills</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <span class="material-symbols-outlined text-orange-600 text-5xl">smart_toy</span>
+        <h3 class="font-bold mt-2">Robotics</h3>
+      </div>
+      <div class="text-center">
+        <span class="material-symbols-outlined text-orange-600 text-5xl">code</span>
+        <h3 class="font-bold mt-2">Software</h3>
+      </div>
+      <!-- More skills here -->
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="min-h-screen flex flex-col items-center justify-center px-10">
+    <h2 class="text-2xl font-bold mb-6">Get in Touch</h2>
+    <form class="flex flex-col gap-4 max-w-md w-full">
+      <input type="text" placeholder="Name" class="input">
+      <input type="email" placeholder="Email" class="input">
+      <textarea rows="5" placeholder="Your Message" class="input"></textarea>
+      <button type="submit" class="rounded-lg px-6 py-3 bg-orange-600 text-white font-bold hover:bg-orange-500">Send</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 text-gray-600 dark:text-gray-400 text-sm">
+    © 2025 Siddarth. All rights reserved.
+  </footer>
+
+  <!-- Custom JS -->
+  <script src="script.js"></script>
+</body>
+</html>

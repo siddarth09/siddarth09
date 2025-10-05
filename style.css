@@ -1,0 +1,17 @@
+html {
+  scroll-behavior: smooth;
+}
+
+/* Inputs look nicer */
+.input {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ec5413;
+  background: white;
+  color: black;
+}
+
+body.dark .input {
+  background: #1e1e1e;
+  color: white;
+}
