@@ -89,62 +89,108 @@
 
 
     <!-- Projects -->
-    <!-- Projects Section -->
+       
     <section id="projects" class="px-10 py-20 bg-background-dark text-white">
     <div class="max-w-6xl mx-auto">
         <h2 class="text-3xl font-bold mb-8">Featured Projects</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Project 1 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">Autonomous Racing (F1TENTH)</h3>
-            <p class="text-gray-300 mt-2">Trajectory optimization with MPC/MPCC, integrating Signal Temporal Logic for safety.</p>
-        </div>
 
-        <!-- Project 2 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">ECLSS Simulation</h3>
-            <p class="text-gray-300 mt-2">ROS 2-based simulation of OGS, ARS, and WRS, with astronaut GUI and diagnostics.</p>
-        </div>
-
-        <!-- Project 3 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">Thermal Control System</h3>
-            <p class="text-gray-300 mt-2">RK4 heat solver with coolant loops, radiator venting, and live graph visualization.</p>
-        </div>
-
-        <!-- Project 4 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">Electrical Power System</h3>
-            <p class="text-gray-300 mt-2">Battery Manager, BCDU, and DDCU nodes simulating real ISS EPS operations.</p>
+        <!-- Project 6 -->
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">Space Station OS</h3>
+            <p class="text-gray-300 mt-2">
+                An autonomous operating system for space stations built on ROS 2. 
+                Integrates ECLSS, Thermal, EPS, GNC, and Comms subsystems with AI agents, 
+                diagnostics, and astronaut-facing GUIs.
+            </p>
+            </div>
+            <a href="projects/space-station-os.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
         </div>
 
         <!-- Project 5 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">Communication Bridge (CCSDS)</h3>
-            <p class="text-gray-300 mt-2">ROS 2 ↔ CCSDS/CFDP protocol bridge over WebSockets for telemetry/telecommand.</p>
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">F1TENTH Autonomous Driving</h3>
+            <p class="text-gray-300 mt-2">
+                Implemented MPC, MPCC, and neural network architectures for real-time autonomous racing. 
+                Focused on trajectory optimization, obstacle avoidance, and safety verification.
+            </p>
+            </div>
+            <a href="projects/f1tenth.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
         </div>
 
-        <!-- Project 6 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">GNC System</h3>
-            <p class="text-gray-300 mt-2">Orbit dynamics and LVLH attitude control with CMG/thruster switching logic.</p>
+        <!-- Project 4 -->
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">GuidanceCore – MAVERICK</h3>
+            <p class="text-gray-300 mt-2">
+                Developed an MPC-based missile autopilot technology enabling accurate target engagement. 
+                Emphasized high-speed dynamics, guidance laws, and precision demolition.
+            </p>
+            </div>
+            <a href="projects/maverick.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
         </div>
 
-        <!-- Project 7 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">Humanoid Robotics</h3>
-            <p class="text-gray-300 mt-2">MPC locomotion and RL policy training for humanoids in Isaac Sim.</p>
+        <!-- Project 3 -->
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">Pickster</h3>
+            <p class="text-gray-300 mt-2">
+                Real-world implementation of basic robotic manipulation using MATLAB and the PincherX-100 arm. 
+                Explored kinematics, grasping strategies, and pick-and-place tasks.
+            </p>
+            </div>
+            <a href="projects/pickster.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
         </div>
 
-        <!-- Project 8 -->
-        <div class="rounded-lg border border-primary/30 p-6">
-            <h3 class="text-xl font-bold">AI Agent (NOVA)</h3>
-            <p class="text-gray-300 mt-2">LLM-based astronaut assistant answering telemetry queries and supporting operations.</p>
+        <!-- Project 2 -->
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">DITTO</h3>
+            <p class="text-gray-300 mt-2">
+                Outdoor delivery robot agent for last-mile delivery in gated communities and hospitals. 
+                Focused on navigation, safety, and human-robot interaction.
+            </p>
+            </div>
+            <a href="projects/ditto.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
         </div>
+
+        <!-- Project 1 -->
+        <div class="rounded-lg border border-primary/30 p-6 flex flex-col justify-between">
+            <div>
+            <h3 class="text-xl font-bold">RUSTY</h3>
+            <p class="text-gray-300 mt-2">
+                Indoor warehouse robot using ROS 1 to act as a pickup assistant. 
+                Designed for inventory management, task automation, and safe navigation in cluttered spaces.
+            </p>
+            </div>
+            <a href="projects/rusty.html" 
+            class="mt-4 inline-flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white font-semibold shadow-md hover:bg-primary/80 transition">
+            View Project
+            </a>
+        </div>
+
         </div>
     </div>
     </section>
+
 
 
     <!-- Skills -->
