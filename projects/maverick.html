@@ -172,7 +172,11 @@
 
             <div class="block">
             <h4>Experimental Notes</h4>
-            <p class="muted">SFI produces a sharp initial corrective spike then smooth convergence in δp. Tracking error for Az can be larger during aggressive LOS maneuvers. See intel source for plots and time-series. :contentReference[oaicite:1]{index=1}</p>
+            <p class="muted">
+                SFI exhibits an initial corrective spike followed by smooth convergence in control deflection (δp).
+                However, during aggressive line-of-sight (LOS) maneuvers, it may show higher tracking error in Az.
+                Refer to the project plots for full time-series behavior and actuator response.
+            </p>
             </div>
         </div>
         </div>
@@ -211,8 +215,13 @@
 
             <div class="block">
             <h4>Experimental Notes</h4>
-            <p class="muted">LQR+I shows quick stabilization of α and q and smooth δp. Use when constrained computation or deterministic optimality is required. Refer to the project write-up for Riccati derivation and state trajectories. :contentReference[oaicite:2]{index=2}</p>
+            <p class="muted">
+                LQR+I shows quick stabilization of α and q with smooth control surface deflections (δp).
+                It is effective when computational efficiency and predictable optimality are required.
+                Refer to the project documentation for Riccati derivations and full state trajectories.
+            </p>
             </div>
+
         </div>
         </div>
     </article>
@@ -252,7 +261,11 @@
             </a>
             <div class="block">
             <h4>Experimental Notes</h4>
-            <p class="muted">MPC produced superior response (Time-to-target ≈ 8s) and efficient actuator use, but soft terminal penalties caused some terminal Az tracking trade-offs. See Tables & Figures in the report for numeric metrics. :contentReference[oaicite:3]{index=3}</p>
+            <p class="muted">
+                MPC produced superior response (Time-to-target ≈ 8s) and efficient actuator use, 
+                but soft terminal penalties caused some Az tracking trade-offs. 
+                See Tables & Figures in the report for numeric metrics.
+            </p>
             </div>
         </div>
         </div>
