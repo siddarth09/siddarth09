@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GuidanceCore — MAVERICK</title>
+
+  <!-- Your site stylesheet -->
+  <link rel="stylesheet" href="../style.css" />
+  <!-- Space Grotesk -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>
+        GuidanceCore — MAVERICK
+      <a href="https://github.com/siddarth09/Guidance_Core_Maverick/tree/main" target="_blank" class="github-link" aria-label="GitHub">
+        <img src="../assets/github-mark-white.svg" alt="GitHub" class="github-icon">
+      </a>
+    </h1>
+    <p><em>Autonomous Missile Guidance Systems</em></p>
+  </header>
+
+  <!-- HERO with YouTube background -->
+  <section class="hero" aria-label="Hero video background">
+    <iframe
+      title="GuidanceCore — MAVERICK"
+      src="https://www.youtube.com/embed/nJwKAhgWHOc?autoplay=1&mute=1&loop=1&controls=0&rel=0&modestbranding=1&playlist=nJwKAhgWHOc"
+      frameborder="0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+
+    <div class="overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <!-- Top HUD -->
+      <div class="hero-top">
+        <div class="hero-titlegroup">
+          <small>MISSION</small>
+          <h2>GuidanceCore — MAVERICK</h2>
+          <div class="subtitle">Autonomous Missile Guidance using Model Predictive Control</div>
+        </div>
+        <div class="hero-status">
+          <small>STATUS</small>
+          <strong>TACTICAL READY</strong>
+        </div>
+      </div>
+
+      <!-- Center: Title, desc, CTA, Telemetry -->
+      <div class="hero-center">
+        <div>
+          <h1>GuidanceCore — MAVERICK</h1>
+          <p>
+            Autonomous guidance system — comparative study of State-Integral (SFI),
+            LQR (with integral), and MPC. Built &amp; simulated in MATLAB; MPC
+            implemented with CasADi/IPOPT for optimization.
+          </p>
+          <a class="cta" href="#mission" aria-label="Jump to mission brief">
+            <span>Mission Brief ↓</span>
+          </a>
+
+          <!-- Telemetry -->
+          <div class="telemetry">
+            <div class="telemetry-grid">
+              <div class="tile">
+                <small>TARGET</small>
+                <strong>ACQUIRED</strong>
+              </div>
+              <div class="tile">
+                <small>AUTO-TRACK</small>
+                <strong>ENGAGED</strong>
+              </div>
+              <div class="tile">
+                <small>RANGE</small>
+                <strong id="t-range">12.40 km</strong>
+              </div>
+              <div class="tile">
+                <small>G-FORCE</small>
+                <strong id="t-g">32.60 g</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom strip -->
+      <div class="hero-bottom">
+        <div>LOCK: FULL</div>
+        <div>RANGE TO IMPACT: 00:00:12</div>
+        <div>MODE: AUTONOMOUS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <!-- =========================
+   MISSION BRIEFING [ALPHA-01]
+   ========================= -->
+    <section id="mission" class="dossier-panel">
+    <div class="dossier-header">
+        [ MISSION BRIEFING // CLEARANCE: ALPHA ]
+    </div>
+
+    <div class="dossier-body">
+        <p>
+        Objective: Evaluate three autonomous guidance laws—State-Integral (SFI),
+        Linear Quadratic Regulator with Integral action (LQR+I), and Model Predictive Control (MPC)—for
+        engagement in a short-period missile environment. Each controller shall be assessed across:
+        </p>
+
+        <ul class="mission-criteria">
+        <li>Trajectory tracking accuracy under dynamic load</li>
+        <li>Control effort and actuator stress</li>
+        <li>Terminal constraint handling and stabilization time</li>
+        </ul>
+
+        <p>
+        Intel Source: Missile dynamics are modeled using a linear short-period approximation
+        <em>(Ref. Mracek & Ridgely)</em>, simulating autonomous interception without pilot override.
+        Simulations executed using MATLAB and CasADi/IPOPT for comparative fairness.
+        </p>
+
+        <div class="mission-notice">
+        [ NOTE ]<br>
+        Legacy controllers (SFI/LQR) provide baseline doctrine. MPC introduces predictive capability
+        for next-gen AI-guided interceptors.
+        </div>
+    </div>
+    </section>
+
+
+    <!-- =========================
+     CONTROLLER MODULES (DOSSIER)
+     ========================= -->
+
+    <section id="controllers" class="dossier-modules">
+    <!-- SFI / EAGLE -->
+    <article class="module-card">
+        <div class="module-header">
+        <div class="callsign">[ MODULE SFI // CALLSIGN: EAGLE ]</div>
+        <div class="tagline">State-Integral Augmented Feedback — Low energy, educational baseline</div>
+        </div>
+
+        <div class="module-body">
+        <p class="lead">
+            Role: Augmented state-feedback with integral action to eliminate steady-state Az error. Designed via pole-placement for an augmented short-period model (α, q) with integral of acceleration error.
+        </p>
+
+        <div class="module-blocks">
+            <div class="block">
+            <h4>Design</h4>
+            <ul>
+                <li>Augmented integral state: <code>ė_int = Az_ref − Az_m</code></li>
+                <li>Control law: <code>u = −K x − K_i e_int</code></li>
+                <li>Gains via pole-placement on augmented system</li>
+            </ul>
+            </div>
+
+            <div class="block">
+            <h4>Characteristics</h4>
+            <ul>
+                <li>Low average control effort; smooth actuator commands</li>
+                <li>Slower time-to-target versus LQR/MPC</li>
+                <li>Useful for teaching/intuition about integral compensation</li>
+            </ul>
+            </div>
+
+            <div class="block">
+            <h4>Experimental Notes</h4>
+            <p class="muted">SFI produces a sharp initial corrective spike then smooth convergence in δp. Tracking error for Az can be larger during aggressive LOS maneuvers. See intel source for plots and time-series. :contentReference[oaicite:1]{index=1}</p>
+            </div>
+        </div>
+        </div>
+    </article>
+
+    <!-- LQR / TALON -->
+    <article class="module-card">
+        <div class="module-header">
+        <div class="callsign">[ MODULE LQR // CALLSIGN: TALON ]</div>
+        <div class="tagline">LQR with Integral — Balanced optimal regulator with zero steady-state error</div>
+        </div>
+
+        <div class="module-body">
+        <p class="lead">
+            Role: Optimal infinite-horizon state-feedback augmented with an integral state to remove steady-state acceleration error. Gains computed by solving the Discrete Algebraic Riccati Equation (DARE).
+        </p>
+
+        <div class="module-blocks">
+            <div class="block">
+            <h4>Design</h4>
+            <ul>
+                <li>Cost minimized: <code>J = Σ (xᵀQx + uᵀRu)</code></li>
+                <li>Augmented matrices build integral into state vector; solve DARE → K_aug = [K, K_i]</li>
+                <li>Tuned via Qy and R weighting (Qy = CᵀQyC formulation)</li>
+            </ul>
+            </div>
+
+            <div class="block">
+            <h4>Characteristics</h4>
+            <ul>
+                <li>Best Az tracking among studied controllers (zero steady-state error)</li>
+                <li>Moderate control effort and reliable transient behavior</li>
+                <li>Computationally lightweight — suitable for embedded autopilots</li>
+            </ul>
+            </div>
+
+            <div class="block">
+            <h4>Experimental Notes</h4>
+            <p class="muted">LQR+I shows quick stabilization of α and q and smooth δp. Use when constrained computation or deterministic optimality is required. Refer to the project write-up for Riccati derivation and state trajectories. :contentReference[oaicite:2]{index=2}</p>
+            </div>
+        </div>
+        </div>
+    </article>
+
+    <!-- MPC / VIPER -->
+    <article class="module-card">
+        <div class="module-header">
+        <div class="callsign">[ MODULE MPC // CALLSIGN: VIPER ]</div>
+        <div class="tagline">Model Predictive Control — Predictive, constraint-aware, fastest response</div>
+        </div>
+
+        <div class="module-body">
+        <p class="lead">
+            Role: Finite-horizon optimization solved online (CasADi + IPOPT). Balances tracking, control effort, and terminal position cost while enforcing input bounds to respect actuator limits.
+        </p>
+
+        <div class="module-blocks">
+            <div class="block">
+            <h4>Formulation</h4>
+            <ul>
+                <li>Horizon cost: <code>min_U Σ [(C x_k − y_ref_k)ᵀQy(C x_k − y_ref_k) + u_kᵀ R u_k] + terminal</code></li>
+                <li>Dynamics: <code>x_{k+1} = A_d x_k + B_d u_k</code>, input bounds <code>u_min ≤ u_k ≤ u_max</code></li>
+                <li>Terminal cost penalizes deviation from impact point (p_N)</li>
+            </ul>
+            </div>
+
+            <div class="block">
+            <h4>Characteristics</h4>
+            <ul>
+                <li>Fastest time-to-target and lowest total control effort in simulations</li>
+                <li>Handles input bounds directly (u_min = −0.3, u_max = 0.2 in experiments)</li>
+                <li>Computationally intensive — requires solver tuning and warm-starting for real-time use</li>
+            </ul>
+            </div>
+            <a href="model_predictive_control_final.html" class="module-btn">
+                // EXECUTE: OPEN MATLAB CODE
+            </a>
+            <div class="block">
+            <h4>Experimental Notes</h4>
+            <p class="muted">MPC produced superior response (Time-to-target ≈ 8s) and efficient actuator use, but soft terminal penalties caused some terminal Az tracking trade-offs. See Tables & Figures in the report for numeric metrics. :contentReference[oaicite:3]{index=3}</p>
+            </div>
+        </div>
+        </div>
+    </article>
+    </section>
+
+    <!-- ================================
+    < HANGAR BAY // AUTOPILOT COMPARATIVES >
+    ================================ -->
+    <section class="hangar-section">
+    <h2 class="hangar-title">&lt; HANGAR BAY // AUTOPILOT COMPARATIVES &gt;</h2>
+
+    <!-- Performance Matrix -->
+    <div class="perf-table">
+    <div class="table-head-row">
+        <div class="head-metric">PERFORMANCE METRICS</div>
+        <div class="head-col">SFI</div>
+        <div class="head-col">LQR</div>
+        <div class="head-col">MPC</div>
+    </div>
+
+    <div class="table-row">
+        <div class="metric">Time to Target (s)</div>
+        <div class="sfi">13.80</div>
+        <div class="lqr">10.00</div>
+        <div class="mpc">8.00</div>
+    </div>
+    <div class="table-row">
+        <div class="metric">Avg Control Effort (rad)</div>
+        <div class="sfi">0.04</div>
+        <div class="lqr">0.10</div>
+        <div class="mpc">0.08</div>
+    </div>
+    <div class="table-row">
+        <div class="metric">Final Az Error (g)</div>
+        <div class="sfi">19.91</div>
+        <div class="lqr">0.00</div>
+        <div class="mpc">14.97</div>
+    </div>
+    <div class="table-row">
+        <div class="metric">Total Control Effort (Σ|u|)</div>
+        <div class="sfi">48.94</div>
+        <div class="lqr">10.34</div>
+        <div class="mpc">6.06</div>
+    </div>
+    </div>
+
+
+   <div class="video-block">
+        <div class="video-title">[ VIDEO FEED // FIELD TEST RUN ]</div>
+        
+        <div class="hud-video">
+            <iframe 
+            width="100%" 
+            height="380" 
+            src="https://www.youtube.com/embed/UJg14tBe5wE?autoplay=1&mute=1&loop=1&controls=1&playlist=UJg14tBe5wE"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+            </iframe>
+        </div>
+        </div>
+
+        <a href="https://github.com/siddarth09/Guidance_Core_Maverick/blob/main/Comparative_analysis_of_controllers.pdf" class="briefing-btn" target="_blank">
+        // OPEN THE COMPLETE MISSION BRIEFING
+        </a>
+
+  </main>
+
+  <footer>
+    <p>© 2025 Siddarth — GuidanceCore · MAVERICK</p>
+  </footer>
+
+  <script>
+    // Simple telemetry oscillation to mimic the React useEffect animation
+    (function(){
+      const rng = document.getElementById('t-range');
+      const gf  = document.getElementById('t-g');
+      function fmt(v, unit){ return v.toFixed(2) + ' ' + unit; }
+
+      let tId = setInterval(() => {
+        const now = Date.now();
+        const range = 12.2 + Math.sin(now / 1300) * 0.25; // km
+        const g     = 32.0 + Math.cos(now / 1000) * 0.6;  // g
+        if (rng) rng.textContent = fmt(range, 'km');
+        if (gf)  gf.textContent  = fmt(g, 'g');
+      }, 300);
+
+      // Safety: clear if page hidden for long time
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && tId) { clearInterval(tId); tId = null; }
+        else if (!document.hidden && !tId) {
+          tId = setInterval(() => {
+            const now = Date.now();
+            const range = 12.2 + Math.sin(now / 1300) * 0.25;
+            const g     = 32.0 + Math.cos(now / 1000) * 0.6;
+            if (rng) rng.textContent = fmt(range, 'km');
+            if (gf)  gf.textContent  = fmt(g, 'g');
+          }, 300);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
