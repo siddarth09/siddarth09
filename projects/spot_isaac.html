@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Autonomous Indoor Navigation for Urban Search & Rescue</title>
 
-  <!-- Site styles -->
+  <!-- Main site styles -->
   <link rel="stylesheet" href="../style.css" />
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap"
@@ -24,37 +24,38 @@
     </a>
   </h1>
   <p>
-    <em>Autonomous Indoor Navigation · Legged Robotics · Isaac Sim · ROS 2</em>
+    <em>Autonomous Indoor Navigation . Isaac Sim . ROS 2</em>
   </p>
 </header>
 
-<!-- ================= HERO ================= -->
-<section id="hero" class="hero">
-  <div class="hero-content center">
-    <h1>
-      Autonomous Indoor Navigation for Urban Search & Rescue
-    </h1>
-    <p>
-      Developing legged robotic autonomy for GPS-denied, cluttered indoor
-      environments encountered during disaster response.
-    </p>
-  </div>
-</section>
-
 <main class="content">
 
-<!-- ================= OPERATIONAL CONTEXT ================= -->
+<!-- ================= VIDEO BANNER ================= -->
+<section class="inline-video">
+  <iframe width="1280" height="720" src="https://www.youtube-nocookie.com/embed/iJAQ9V45jA8?si=sI-l02PqAu8bMANC" 
+  title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</section>
+
+<!-- ================= PROBLEM ================= -->
 <section class="section">
-  <h2>Operational Context</h2>
+  <h2>The Problem: Disaster Search & Rescue</h2>
   <p>
-    Urban search and rescue operations often require entering damaged or
-    unstable indoor environments where human access is unsafe or limited.
-    Robots operating in these spaces must navigate without GPS, tolerate
-    cluttered geometry, and maintain stable mobility under uncertainty.
+    After earthquakes, explosions, or structural failures, first responders are
+    often required to enter damaged buildings that are unstable, poorly lit,
+    and unsafe for human access. These environments are cluttered, unpredictable,
+    and typically GPS-denied — yet rapid situational awareness is critical.
+  </p>
+
+  <p>
+    Wheeled robots struggle with debris and elevation changes, while aerial
+    systems face endurance and sensing limitations indoors. Legged robots offer
+    a promising alternative, but enabling reliable autonomy in such environments
+    remains a challenging systems problem.
   </p>
 
   <ul>
-    <li>Collapsed or partially damaged buildings</li>
+    <li>Collapsed or partially damaged indoor structures</li>
     <li>Narrow corridors, doorways, and stairwells</li>
     <li>Debris and uneven indoor surfaces</li>
     <li>GPS-denied localization</li>
@@ -62,149 +63,85 @@
   </ul>
 </section>
 
-<!-- ================= INLINE VIDEO DEMO ================= -->
-<section class="inline-video">
-  <iframe
-    src="https://www.youtube.com/embed/iJAQ9V45jA8
-         ?autoplay=1
-         &mute=1
-         &loop=1
-         &playlist=iJAQ9V45jA8
-         &controls=0
-         &modestbranding=1
-         &rel=0
-         &playsinline=1"
-    title="Spot Indoor Navigation Demo"
-    frameborder="0"
-    allow="autoplay; encrypted-media; picture-in-picture"
-    allowfullscreen>
-  </iframe>
-</section>
-
-
-<!-- ================= CAPABILITIES ================= -->
+<!-- ================= WHAT I BUILT ================= -->
 <section class="section">
-  <h2>Robotic Capabilities</h2>
-
-  <div class="capabilities">
-
-    <div class="capability">
-      <h3>Stable Legged Locomotion Indoors</h3>
-      <p>
-        A reinforcement-learned locomotion policy enables smooth and stable
-        quadruped walking in confined indoor environments without relying on
-        hand-engineered gaits.
-      </p>
-    </div>
-
-    <div class="capability">
-      <h3>Autonomous Goal-Directed Navigation</h3>
-      <p>
-        The robot plans and executes paths to target locations while maintaining
-        locomotion stability, enabling autonomous exploration and inspection.
-      </p>
-    </div>
-
-    <div class="capability">
-      <h3>Localization Without GPS</h3>
-      <p>
-        Localization is handled through onboard sensing and state estimation,
-        allowing operation in GPS-denied indoor disaster scenarios.
-      </p>
-    </div>
-
-    <div class="capability">
-      <h3>Obstacle-Aware Motion Planning</h3>
-      <p>
-        Navigation accounts for obstacles and constrained spaces common in
-        damaged indoor environments.
-      </p>
-    </div>
-
-  </div>
-</section>
-
-<!-- ================= AUTONOMY STACK ================= -->
-<section class="section">
-  <h2>Autonomy Stack</h2>
+  <h2>What I Started Building</h2>
   <p>
-    The autonomy system combines learning-based and classical components,
-    selected for reliability, interpretability, and rapid development.
+    This project explores autonomous indoor navigation for legged robots in
+    disaster-response scenarios, using simulation as a controlled environment
+    to study system integration, failure modes, and design trade-offs.
   </p>
 
-  <pre class="stack">
-Sensors
-   ↓
-State Estimation
-   ↓
-RL-Based Locomotion Control
-   ↓
-ROS 2 Navigation (Nav2)
-   ↓
-Legged Motion Commands
-  </pre>
-
   <p>
-    Reinforcement learning accelerates the development of robust locomotion,
-    while the ROS 2 Nav2 stack provides proven localization, planning, and
-    control for indoor navigation tasks.
+    Rather than treating locomotion and navigation as separate problems, the
+    goal is to build a pipeline where learned legged motion can be reliably
+    composed with classical navigation stacks to enable goal-directed autonomy.
   </p>
 </section>
 
-<!-- ================= CONSTRAINTS ================= -->
+<!-- ================= LOCOMOTION ================= -->
 <section class="section">
-  <h2>Constraints & Failure Modes</h2>
+  <h2>Step 1: Learning Stable Legged Locomotion</h2>
   <p>
-    Several practical challenges were encountered during system integration
-    and testing:
+    The first step was to obtain stable and robust quadruped locomotion. Instead
+    of hand-engineering gaits, a reinforcement learning policy was trained in
+    Isaac Lab to learn walking behavior directly from interaction.
+  </p>
+
+  <p>
+    This approach enabled rapid iteration on reward design and produced smooth,
+    disturbance-tolerant locomotion suitable for indoor environments with
+    moderate irregularities.
   </p>
 
   <ul>
-    <li>Timing and synchronization issues between sensors and localization</li>
-    <li>Sensor latency affecting navigation stability</li>
-    <li>Velocity command tuning for legged platforms</li>
-    <li>Navigation oscillations in narrow indoor spaces</li>
+    <li>Reinforcement learning–based locomotion training in Isaac Lab</li>
+    <li>Emphasis on stability, smooth motion, and recovery</li>
+    <li>Designed as a foundation for higher-level autonomy</li>
   </ul>
+</section>
 
+<!-- ================= NAVIGATION ================= -->
+<section class="section">
+  <h2>Step 2: Autonomous Navigation in Isaac Sim</h2>
   <p>
-    These constraints highlight the importance of system-level debugging and
-    careful integration when deploying autonomy in real-world disaster
-    environments.
+    With locomotion in place, the next step was integrating navigation on top of
+    learned motion. Isaac Sim was used to construct indoor, disaster-inspired
+    environments and connect the robot to the ROS 2 Nav2 navigation stack.
   </p>
-</section>
 
-<!-- ================= DEPLOYMENT READINESS ================= -->
-<section class="section">
-  <h2>Deployment Readiness</h2>
-
-  <h3>Current Capabilities</h3>
-  <ul>
-    <li>Reliable indoor navigation in simulated USAR environments</li>
-    <li>Stable locomotion under moderate disturbances</li>
-  </ul>
-
-  <h3>Areas for Improvement</h3>
-  <ul>
-    <li>Perception robustness in visually degraded environments</li>
-    <li>Handling severe terrain variation</li>
-    <li>Long-duration autonomous operation</li>
-  </ul>
-
-  <h3>Next Steps</h3>
-  <ul>
-    <li>Multi-terrain locomotion</li>
-    <li>Improved sensor fusion</li>
-    <li>Sim-to-real validation</li>
-  </ul>
-</section>
-
-<!-- ================= IMPACT ================= -->
-<section class="section">
-  <h2>Impact for First Responders</h2>
   <p>
-    Autonomous legged robots capable of navigating damaged indoor environments
-    can reduce risk to human responders, accelerate situational awareness, and
-    support inspection and search tasks during disaster response operations.
+    This integration surfaced practical challenges, including sensor
+    synchronization, velocity command compatibility with legged motion, and
+    navigation stability in narrow, cluttered spaces.
+  </p>
+
+  <ul>
+    <li>Indoor navigation using ROS 2 Nav2</li>
+    <li>Localization and planning in GPS-denied environments</li>
+    <li>Bridging classical planners with learned locomotion</li>
+  </ul>
+</section>
+
+<!-- ================= STATUS ================= -->
+<section class="section">
+  <h2>Current Status & Ongoing Work</h2>
+  <p>
+    This project is an active work in progress. While autonomous indoor
+    navigation is functional in simulation, several challenges remain before
+    deployment-ready autonomy can be claimed.
+  </p>
+
+  <ul>
+    <li>Improving robustness under severe terrain variation</li>
+    <li>More reliable perception in low-visibility environments</li>
+    <li>Longer-horizon autonomy and recovery behaviors</li>
+    <li>Future sim-to-real validation</li>
+  </ul>
+
+  <p>
+    The current system provides a strong foundation for continued exploration
+    of legged autonomy in disaster response scenarios.
   </p>
 </section>
 
