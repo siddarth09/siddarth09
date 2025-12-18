@@ -80,81 +80,117 @@
       </div>
     </section>
 
-    <section id="projects" class="section">
-      <h2 class="text-2xl sm:text-3xl font-bold mb-8">
-        Selected Projects
-      </h2>
+    <!-- Projects -->
+    <section id="projects" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Featured Projects</h2>
 
-      <div
-        id="projects-grid"
-        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8"
-      >
+        <div
+            id="projects-grid"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8"
+          >
+          
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+              <img
+                src="assets/spot_nav.png"
+                alt="Spot Indoor Navigation for Urban Search and Rescue"
+                class="w-full h-40 sm:h-48 md:h-56 object-cover"
+              />
+              <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold">
+                  Spot — Urban Search & Rescue
+                </h3>
+                <p class="text-gray-300 text-sm sm:text-base mt-2">
+                  Autonomous indoor navigation for disaster response using legged locomotion,
+                  Isaac Sim, and ROS 2 Nav2 in GPS-denied environments.
+                </p>
+                <a
+                  href="projects/spot_isaac.html"
+                  class="mt-3 inline-block text-primary font-semibold hover:underline"
+                >
+                  View Project →
+                </a>
+              </div>
+            </div>
 
-        <!-- ================= DITTO ================= -->
-        <div class="rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-          <img
-            src="assets/ditto.webp"
-            alt="DITTO Outdoor Delivery Robot"
-            class="w-full h-40 sm:h-48 md:h-56 object-cover"
-          />
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-bold">DITTO</h3>
-            <p class="text-gray-300 text-sm sm:text-base mt-2">
-              Outdoor delivery robot for last-mile logistics in community-scale
-              environments.
-            </p>
-            <a
-              href="projects/ditto.html"
-              class="mt-3 inline-block text-primary font-semibold hover:underline"
-            >
-              View Project →
-            </a>
+          <!-- Project 1 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/ssos.webp" alt="Space Station OS" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">Space Station OS</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">An autonomous OS for space stations built on ROS 2.</p>
+              <a href="projects/ssos.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
+            </div>
           </div>
+
+          <!-- Project 2 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <img src="assets/f1tenth.webp" alt="F1TENTH" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+            <div class="p-4 sm:p-6">
+              <h3 class="text-lg sm:text-xl font-bold">F1TENTH Autonomous Driving</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-2">Implemented MPC, MPCC, and NN architectures for real-time racing.</p>
+              <a href="projects/f1tenth.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
+            </div>  
+          </div>
+
+          <!-- Project 3 -->
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <video 
+                src="assets/maverick.mp4" 
+                class="w-full h-40 sm:h-48 md:h-56 object-cover" 
+                autoplay 
+                muted 
+                loop 
+                playsinline
+            ></video>
+            <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold">GuidanceCore – MAVERICK</h3>
+                <p class="text-gray-300 text-sm sm:text-base mt-2">
+                MPC-based missile autopilot enabling accurate target engagement.
+                </p>
+                <a href="projects/maverick.html" class="mt-3 inline-block text-primary font-semibold hover:underline">
+                View Project →
+                </a>
+            </div>
+            </div>
+
+
+          
+          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+            <video 
+                src="assets/pickster.mp4" 
+                class="w-full h-40 sm:h-48 md:h-56 object-cover" 
+                alt="Pickster"
+                autoplay
+                muted
+                loop
+                playsinline
+            ></video>
+
+            <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold">Pickster</h3>
+                <p class="text-gray-300 text-sm sm:text-base mt-2">
+                Robotic manipulation with MATLAB + PincherX-100 arm.
+                </p>
+                <a href="projects/pickster.html" class="mt-3 inline-block text-primary font-semibold hover:underline">
+                View Project →
+                </a>
+            </div>
+            </div>
+
+
+ 
+            <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
+                <img src="assets/ditto.webp" alt="DITTO" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
+                <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold">DITTO</h3>
+                <p class="text-gray-300 text-sm sm:text-base mt-2">Outdoor delivery robot for last-mile logistics in communities.</p>
+                <a href="projects/ditto.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
+                </div>
+            </div>
         </div>
-
-        <!-- ================= SPOT / USAR ================= -->
-        <div class="rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-          <img
-            src="assets/spot_usar.webp"
-            alt="Spot Indoor Navigation for Urban Search and Rescue"
-            class="w-full h-40 sm:h-48 md:h-56 object-cover"
-          />
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-bold">
-              Spot — Urban Search & Rescue
-            </h3>
-            <p class="text-gray-300 text-sm sm:text-base mt-2">
-              Autonomous indoor navigation for disaster response using legged
-              locomotion, Isaac Lab, Isaac Sim, and ROS 2 Nav2 in GPS-denied
-              environments.
-            </p>
-            <a
-              href="projects/spot_isaac.html"
-              class="mt-3 inline-block text-primary font-semibold hover:underline"
-            >
-              View Project →
-            </a>
-          </div>
-        </div>
-
-        <!-- ================= PLACEHOLDER / FUTURE ================= -->
-        <div class="rounded-lg border border-primary/20 bg-background-dark/60 overflow-hidden">
-          <div class="h-40 sm:h-48 md:h-56 flex items-center justify-center text-gray-400 text-sm">
-            More projects coming soon
-          </div>
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-bold text-gray-400">
-              Work in Progress
-            </h3>
-            <p class="text-gray-400 text-sm sm:text-base mt-2">
-              Ongoing work across autonomy, control, and simulation.
-            </p>
-          </div>
-        </div>
-
       </div>
     </section>
-
 
     <!-- Contact -->
     <section id="contact" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white text-center">
