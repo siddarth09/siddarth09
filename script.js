@@ -36,3 +36,6 @@ const carousel = document.getElementById("projects-carousel");
   }
 
   setInterval(autoScroll, delay);
+
+
+  

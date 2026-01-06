@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RoboRacer F1TENTH — Real-World Autonomous Racing (MPC + MPCC)</title>
+
+  <!-- Main site stylesheet -->
+  <link rel="stylesheet" href="../style.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- KaTeX for equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body,{delimiters:[
+            {left:'$$',right:'$$',display:true},
+            {left:'\\(',right:'\\)',display:false}
+          ]});"></script>
+
+  <style>
+    
+
+    :root{
+      --bg0:#070A0F;
+      --bg1:#0B1220;
+      --card: rgba(10, 14, 22, 0.78);
+      --card2: rgba(12, 18, 28, 0.9);
+      --text:#E9EEF7;
+      --muted:#A9B4C7;
+      --muted2:#8591A8;
+
+      --red:#FF1E1E;          /* F1 red */
+      --red2:#FF4D4D;
+      --white:#FFFFFF;
+
+      --grid: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.12);
+      --stroke2: rgba(255, 30, 30, 0.35);
+      --shadow: 0 16px 60px rgba(0,0,0,0.55);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:"Space Grotesk", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(180deg, rgba(7,10,15,1) 0%, rgba(9,14,24,1) 40%, rgba(7,10,15,1) 100%),
+        radial-gradient(1200px 600px at 30% 0%, rgba(255,30,30,0.12), transparent 55%),
+        radial-gradient(900px 520px at 75% 10%, rgba(255,255,255,0.05), transparent 55%);
+      overflow-x:hidden;
+    }
+
+    /* Subtle grid */
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 46px 46px;
+      pointer-events:none;
+      opacity:0.65;
+      mix-blend-mode:overlay;
+    }
+
+    a{ color: var(--red2); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* Header: minimal + F1 strip */
+    header.header{
+      position:sticky; top:0; z-index:50;
+      display:flex; align-items:center; justify-content:center;
+      padding:1.15rem 1rem;
+      background: rgba(8,10,14,0.78);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--stroke);
+    }
+    header.header:after{
+      content:"";
+      position:absolute; left:0; right:0; bottom:-1px;
+      height:3px;
+      background: linear-gradient(90deg, var(--red), transparent 35%, transparent 65%, var(--red));
+      opacity:0.9;
+    }
+    header.header h1{
+      margin:0;
+      font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+      font-weight:800;
+      letter-spacing:.02em;
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:36px; height:36px;
+      border-radius:10px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-weight:800;
+      text-decoration:none;
+    }
+    .back-link:hover{ border-color: var(--stroke2); text-decoration:none; }
+
+    header.header p{
+      display:none;
+    }
+
+    /* HERO */
+    .hero{
+      position:relative;
+      width:100%;
+      height:min(92vh, 820px);
+      overflow:hidden;
+      border-bottom: 1px solid var(--stroke);
+    }
+    .hero iframe{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      transform: scale(1.06);
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .hero .overlay{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(7,10,15,0.55) 0%, rgba(7,10,15,0.85) 72%, rgba(7,10,15,0.98) 100%),
+        radial-gradient(900px 520px at 15% 20%, rgba(255,30,30,0.18), transparent 55%),
+        radial-gradient(800px 520px at 85% 15%, rgba(255,255,255,0.08), transparent 55%);
+    }
+
+    /* HERO HUD content */
+    .hero-content{
+      position:absolute; inset:0;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 1.25rem;
+    }
+    .hero-top{
+      max-width: 1200px;
+      width:100%;
+      margin: 0 auto;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 1rem;
+    }
+    .hero-titlegroup small{
+      display:inline-block;
+      font-family: var(--mono);
+      color: var(--muted2);
+      letter-spacing:.14em;
+      font-size:.72rem;
+      text-transform:uppercase;
+    }
+    .hero-titlegroup h2{
+      margin:.4rem 0 .15rem;
+      font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+      font-weight:800;
+    }
+    .hero-titlegroup .subtitle{
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 760px;
+    }
+
+    .hero-status{
+      min-width: 240px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255, 30, 30, 0.4);
+      border-radius: 14px;
+      padding: .9rem 1rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .hero-status small{
+      font-family: var(--mono);
+      display:block;
+      color: var(--muted2);
+      letter-spacing:.12em;
+      font-size:.72rem;
+      text-transform:uppercase;
+    }
+    .hero-status strong{
+      display:block;
+      margin-top:.35rem;
+      font-size: 1rem;
+      font-weight:900;
+      color: var(--white);
+    }
+    .hero-status .pill{
+      margin-top:.55rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      font-family: var(--mono);
+      font-size:.75rem;
+      padding:.35rem .6rem;
+      border-radius: 999px;
+      background: rgba(255, 30, 30, 0.15);
+      border: 1px solid rgba(255, 30, 30, 0.35);
+      color: #FFD5D5;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--red);
+      box-shadow: 0 0 0 3px rgba(255,30,30,0.22);
+    }
+
+    .hero-center{
+      max-width: 1200px;
+      width:100%;
+      margin: 0 auto;
+      display:grid;
+      align-items:center;
+      padding: .75rem 0;
+    }
+    .hero-center h1{
+      margin:0;
+      font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing:.01em;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+    .hero-center p{
+      margin: .8rem 0 1.05rem;
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .cta-row{
+      display:flex;
+      gap:.7rem;
+      flex-wrap:wrap;
+    }
+    .cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.55rem;
+      padding:.68rem 1rem;
+      border-radius: 14px;
+      font-weight: 900;
+      letter-spacing:.02em;
+      border: 1px solid rgba(255,30,30,0.45);
+      background: rgba(255,30,30,0.18);
+      color: var(--white);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      transition: transform .15s ease, filter .15s ease, background .15s ease;
+      text-decoration:none;
+    }
+    .cta:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      background: rgba(255,30,30,0.26);
+      text-decoration:none;
+    }
+    .cta.secondary{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+    .cta.secondary:hover{
+      border-color: rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Telemetry */
+    .telemetry{
+      margin-top: 1rem;
+      width: min(980px, 100%);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+    .telemetry-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: .65rem .9rem;
+      font-family: var(--mono);
+      color: var(--muted2);
+      font-size:.72rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+    .telemetry-grid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap:0;
+    }
+    @media (max-width: 860px){
+      .telemetry-grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    .tile{
+      padding: .85rem .95rem;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: var(--mono);
+    }
+    .tile:nth-child(2n){ border-right:none; }
+    @media(min-width:861px){
+      .tile:nth-child(4n){ border-right:none; }
+      .tile:nth-last-child(-n+4){ border-bottom:none; }
+    }
+    .tile small{
+      display:block;
+      color: var(--muted2);
+      font-size:.70rem;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .tile strong{
+      display:block;
+      margin-top:.35rem;
+      color: var(--white);
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .hero-bottom{
+      max-width: 1200px;
+      width:100%;
+      margin: 0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+      color: var(--muted2);
+      font-family: var(--mono);
+      font-size:.72rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      padding: .35rem 0 .25rem;
+    }
+
+    /* MAIN */
+    main{
+      max-width: 1200px;
+      margin: -2.6rem auto 4rem;
+      padding: 0 1rem;
+    }
+
+    .block{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 1.15rem 1.15rem;
+      margin-top: .9rem; /* reduced vertical gaps */
+      backdrop-filter: blur(10px);
+    }
+    @media (min-width: 900px){
+      .block{ padding: 1.35rem 1.35rem; }
+    }
+
+    .block-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:1rem;
+      margin-bottom: .65rem;
+    }
+    .kicker{
+      font-family: var(--mono);
+      color: var(--muted2);
+      font-size:.72rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    h2.section-title{
+      margin:.25rem 0 0;
+      font-size: clamp(1.2rem, 2.3vw, 1.8rem);
+      font-weight: 900;
+      letter-spacing:.01em;
+    }
+
+    .chips{
+      display:flex; flex-wrap:wrap; gap:.5rem;
+      justify-content:flex-end;
+    }
+    .chip{
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding: .35rem .55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .chip.hot{
+      border-color: rgba(255,30,30,0.40);
+      background: rgba(255,30,30,0.14);
+      color: #FFD5D5;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: .9rem;
+      margin-top: .75rem;
+    }
+    @media (min-width: 980px){
+      .grid-2{ grid-template-columns: 1.15fr 0.85fr; }
+    }
+
+    p{
+      margin: .55rem 0;
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 1.03rem;
+    }
+    .muted{ color: var(--muted); }
+    ul{ margin:.55rem 0; padding-left: 1.1rem; color: var(--muted); }
+    li{ margin:.35rem 0; }
+
+    .panel{
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: .95rem 1rem;
+    }
+
+    pre{
+      margin:0;
+      white-space: pre;
+      overflow:auto;
+      padding:.85rem .9rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.35);
+      font-family: var(--mono);
+      font-size: .86rem;
+      color: #D9E2F2;
+      line-height: 1.55;
+    }
+    .eq{
+      padding:.75rem .85rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,30,30,0.25);
+      background: rgba(255,30,30,0.08);
+      overflow:auto;
+    }
+    .eq .katex{ font-size: 1.03em; }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,0.10);
+      margin: .85rem 0;
+    }
+
+    .callout{
+      padding:.85rem .95rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,30,30,0.30);
+      background: rgba(255,30,30,0.10);
+      color: #FFE8E8;
+      font-family: var(--mono);
+      font-size: .86rem;
+      line-height: 1.55;
+    }
+
+    /* Table */
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.30);
+    }
+    .table th, .table td{
+      padding: .75rem .8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      font-family: var(--mono);
+      font-size: .88rem;
+    }
+    .table th{
+      text-align:left;
+      color: var(--muted2);
+      background: rgba(255,255,255,0.03);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .table td{ color: var(--text); }
+    .table tr:last-child td{ border-bottom:none; }
+    .table th:last-child, .table td:last-child{ border-right:none; }
+
+    /* Video block inside page */
+    .inline-video{
+      width:100%;
+      aspect-ratio: 16/9;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:#000;
+      box-shadow: var(--shadow);
+    }
+    .inline-video iframe{
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+    footer{
+      text-align:center;
+      color: var(--muted2);
+      border-top: 1px solid rgba(255,255,255,0.10);
+      padding: 1.5rem 1rem 2rem;
+      font-size: .9rem;
+      margin-top: 2rem;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(10px);
+    }
+
+    /* KaTeX spacing */
+    .katex-display{ margin: .55rem 0; }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <h1>
+      RoboRacer F1TENTH — Real-World Autonomous Racing
+      <a class="back-link" href="../index.html" aria-label="Back to portfolio">←</a>
+    </h1>
+  </header>
+
+  <!-- HERO: full-bleed YouTube background -->
+  <section class="hero" aria-label="Hero video background">
+    <!-- Replace video id with your own run if available -->
+    <iframe
+        title="RoboRacer F1TENTH — Field Run"
+        src="https://youtube.com/embed/shorts/KNlxPzRS_G8?si=kCo_0BCJnJ-Ka2I3"
+        class="absolute inset-0 w-full h-full"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+
+    <div class="overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <!-- Top HUD -->
+      <div class="hero-top">
+        <div class="hero-titlegroup">
+          <small>RACE PROGRAM</small>
+          <h2>Optimization-Based Autonomy on Ackermann Vehicle</h2>
+          <div class="subtitle">Dynamic trajectory sampling → CasADi MPC tracking → MPCC racing line control (RoboRacer F1TENTH)</div>
+        </div>
+
+        <div class="hero-status">
+          <small>STATUS</small>
+          <strong>TRACK READY</strong>
+          <div class="pill"><span class="dot"></span> REAL ROBOT DEPLOYMENT</div>
+        </div>
+      </div>
+
+      <!-- Center -->
+      <div class="hero-center">
+        <div>
+          <h1>Real-World Deployment on RoboRacer F1TENTH</h1>
+          <p>
+            Built and deployed a full local autonomy stack for a real F1TENTH Ackermann platform:
+            (1) online trajectory generation using RK4 rollouts scored with obstacle distance transforms,
+            (2) trajectory tracking using nonlinear MPC solved with CasADi/IPOPT, and
+            (3) MPCC for high-speed racing line control with contouring/lag errors and explicit progress optimization.
+          </p>
+
+          <div class="cta-row">
+            <a class="cta" href="#stack">Explore the Stack ↓</a>
+            <a class="cta secondary" href="#math">Math & Formulation</a>
+          </div>
+
+          <!-- Telemetry -->
+          <div class="telemetry" aria-label="Telemetry">
+            <div class="telemetry-header">
+              <span>LIVE HUD</span>
+              <span>MODE: AUTONOMOUS</span>
+            </div>
+            <div class="telemetry-grid">
+              <div class="tile"><small>PLANNER</small><strong>DYNAMIC ROLLOUT</strong></div>
+              <div class="tile"><small>TRACKER</small><strong>CASADI MPC</strong></div>
+              <div class="tile"><small>RACING</small><strong>MPCC</strong></div>
+              <div class="tile"><small>PLATFORM</small><strong>ROBORACER F1TENTH</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom strip -->
+      <div class="hero-bottom">
+        <div>ACKERMANN: ENABLED</div>
+        <div>OPTIMIZER: IPOPT</div>
+        <div>HORIZON: ONLINE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- Overview / Stack -->
+    <section id="stack" class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">SYSTEM OVERVIEW</div>
+          <h2 class="section-title">Autonomy Stack (Real Robot)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip hot">F1TENTH</span>
+          <span class="chip">Ackermann</span>
+          <span class="chip">ROS 2</span>
+          <span class="chip">TF2</span>
+          <span class="chip">CasADi</span>
+          <span class="chip">IPOPT</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <p class="muted">
+            This project is a “racing-style” autonomy pipeline: generate feasible motion candidates fast,
+            then apply optimization-based control to execute them safely and smoothly on hardware.
+            I implemented both a general MPC tracker (for arbitrary trajectories) and an MPCC controller
+            (for racing line following + progress maximization).
+          </p>
+
+          <div class="divider"></div>
+
+          <pre>
+            SENSOR / MAP  →  LOCAL TRAJ GEN (RK4 rollouts + scoring)  →  /dynamic_trajectory (nav_msgs/Path)
+                                                        ↓
+                                            MPC TRACKER (CasADi/IPOPT)  →  /drive (AckermannDriveStamped)
+
+            RACING LINE (Trajectory msg w/ arc-length)  →  MPCC (contour + lag + progress θ)  →  /drive</pre>
+
+          <p class="muted">
+            The key engineering decision: separate “what to do next” (trajectory choice) from “how to execute”
+            (MPC/MPCC optimization), so each component stays debuggable and swappable.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="kicker">HARDWARE NOTE</div>
+          <p>
+            Platform: <strong>RoboRacer F1TENTH</strong> (Ackermann steering).
+            Control published as <code style="font-family:var(--mono)">AckermannDriveStamped</code>
+            with steering angle and speed. Robot pose obtained via TF:
+            <code style="font-family:var(--mono)">map → ego_racecar/base_link</code>.
+          </p>
+
+          <div class="divider"></div>
+
+          <div class="callout">
+            WHY THIS MATTERS:<br/>
+            This is not simulation-only control. Constraints, timing, TF availability, and safety margins
+            (distance-to-obstacle) directly affect whether the robot runs cleanly on track.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Dynamic Trajectory Generation -->
+    <section id="planner" class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">LOCAL PLANNER</div>
+          <h2 class="section-title">Dynamic Trajectory Generation (RK4 Rollouts + Distance Transform)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip hot">RK4</span>
+          <span class="chip">Distance Transform</span>
+          <span class="chip">Sampling</span>
+          <span class="chip">Safety Margin</span>
+        </div>
+      </div>
+
+      <p>
+        The trajectory generator samples steering commands \( \delta \) across the feasible range and forward-simulates
+        the bicycle model for a fixed horizon \(N\) with timestep \(\Delta t\). Each rollout produces a candidate path
+        \(\{(x_k,y_k,\theta_k)\}_{k=1}^N\) which is scored using obstacle clearance from a distance transform map and
+        penalties for curvature and goal deviation.
+      </p>
+
+      <div class="grid-2">
+        <div>
+          <div class="kicker">KINEMATIC MODEL</div>
+          <div class="eq">
+            $$\dot{x}=v\cos\theta,\qquad \dot{y}=v\sin\theta,\qquad \dot{\theta}=\frac{v}{L}\tan(\delta)$$
+          </div>
+
+          <p class="muted">
+            Integration is done via RK4:
+            \(x_{k+1}=x_k+\frac{\Delta t}{6}(k_1+2k_2+2k_3+k_4)\) (applied to all state components),
+            which reduces numerical drift compared to Euler at higher speeds / longer horizons.
+          </p>
+
+          <div class="kicker">OBSTACLE CLEARANCE</div>
+          <p class="muted">
+            From an occupancy grid, free cells are binarized and passed through an Euclidean distance transform
+            \(d(x,y)\), giving approximate clearance (in meters) for each map cell. Any rollout with
+            \(\min_k d(x_k,y_k) < d_{\text{safe}}\) is rejected.
+          </p>
+
+          <div class="eq">
+            $$\text{Reject if }\;\min_{k\in[1,N]} d(x_k,y_k) < d_{\text{safe}}$$
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="kicker">SCORING FUNCTION</div>
+          <p class="muted">
+            A simple, interpretable objective works well for fast online selection:
+          </p>
+          <div class="eq">
+            $$J(\tau)=\sum_{k=1}^{N} d(x_k,y_k)\;-\;\alpha\,\underbrace{\sum_{k=2}^{N}|\Delta\theta_k|}_{\text{curvature}}\;-\;\beta\,\underbrace{\|[x_N,y_N]-g\|_2}_{\text{goal}}$$
+          </div>
+
+          <ul>
+            <li><strong>Clearance term</strong> prefers trajectories farther from obstacles.</li>
+            <li><strong>Curvature term</strong> discourages aggressive yaw oscillations.</li>
+            <li><strong>Goal term</strong> pulls the rollout endpoint toward a target.</li>
+          </ul>
+
+          <div class="divider"></div>
+
+          <div class="kicker">OUTPUT</div>
+          <p class="muted">
+            The best rollout is published as <code style="font-family:var(--mono)">nav_msgs/Path</code> on
+            <code style="font-family:var(--mono)">/dynamic_trajectory</code>, which becomes the MPC reference.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: MPC -->
+    <section id="mpc" class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">TRACKING CONTROLLER</div>
+          <h2 class="section-title">Nonlinear MPC Tracking (CasADi + IPOPT)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip hot">MPC</span>
+          <span class="chip">CasADi</span>
+          <span class="chip">IPOPT</span>
+          <span class="chip">Ackermann</span>
+        </div>
+      </div>
+
+      <p>
+        The MPC tracker consumes the reference path and solves a finite-horizon nonlinear optimization problem every
+        control cycle. The state includes pose and speed:
+        \(\mathbf{x}=[x, y, \psi, v]^T\). Controls are commanded speed and steering:
+        \(\mathbf{u}=[v_c,\delta]^T\).
+      </p>
+
+      <div class="grid-2">
+        <div>
+          <div class="kicker">DYNAMICS (WITH SLIP ANGLE)</div>
+          <p class="muted">
+            The model uses a small slip-angle approximation:
+            \(\beta=\tan^{-1}\!\left(\frac{L_r}{L}\tan\delta\right)\).
+          </p>
+
+          <div class="eq">
+            $$\beta=\tan^{-1}\!\left(\frac{L_r}{L}\tan\delta\right)$$
+            $$\begin{aligned}
+            x_{k+1}&=x_k+v_c\cos(\psi_k+\beta)\Delta t\\
+            y_{k+1}&=y_k+v_c\sin(\psi_k+\beta)\Delta t\\
+            \psi_{k+1}&=\psi_k+\frac{v_c\cos\beta}{L}\tan\delta\,\Delta t\\
+            v_{k+1}&=v_c
+            \end{aligned}$$
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="kicker">OPTIMIZATION PROBLEM</div>
+          <p class="muted">Minimize tracking error + control effort with input bounds:</p>
+
+          <div class="eq">
+            $$\min_{\{\mathbf{x}_k,\mathbf{u}_k\}}
+            \sum_{k=0}^{N-1}\left(\|\mathbf{x}_k-\mathbf{x}^{ref}_k\|_Q^2+\|\mathbf{u}_k\|_R^2\right)
+            +\|\mathbf{x}_N-\mathbf{x}^{ref}_N\|_{Q_f}^2$$
+            $$\text{s.t.}\;\;\mathbf{x}_{k+1}=f(\mathbf{x}_k,\mathbf{u}_k),\;\;
+            v_{\min}\le v_c\le v_{\max},\;\;\delta_{\min}\le \delta\le \delta_{\max}$$
+          </div>
+
+          <p class="muted">
+            Implemented with CasADi symbolic variables and solved using IPOPT.
+            The first control action \((v_0,\delta_0)\) is applied (receding horizon control).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: MPCC -->
+    <section id="mpcc" class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">RACING CONTROLLER</div>
+          <h2 class="section-title">Model Predictive Contouring Control (MPCC)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip hot">MPCC</span>
+          <span class="chip">Contouring</span>
+          <span class="chip">Progress</span>
+          <span class="chip">Racing Line</span>
+        </div>
+      </div>
+
+      <p>
+        MPCC differs from standard tracking MPC by introducing a <strong>progress state</strong> \(\theta\)
+        (arc-length along the centerline) and penalizing <em>contouring</em> and <em>lag</em> errors relative to the
+        racing line. The optimizer simultaneously decides how to steer and how quickly to advance along the track.
+      </p>
+
+      <div class="grid-2">
+        <div>
+          <div class="kicker">STATE & DYNAMICS</div>
+          <p class="muted">
+            Augmented state: \(\mathbf{x}=[x,y,\psi,v,\theta]^T\), with progress update:
+            \(\theta_{k+1}=\theta_k+v_k\Delta t\).
+          </p>
+          <div class="eq">
+            $$\theta_{k+1}=\theta_k+v_k\Delta t$$
+            $$\begin{aligned}
+            x_{k+1}&=x_k+v_c\cos(\psi_k)\Delta t\\
+            y_{k+1}&=y_k+v_c\sin(\psi_k)\Delta t\\
+            \psi_{k+1}&=\psi_k+\frac{v_c}{L}\tan\delta\,\Delta t\\
+            v_{k+1}&=v_c
+            \end{aligned}$$
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="kicker">CONTOURING / LAG ERRORS</div>
+          <p class="muted">
+            Let the nearest centerline reference be \((x_{cl},y_{cl},\phi_{cl},s_{cl})\).
+            With \(dx=x-x_{cl}\), \(dy=y-y_{cl}\):
+          </p>
+          <div class="eq">
+            $$\varepsilon_c=\sin(\phi_{cl})\,dx-\cos(\phi_{cl})\,dy$$
+            $$\varepsilon_l=-\cos(\phi_{cl})\,dx-\sin(\phi_{cl})\,dy$$
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="kicker">MPCC OBJECTIVE</div>
+          <p class="muted">
+            Penalize contouring/lag errors and encourage progress by rewarding \(\theta\) toward \(s_{cl}\):
+          </p>
+          <div class="eq">
+            $$\min \sum_{k=0}^{N-1}\left(q_c\varepsilon_{c,k}^2+q_l\varepsilon_{l,k}^2
+            -q_\theta(\theta_k-s_{cl,k})+\|\mathbf{u}_k\|_R^2\right)$$
+          </div>
+
+          <p class="muted">
+            In practice: MPCC “doesn’t blindly chase waypoints”; it optimizes a <em>race-style tradeoff</em> between
+            staying near the line and maximizing forward progress.
+          </p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="kicker">WHY MPCC OVER TRACKING MPC?</div>
+          <ul>
+            <li><strong>Explicit progress</strong> makes the controller “want” to move forward, not just reduce error.</li>
+            <li><strong>Stable at speed</strong> because it avoids overreacting to noisy reference points.</li>
+            <li><strong>Racing line behavior</strong>: controls naturally balance corner cutting vs stability.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="kicker">ROS INTERFACES</div>
+          <ul>
+            <li><code style="font-family:var(--mono)">/racing_trajectory</code> → custom Trajectory msg (with arc-length \(s\))</li>
+            <li><code style="font-family:var(--mono)">/mpcc_predicted_horizon</code> → MarkerArray (visual horizon points)</li>
+            <li><code style="font-family:var(--mono)">/drive</code> → AckermannDriveStamped (applied control)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Math index + Implementation Notes -->
+    <section id="math" class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">MATH INDEX</div>
+          <h2 class="section-title">Key Equations (Quick Reference)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip">Bicycle Model</span>
+          <span class="chip">Distance Transform</span>
+          <span class="chip">MPC Cost</span>
+          <span class="chip hot">MPCC Errors</span>
+        </div>
+      </div>
+
+      <table class="table" aria-label="Equation index">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Equation</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Planner</td>
+            <td>\(\dot{\theta}=\frac{v}{L}\tan\delta\)</td>
+            <td>Rollout curvature / turning</td>
+          </tr>
+          <tr>
+            <td>Planner</td>
+            <td>\(\min_k d(x_k,y_k)\ge d_{\text{safe}}\)</td>
+            <td>Obstacle safety margin</td>
+          </tr>
+          <tr>
+            <td>MPC</td>
+            <td>\(\min \sum \|\mathbf{x}-\mathbf{x}^{ref}\|_Q^2+\|\mathbf{u}\|_R^2\)</td>
+            <td>Trajectory tracking</td>
+          </tr>
+          <tr>
+            <td>MPCC</td>
+            <td>\(\varepsilon_c=\sin\phi\,dx-\cos\phi\,dy\)</td>
+            <td>Contouring error</td>
+          </tr>
+          <tr>
+            <td>MPCC</td>
+            <td>\(\varepsilon_l=-\cos\phi\,dx-\sin\phi\,dy\)</td>
+            <td>Lag error</td>
+          </tr>
+          <tr>
+            <td>MPCC</td>
+            <td>\(\theta_{k+1}=\theta_k+v_k\Delta t\)</td>
+            <td>Progress along track</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="divider"></div>
+
+      <div class="callout">
+        NOTE ON EQUATIONS:<br/>
+        This page uses <strong>KaTeX</strong> (already included in &lt;head&gt;). Use inline math with <code>\( ... \)</code>
+        and block math with <code>$$ ... $$</code>. No additional LaTeX extensions are needed beyond KaTeX.
+      </div>
+    </section>
+
+    <!-- Optional: Extra video -->
+    <section class="block">
+      <div class="block-head">
+        <div>
+          <div class="kicker">FIELD FOOTAGE</div>
+          <h2 class="section-title">Run Video (Full Width)</h2>
+        </div>
+        <div class="chips">
+          <span class="chip hot">HERO-STYLE</span>
+          <span class="chip">On-Track</span>
+        </div>
+      </div>
+
+      <div class="inline-video">
+        <iframe
+          title="RoboRacer F1TENTH — Field Test"
+          src="https://www.youtube.com/embed/UJg14tBe5wE?autoplay=0&mute=0&controls=1&rel=0&modestbranding=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+
+      <p class="muted">
+        Swap the YouTube link above with your cleanest run (or an unlisted video) once you have it.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2025 Siddarth — RoboRacer F1TENTH · MPC + MPCC</p>
+  </footer>
+
+  
+</body>
+</html>
