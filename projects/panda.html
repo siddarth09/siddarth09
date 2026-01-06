@@ -11,6 +11,10 @@
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap"
     rel="stylesheet"
   />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+            onload="renderMathInElement(document.body);"></script>
 
   <!-- Page-specific overrides -->
   
@@ -34,7 +38,7 @@
 <main class="content">
 
 <!-- ================= VIDEO / VISUAL ================= -->
-<section class="inline-video">
+<section class="panda-hero">
   <!-- Replace with your MuJoCo / PPO rollout video when ready -->
   <iframe
     width="1280"
@@ -52,72 +56,146 @@
 <section class="section">
   <h2>The Problem: Robotic Manipulation Beyond Scripts</h2>
   <p>
-    Robotic pick-and-place tasks appear deceptively simple, yet they expose many
-    of the fundamental challenges in manipulation: high-dimensional control,
+    Robotic pick-and-place tasks appear deceptively simple, yet they expose many of
+    the fundamental challenges in manipulation: high-dimensional control,
     kinematic constraints, perception uncertainty, and the need for precise,
     repeatable interaction with the environment.
   </p>
 
   <p>
-    Classical approaches can solve structured manipulation problems effectively,
-    but they often require careful system integration and struggle to generalize
-    beyond the scenarios they were explicitly designed for.
+    Classical approaches solve structured scenarios reliably, but require careful
+    system integration and often fail to generalize beyond explicitly modeled
+    cases.
   </p>
 </section>
 
-<!-- ================= CLASSICAL SYSTEM ================= -->
+<!-- ================= CLASSICAL PIPELINE ================= -->
 <section class="section two-col">
   <div>
     <h2>Step 1: Classical Pick & Place Pipeline</h2>
     <p>
-      The initial system was built using a classical robotics pipeline, focusing on
-      explicit modeling and modular system design.
+      The initial system was built using a classical robotics pipeline based on
+      explicit modeling and modular decomposition.
     </p>
 
     <ul>
-      <li>Cube detection and pose estimation</li>
-      <li>TF-based transformation into the robot base frame</li>
-      <li>Motion planning to generate task-space targets</li>
-      <li>Jacobian-based inverse kinematics for joint control</li>
+      <li>HSV-based cube detection and centroid estimation</li>
+      <li>TF-based coordinate transformation into robot base frame</li>
+      <li>Sampling-based motion planning (RRTConnect)</li>
+      <li>Jacobian-based inverse kinematics using Pinocchio</li>
       <li>Explicit sequencing of approach, grasp, lift, and retreat</li>
     </ul>
-
-    <p>
-      This approach provides transparency, debuggability, and precise control,
-      making it well-suited for structured environments and repeatable tasks.
-    </p>
   </div>
 
   <div class="side-panel">
     <h3>Pipeline Overview</h3>
     <pre>
-            Camera → Cube Detection
-                    ↓
-                TF Transform
-                    ↓
-            Task-Space Target
-                    ↓
-            Jacobian IK Solver
-                    ↓
-            Joint Commands → Robot
+Camera → HSV Segmentation
+        ↓
+    2D Centroid
+        ↓
+   TF Transform
+        ↓
+ Motion Planning
+        ↓
+ Jacobian IK
+        ↓
+ Joint Commands
     </pre>
   </div>
 </section>
 
-
-<!-- ================= LIMITATIONS ================= -->
+<!-- ================= PERCEPTION ================= -->
 <section class="section">
-  <h2>Motivation for Learning-Based Extension</h2>
+  <h2>Perception: HSV Filtering and Object Localization</h2>
   <p>
-    While the classical pipeline performs reliably, it requires careful tuning
-    and explicit handling of many edge cases. Small changes in object placement,
-    timing, or execution noise can require manual intervention or redesign.
+    Object detection is performed using simple HSV color segmentation to maintain
+    transparency and robustness under controlled lighting.
   </p>
 
   <p>
-    To explore more adaptive behavior, the next step was to extend the system
-    using reinforcement learning, while keeping the problem grounded in
-    physically realistic simulation.
+    RGB images are converted into HSV space and thresholded:
+  </p>
+
+  <p>
+    $$ M(x,y) =
+    \begin{cases}
+      1 & H_{min} \le H(x,y) \le H_{max} \\
+      0 & \text{otherwise}
+    \end{cases} $$
+  </p>
+
+  <p>
+    Binary masks are processed using contour detection. The object centroid is
+    computed using image moments:
+  </p>
+
+  <p>
+    $$ c_x = \frac{m_{10}}{m_{00}}, \quad
+       c_y = \frac{m_{01}}{m_{00}} $$
+  </p>
+
+  <p>
+    The centroid is then projected into 3D and transformed into the robot base
+    frame using ROS 2 TF.
+  </p>
+</section>
+
+<!-- ================= IK ================= -->
+<section class="section">
+  <h2>Inverse Kinematics with Pinocchio</h2>
+  <p>
+    For the 7-DoF Franka Panda arm, forward kinematics define a mapping:
+  </p>
+
+  <p>
+    $$ \mathbf{x} = f(\mathbf{q}) $$
+  </p>
+
+  <p>
+    The differential relationship between task space and joint space is:
+  </p>
+
+  <p>
+    $$ \dot{\mathbf{x}} = \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}} $$
+  </p>
+
+  <p>
+    A damped least-squares inverse is used to compute joint velocities:
+  </p>
+
+  <p>
+    $$ \dot{\mathbf{q}} =
+    \mathbf{J}^\top(\mathbf{J}\mathbf{J}^\top + \lambda^2 \mathbf{I})^{-1}
+    (\mathbf{x}^* - \mathbf{x}) $$
+  </p>
+
+  <p>
+    Pinocchio provides fast Jacobian computation and frame-level kinematics,
+    enabling stable closed-loop IK control.
+  </p>
+</section>
+
+<!-- ================= MOTION PLANNING ================= -->
+<section class="section">
+  <h2>Motion Planning with OMPL (RRTConnect)</h2>
+  <p>
+    Motion planning is performed in joint configuration space
+    \( \mathcal{C} \subset \mathbb{R}^7 \).
+  </p>
+
+  <p>
+    Given start and goal configurations, RRTConnect grows two trees toward each
+    other using random sampling until a collision-free path is found:
+  </p>
+
+  <p>
+    $$ \|\mathbf{q}_{start} - \mathbf{q}_{goal}\| < \varepsilon $$
+  </p>
+
+  <p>
+    RRTConnect was chosen for its efficiency in high-dimensional spaces and
+    suitability for single-query planning in pick-and-place tasks.
   </p>
 </section>
 
@@ -125,27 +203,34 @@
 <section class="section">
   <h2>Step 2: PPO-Based Manipulation in MuJoCo</h2>
   <p>
-    A reinforcement learning environment was built in MuJoCo to study manipulation
-    from direct interaction. Instead of relying on an external planner or IK
-    module, the policy operates using incremental Cartesian end-effector actions.
+    To explore adaptive behavior, a reinforcement learning environment was built
+    in MuJoCo. The policy operates on incremental Cartesian end-effector actions
+    rather than explicit joint targets.
   </p>
 
   <p>
-    The environment embeds Jacobian-based control internally, allowing the policy
-    to focus on task execution rather than explicit kinematic reasoning.
+    The PPO objective maximizes the expected return:
   </p>
 
-  <ul>
-    <li>Δ end-effector Cartesian actions with gripper control</li>
-    <li>Custom Gymnasium environment for Panda manipulation</li>
-    <li>PPO with actor–critic architecture in PyTorch</li>
-    <li>GAE, clipped objectives, and entropy regularization</li>
-    <li>Reward shaping for reach, success, safety, and smoothness</li>
-  </ul>
+  <p>
+    $$ J(\theta) = \mathbb{E}_{\pi_\theta}
+    \left[\sum_{t=0}^{\infty} \gamma^t r_t \right] $$
+  </p>
 
   <p>
-    This learning-based extension enables more fluid behavior and tolerance to
-    small variations, while remaining grounded in physically accurate dynamics.
+    Reward shaping includes distance, success, smoothness, and safety terms:
+  </p>
+
+  <p>
+    $$ r_t =
+    -\|\mathbf{p}_{ee} - \mathbf{p}_{obj}\|
+    + r_{\text{success}}
+    - \alpha \|\Delta \mathbf{a}_t\|^2 $$
+  </p>
+
+  <p>
+    PPO updates use clipped surrogate objectives with Generalized Advantage
+    Estimation (GAE) to stabilize learning.
   </p>
 </section>
 
@@ -154,26 +239,20 @@
   <h2>Next Step: Integrating IK with Learning</h2>
   <p>
     The current learning-based system intentionally excludes explicit inverse
-    kinematics to simplify the control interface and study policy behavior in
-    isolation.
+    kinematics to isolate policy behavior.
   </p>
 
   <p>
-    The next phase of this project will combine the strengths of both approaches
-    by integrating inverse kinematics into the learning pipeline, enabling
-    structured task constraints while retaining adaptability through learning.
+    Future work will integrate IK constraints into the learning pipeline,
+    combining the structure of classical control with the adaptability of
+    reinforcement learning.
   </p>
 
   <ul>
-    <li>Hybrid control combining IK constraints with PPO policies</li>
+    <li>Hybrid PPO + IK control</li>
     <li>Improved stability near kinematic limits</li>
     <li>More reliable grasp execution and recovery</li>
   </ul>
-
-  <p>
-    This progression reflects an ongoing exploration of how classical robotics
-    and reinforcement learning can be composed into robust manipulation systems.
-  </p>
 </section>
 
 </main>
@@ -184,3 +263,4 @@
 
 </body>
 </html>
+

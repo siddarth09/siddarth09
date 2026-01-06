@@ -923,12 +923,20 @@ footer {
       border-bottom: 2px solid rgba(111, 163, 199, 0.4);
     }
 
-    section h2 {
-      color: #7aa2c3;
+    section {
+      padding: 2rem 1.5rem;   /* tighter vertical spacing */
+    }
+    .section h2 {
+      margin-bottom: 0.6rem;
+    }
+    .section h3 {
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
     }
 
+
     .section {
-      margin-bottom: 4.5rem;
+      margin-bottom: 2.5rem;
     }
 
 
@@ -938,17 +946,19 @@ footer {
       color: #b9c2cf;
     }
 
-  .inline-video {
-  max-width: 1100px;
-  margin: 3rem auto;
-  aspect-ratio: 16 / 9;
-  border-radius: 6px;
+ .panda-hero {
+  position: relative;
+  width: 100vw;
+  height: min(90vh, 900px);   /* tall but controlled */
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  border: 1px solid rgba(122, 162, 195, 0.35);
   background: #000;
 }
 
-.inline-video iframe {
+.panda-hero iframe {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border: none;
