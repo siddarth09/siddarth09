@@ -66,33 +66,44 @@
 </section>
 
 <!-- ================= CLASSICAL SYSTEM ================= -->
-<section class="section">
-  <h2>Step 1: Classical Pick & Place Pipeline</h2>
-  <p>
-    The initial system was built using a classical robotics pipeline, focusing on
-    explicit modeling and modular system design. Each component was responsible
-    for a clearly defined role in the manipulation process.
-  </p>
+<section class="section two-col">
+  <div>
+    <h2>Step 1: Classical Pick & Place Pipeline</h2>
+    <p>
+      The initial system was built using a classical robotics pipeline, focusing on
+      explicit modeling and modular system design.
+    </p>
 
-  <p>
-    The pipeline integrates perception, coordinate frame transformations,
-    motion planning, and inverse kinematics to execute deterministic pick-and-
-    place behavior with a 7-DoF Franka Panda arm.
-  </p>
+    <ul>
+      <li>Cube detection and pose estimation</li>
+      <li>TF-based transformation into the robot base frame</li>
+      <li>Motion planning to generate task-space targets</li>
+      <li>Jacobian-based inverse kinematics for joint control</li>
+      <li>Explicit sequencing of approach, grasp, lift, and retreat</li>
+    </ul>
 
-  <ul>
-    <li>Cube detection and pose estimation</li>
-    <li>TF-based transformation into the robot base frame</li>
-    <li>Motion planning to generate task-space targets</li>
-    <li>Jacobian-based inverse kinematics for joint control</li>
-    <li>Explicit sequencing of approach, grasp, lift, and retreat</li>
-  </ul>
+    <p>
+      This approach provides transparency, debuggability, and precise control,
+      making it well-suited for structured environments and repeatable tasks.
+    </p>
+  </div>
 
-  <p>
-    This approach provides transparency, debuggability, and precise control,
-    making it well-suited for structured environments and repeatable tasks.
-  </p>
+  <div class="side-panel">
+    <h3>Pipeline Overview</h3>
+    <pre>
+            Camera → Cube Detection
+                    ↓
+                TF Transform
+                    ↓
+            Task-Space Target
+                    ↓
+            Jacobian IK Solver
+                    ↓
+            Joint Commands → Robot
+    </pre>
+  </div>
 </section>
+
 
 <!-- ================= LIMITATIONS ================= -->
 <section class="section">
