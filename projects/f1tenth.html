@@ -387,10 +387,11 @@
       letter-spacing:.01em;
     }
 
-    .chips{
-      display:flex; flex-wrap:wrap; gap:.5rem;
-      justify-content:flex-end;
-    }
+    .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        }
     .chip{
       font-family: var(--mono);
       font-size: .72rem;
@@ -409,12 +410,16 @@
       color: #FFD5D5;
     }
 
-    .grid-2{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: .9rem;
-      margin-top: .75rem;
-    }
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        }
+
+        .grid-2 > * {
+        min-width: 0;
+        }
+    
     @media (min-width: 980px){
       .grid-2{ grid-template-columns: 1.15fr 0.85fr; }
     }
@@ -438,7 +443,7 @@
 
     pre{
       margin:0;
-      white-space: pre;
+      white-space: pre-wrap;
       overflow:auto;
       padding:.85rem .9rem;
       border-radius: 14px;
@@ -448,6 +453,7 @@
       font-size: .86rem;
       color: #D9E2F2;
       line-height: 1.55;
+      max-width: 100%;
     }
     .eq{
       padding:.75rem .85rem;
@@ -528,6 +534,17 @@
       background: rgba(0,0,0,0.25);
       backdrop-filter: blur(10px);
     }
+
+    .code-block {
+        font-family: var(--mono);
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        }
+
 
     /* KaTeX spacing */
     .katex-display{ margin: .55rem 0; }
@@ -645,13 +662,11 @@
 
           <div class="divider"></div>
 
-          <pre>
-            SENSOR / MAP  →  LOCAL TRAJ GEN (RK4 rollouts + scoring)  →  /dynamic_trajectory (nav_msgs/Path)
-                                                        ↓
-                                            MPC TRACKER (CasADi/IPOPT)  →  /drive (AckermannDriveStamped)
-
-            RACING LINE (Trajectory msg w/ arc-length)  →  MPCC (contour + lag + progress θ)  →  /drive</pre>
-
+          <div class="code-block">
+            SENSOR / MAP → LOCAL TRAJ GEN (RK4 rollouts + scoring)
+            ↓
+            MPC TRACKER (CasADi/IPOPT) → /drive
+            </div>
           <p class="muted">
             The key engineering decision: separate “what to do next” (trajectory choice) from “how to execute”
             (MPC/MPCC optimization), so each component stays debuggable and swappable.
