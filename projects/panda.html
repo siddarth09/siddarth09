@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Franka Panda Manipulation — Classical Control to Learning</title>
+
+  <!-- Main site styles -->
+  <link rel="stylesheet" href="../style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Page-specific overrides -->
+  
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <h1>
+    Franka Panda Manipulation
+    <a href="../index.html" class="github-link" aria-label="Back to portfolio">
+      ←
+    </a>
+  </h1>
+  <p>
+    <em>Classical Control . Reinforcement Learning . MuJoCo</em>
+  </p>
+</header>
+
+<main class="content">
+
+<!-- ================= VIDEO / VISUAL ================= -->
+<section class="inline-video">
+  <!-- Replace with your MuJoCo / PPO rollout video when ready -->
+  <iframe
+    width="1280"
+    height="720"
+    src="https://www.youtube.com/embed/Vw0LgdXKMdg?si=7GGlmkW147tx45h9"
+    title="Panda Manipulation"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" >
+  </iframe>
+  
+
+<!-- ================= PROBLEM ================= -->
+<section class="section">
+  <h2>The Problem: Robotic Manipulation Beyond Scripts</h2>
+  <p>
+    Robotic pick-and-place tasks appear deceptively simple, yet they expose many
+    of the fundamental challenges in manipulation: high-dimensional control,
+    kinematic constraints, perception uncertainty, and the need for precise,
+    repeatable interaction with the environment.
+  </p>
+
+  <p>
+    Classical approaches can solve structured manipulation problems effectively,
+    but they often require careful system integration and struggle to generalize
+    beyond the scenarios they were explicitly designed for.
+  </p>
+</section>
+
+<!-- ================= CLASSICAL SYSTEM ================= -->
+<section class="section">
+  <h2>Step 1: Classical Pick & Place Pipeline</h2>
+  <p>
+    The initial system was built using a classical robotics pipeline, focusing on
+    explicit modeling and modular system design. Each component was responsible
+    for a clearly defined role in the manipulation process.
+  </p>
+
+  <p>
+    The pipeline integrates perception, coordinate frame transformations,
+    motion planning, and inverse kinematics to execute deterministic pick-and-
+    place behavior with a 7-DoF Franka Panda arm.
+  </p>
+
+  <ul>
+    <li>Cube detection and pose estimation</li>
+    <li>TF-based transformation into the robot base frame</li>
+    <li>Motion planning to generate task-space targets</li>
+    <li>Jacobian-based inverse kinematics for joint control</li>
+    <li>Explicit sequencing of approach, grasp, lift, and retreat</li>
+  </ul>
+
+  <p>
+    This approach provides transparency, debuggability, and precise control,
+    making it well-suited for structured environments and repeatable tasks.
+  </p>
+</section>
+
+<!-- ================= LIMITATIONS ================= -->
+<section class="section">
+  <h2>Motivation for Learning-Based Extension</h2>
+  <p>
+    While the classical pipeline performs reliably, it requires careful tuning
+    and explicit handling of many edge cases. Small changes in object placement,
+    timing, or execution noise can require manual intervention or redesign.
+  </p>
+
+  <p>
+    To explore more adaptive behavior, the next step was to extend the system
+    using reinforcement learning, while keeping the problem grounded in
+    physically realistic simulation.
+  </p>
+</section>
+
+<!-- ================= PPO ================= -->
+<section class="section">
+  <h2>Step 2: PPO-Based Manipulation in MuJoCo</h2>
+  <p>
+    A reinforcement learning environment was built in MuJoCo to study manipulation
+    from direct interaction. Instead of relying on an external planner or IK
+    module, the policy operates using incremental Cartesian end-effector actions.
+  </p>
+
+  <p>
+    The environment embeds Jacobian-based control internally, allowing the policy
+    to focus on task execution rather than explicit kinematic reasoning.
+  </p>
+
+  <ul>
+    <li>Δ end-effector Cartesian actions with gripper control</li>
+    <li>Custom Gymnasium environment for Panda manipulation</li>
+    <li>PPO with actor–critic architecture in PyTorch</li>
+    <li>GAE, clipped objectives, and entropy regularization</li>
+    <li>Reward shaping for reach, success, safety, and smoothness</li>
+  </ul>
+
+  <p>
+    This learning-based extension enables more fluid behavior and tolerance to
+    small variations, while remaining grounded in physically accurate dynamics.
+  </p>
+</section>
+
+<!-- ================= FUTURE ================= -->
+<section class="section">
+  <h2>Next Step: Integrating IK with Learning</h2>
+  <p>
+    The current learning-based system intentionally excludes explicit inverse
+    kinematics to simplify the control interface and study policy behavior in
+    isolation.
+  </p>
+
+  <p>
+    The next phase of this project will combine the strengths of both approaches
+    by integrating inverse kinematics into the learning pipeline, enabling
+    structured task constraints while retaining adaptability through learning.
+  </p>
+
+  <ul>
+    <li>Hybrid control combining IK constraints with PPO policies</li>
+    <li>Improved stability near kinematic limits</li>
+    <li>More reliable grasp execution and recovery</li>
+  </ul>
+
+  <p>
+    This progression reflects an ongoing exploration of how classical robotics
+    and reinforcement learning can be composed into robust manipulation systems.
+  </p>
+</section>
+
+</main>
+
+<footer>
+  <p>© 2025 Siddarth Dayasagar — Franka Panda Manipulation</p>
+</footer>
+
+</body>
+</html>

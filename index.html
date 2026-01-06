@@ -157,26 +157,38 @@
 
           
           <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-            <video 
-                src="assets/pickster.mp4" 
-                class="w-full h-40 sm:h-48 md:h-56 object-cover" 
-                alt="Pickster"
-                autoplay
-                muted
-                loop
-                playsinline
-            ></video>
+  
+              <img
+                src="assets/panda.png"
+                alt="Panda Manipulation"
+                class="w-full h-40 sm:h-48 md:h-56 object-cover"
+              />
 
-            <div class="p-4 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-bold">Pickster</h3>
+              <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold">
+                  Panda Pick & Place 
+                </h3>
+
                 <p class="text-gray-300 text-sm sm:text-base mt-2">
-                Robotic manipulation with MATLAB + PincherX-100 arm.
+                  Robotic manipulation with a 7-DoF Franka Panda, evolving from a classical
+                  perception–planning–IK pipeline to a PPO-based learning policy in MuJoCo.
                 </p>
-                <a href="projects/pickster.html" class="mt-3 inline-block text-primary font-semibold hover:underline">
-                View Project →
+
+                <ul class="text-gray-400 text-xs sm:text-sm mt-3 list-disc list-inside">
+                  <li>ROS 2 pick & place with perception, TF, and Jacobian IK</li>
+                  <li>PPO manipulation using Δ end-effector Cartesian actions</li>
+                  <li>Custom MuJoCo environment with reward shaping & safety penalties</li>
+                </ul>
+
+                <a
+                  href="projects/panda.html"
+                  class="mt-4 inline-block text-primary font-semibold hover:underline"
+                >
+                  View Project →
                 </a>
+              </div>
             </div>
-            </div>
+
 
 
  
