@@ -56,16 +56,15 @@
 <section class="section">
   <h2>The Problem: Robotic Manipulation Beyond Scripts</h2>
   <p>
-    Robotic pick-and-place tasks appear deceptively simple, yet they expose many of
-    the fundamental challenges in manipulation: high-dimensional control,
-    kinematic constraints, perception uncertainty, and the need for precise,
-    repeatable interaction with the environment.
+    Robotic pick-and-place tasks appear deceptively simple, yet they expose core
+    challenges in manipulation: high-dimensional control, nonlinear kinematics,
+    perception uncertainty, and the need for precise, repeatable interaction.
   </p>
-
   <p>
-    Classical approaches solve structured scenarios reliably, but require careful
-    system integration and often fail to generalize beyond explicitly modeled
-    cases.
+    Classical pipelines can solve structured tasks reliably, but often lack
+    robustness to variation. This project explores a progression from explicit,
+    model-based control to learning-based manipulation, and ultimately toward
+    hybrid systems.
   </p>
 </section>
 
@@ -74,33 +73,33 @@
   <div>
     <h2>Step 1: Classical Pick & Place Pipeline</h2>
     <p>
-      The initial system was built using a classical robotics pipeline based on
-      explicit modeling and modular decomposition.
+      The classical pipeline decomposes manipulation into perception, planning,
+      and control, each solved explicitly using analytical or sampling-based
+      methods.
     </p>
 
     <ul>
-      <li>HSV-based cube detection and centroid estimation</li>
-      <li>TF-based coordinate transformation into robot base frame</li>
-      <li>Sampling-based motion planning (RRTConnect)</li>
+      <li>HSV-based cube detection and centroid extraction</li>
+      <li>Coordinate transformation using ROS 2 TF</li>
+      <li>Sampling-based motion planning with OMPL (RRTConnect)</li>
       <li>Jacobian-based inverse kinematics using Pinocchio</li>
-      <li>Explicit sequencing of approach, grasp, lift, and retreat</li>
+      <li>Explicit state-machine sequencing</li>
     </ul>
   </div>
 
   <div class="side-panel">
-    <h3>Pipeline Overview</h3>
     <pre>
 Camera → HSV Segmentation
         ↓
-    2D Centroid
+   2D Centroid
         ↓
-   TF Transform
+     TF Transform
         ↓
- Motion Planning
+  RRTConnect Planner
         ↓
- Jacobian IK
+  Jacobian IK Control
         ↓
- Joint Commands
+   Joint Commands
     </pre>
   </div>
 </section>
@@ -109,35 +108,39 @@ Camera → HSV Segmentation
 <section class="section">
   <h2>Perception: HSV Filtering and Object Localization</h2>
   <p>
-    Object detection is performed using simple HSV color segmentation to maintain
-    transparency and robustness under controlled lighting.
+    To maintain transparency and debuggability, object detection is performed
+    using classical color segmentation in HSV space.
   </p>
 
   <p>
-    RGB images are converted into HSV space and thresholded:
+    RGB images are converted into HSV and thresholded:
   </p>
 
   <p>
-    $$ M(x,y) =
+    $$ 
+    M(x,y) =
     \begin{cases}
-      1 & H_{min} \le H(x,y) \le H_{max} \\
+      1 & H_{\min} \le H(x,y) \le H_{\max} \\
       0 & \text{otherwise}
-    \end{cases} $$
+    \end{cases}
+    $$
   </p>
 
   <p>
-    Binary masks are processed using contour detection. The object centroid is
-    computed using image moments:
+    Contours are extracted from the binary mask, and the dominant contour is
+    selected. The centroid is computed using image moments:
   </p>
 
   <p>
-    $$ c_x = \frac{m_{10}}{m_{00}}, \quad
-       c_y = \frac{m_{01}}{m_{00}} $$
+    $$
+    c_x = \frac{m_{10}}{m_{00}}, \quad
+    c_y = \frac{m_{01}}{m_{00}}
+    $$
   </p>
 
   <p>
-    The centroid is then projected into 3D and transformed into the robot base
-    frame using ROS 2 TF.
+    The centroid is projected into 3D using known camera intrinsics and
+    transformed into the robot base frame using TF.
   </p>
 </section>
 
@@ -145,34 +148,42 @@ Camera → HSV Segmentation
 <section class="section">
   <h2>Inverse Kinematics with Pinocchio</h2>
   <p>
-    For the 7-DoF Franka Panda arm, forward kinematics define a mapping:
+    Forward kinematics define a nonlinear mapping:
   </p>
 
   <p>
-    $$ \mathbf{x} = f(\mathbf{q}) $$
+    $$
+    \mathbf{x} = f(\mathbf{q})
+    $$
   </p>
 
   <p>
-    The differential relationship between task space and joint space is:
+    The differential relationship between joint space and task space is:
   </p>
 
   <p>
-    $$ \dot{\mathbf{x}} = \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}} $$
+    $$
+    \dot{\mathbf{x}} = \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}}
+    $$
   </p>
 
   <p>
-    A damped least-squares inverse is used to compute joint velocities:
+    Given a desired end-effector pose \( \mathbf{x}^* \), a task-space error is
+    computed and resolved via damped least-squares inverse:
   </p>
 
   <p>
-    $$ \dot{\mathbf{q}} =
-    \mathbf{J}^\top(\mathbf{J}\mathbf{J}^\top + \lambda^2 \mathbf{I})^{-1}
-    (\mathbf{x}^* - \mathbf{x}) $$
+    $$
+    \dot{\mathbf{q}} =
+    \mathbf{J}^\top
+    (\mathbf{J}\mathbf{J}^\top + \lambda^2 \mathbf{I})^{-1}
+    (\mathbf{x}^* - \mathbf{x})
+    $$
   </p>
 
   <p>
-    Pinocchio provides fast Jacobian computation and frame-level kinematics,
-    enabling stable closed-loop IK control.
+    Pinocchio provides analytical Jacobians and efficient frame-level kinematics,
+    enabling stable real-time inverse kinematics control.
   </p>
 </section>
 
@@ -180,22 +191,24 @@ Camera → HSV Segmentation
 <section class="section">
   <h2>Motion Planning with OMPL (RRTConnect)</h2>
   <p>
-    Motion planning is performed in joint configuration space
+    Motion planning is solved in joint configuration space
     \( \mathcal{C} \subset \mathbb{R}^7 \).
   </p>
 
   <p>
-    Given start and goal configurations, RRTConnect grows two trees toward each
-    other using random sampling until a collision-free path is found:
+    RRTConnect grows two rapidly-exploring random trees from start and goal
+    configurations until a collision-free connection is found:
   </p>
 
   <p>
-    $$ \|\mathbf{q}_{start} - \mathbf{q}_{goal}\| < \varepsilon $$
+    $$
+    \|\mathbf{q}_{start} - \mathbf{q}_{goal}\| < \varepsilon
+    $$
   </p>
 
   <p>
-    RRTConnect was chosen for its efficiency in high-dimensional spaces and
-    suitability for single-query planning in pick-and-place tasks.
+    The resulting path is time-parameterized and executed through the IK
+    controller.
   </p>
 </section>
 
@@ -203,34 +216,38 @@ Camera → HSV Segmentation
 <section class="section">
   <h2>Step 2: PPO-Based Manipulation in MuJoCo</h2>
   <p>
-    To explore adaptive behavior, a reinforcement learning environment was built
-    in MuJoCo. The policy operates on incremental Cartesian end-effector actions
-    rather than explicit joint targets.
+    To introduce adaptability, a reinforcement learning environment was built
+    in MuJoCo. The policy operates on incremental Cartesian actions rather than
+    explicit joint targets.
   </p>
 
   <p>
-    The PPO objective maximizes the expected return:
+    The objective maximizes expected return:
   </p>
 
   <p>
-    $$ J(\theta) = \mathbb{E}_{\pi_\theta}
-    \left[\sum_{t=0}^{\infty} \gamma^t r_t \right] $$
+    $$
+    J(\theta) =
+    \mathbb{E}_{\pi_\theta}
+    \left[ \sum_{t=0}^{\infty} \gamma^t r_t \right]
+    $$
   </p>
 
   <p>
-    Reward shaping includes distance, success, smoothness, and safety terms:
+    The reward function combines distance, success, and smoothness terms:
   </p>
 
   <p>
-    $$ r_t =
+    $$
+    r_t =
     -\|\mathbf{p}_{ee} - \mathbf{p}_{obj}\|
     + r_{\text{success}}
-    - \alpha \|\Delta \mathbf{a}_t\|^2 $$
+    - \alpha \|\Delta \mathbf{a}_t\|^2
+    $$
   </p>
 
   <p>
-    PPO updates use clipped surrogate objectives with Generalized Advantage
-    Estimation (GAE) to stabilize learning.
+    PPO uses clipped policy updates with GAE to ensure stable training.
   </p>
 </section>
 
@@ -238,20 +255,15 @@ Camera → HSV Segmentation
 <section class="section">
   <h2>Next Step: Integrating IK with Learning</h2>
   <p>
-    The current learning-based system intentionally excludes explicit inverse
-    kinematics to isolate policy behavior.
-  </p>
-
-  <p>
-    Future work will integrate IK constraints into the learning pipeline,
-    combining the structure of classical control with the adaptability of
-    reinforcement learning.
+    The learning-based system intentionally excludes explicit IK to isolate policy
+    behavior. Future work will integrate inverse kinematics constraints directly
+    into the learning pipeline.
   </p>
 
   <ul>
     <li>Hybrid PPO + IK control</li>
     <li>Improved stability near kinematic limits</li>
-    <li>More reliable grasp execution and recovery</li>
+    <li>More reliable grasp execution</li>
   </ul>
 </section>
 
@@ -263,4 +275,3 @@ Camera → HSV Segmentation
 
 </body>
 </html>
-
