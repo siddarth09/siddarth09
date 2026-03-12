@@ -1,328 +1,790 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Siddarth Portfolio</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siddarth Dayasagar — Robotics Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#ec5413",
-            "background-dark": "#221610",
-          },
-          fontFamily: {
-            display: ["Space Grotesk", "sans-serif"],
-          }
-        }
-      }
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --off-white: #f0f0f0;
+      --gray: #888888;
+      --border: rgba(255,255,255,0.1);
     }
-  </script>
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 64px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 14px; }
+
+    .nav-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    .nav-name {
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.02em; color: var(--white);
+    }
+
+    .nav-center {
+      display: flex; align-items: center; gap: 36px;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+
+    .nav-link {
+      font-size: 13px; font-weight: 300;
+      color: var(--gray); letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--white); }
+
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+
+    .nav-icon-link {
+      display: flex; align-items: center;
+      opacity: 0.45; transition: opacity 0.2s;
+    }
+    .nav-icon-link:hover { opacity: 1; }
+
+    .nav-icon-link img {
+      width: 18px; height: 18px;
+      filter: invert(1);
+    }
+
+    .nav-resume {
+      display: inline-flex; align-items: center;
+      height: 32px; padding: 0 16px;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.04em;
+      background: var(--white); color: var(--black);
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .nav-resume:hover { background: var(--off-white); }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      position: relative; width: 100%;
+      height: 100svh; min-height: 640px;
+      overflow: hidden;
+    }
+
+    .hero video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.15) 0%,
+        rgba(0,0,0,0.0) 25%,
+        rgba(0,0,0,0.0) 50%,
+        rgba(0,0,0,0.65) 80%,
+        rgba(0,0,0,1) 100%
+      );
+    }
+
+    .hero-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 80px 88px;
+      max-width: 1400px; margin: 0 auto; left: 0; right: 0;
+    }
+
+    .hero-label {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 7vw, 104px);
+      font-weight: 200; letter-spacing: -0.03em;
+      line-height: 1.0; color: var(--white);
+      max-width: 900px; margin-bottom: 28px;
+    }
+    .hero-title em { font-style: italic; font-weight: 300; }
+
+    .hero-bio {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      max-width: 420px; line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta-row { display: flex; align-items: center; gap: 16px; }
+
+    .btn {
+      display: inline-flex; align-items: center;
+      height: 44px; padding: 0 24px;
+      font-size: 13px; font-weight: 400;
+      letter-spacing: 0.04em; border-radius: 2px;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .btn-primary { background: var(--white); color: var(--black); }
+    .btn-primary:hover { background: var(--off-white); }
+    .btn-ghost {
+      background: transparent; color: var(--white);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.6); }
+
+    /* ── DIVIDER ─────────────────────────────── */
+    .divider { height: 1px; background: var(--border); }
+
+    /* ── STAT STRIP ──────────────────────────── */
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-bottom: 1px solid var(--border);
+    }
+    @media(max-width:700px) { .stat-strip { grid-template-columns: repeat(2,1fr); } }
+
+    .stat-cell {
+      padding: 44px 48px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-num {
+      font-size: 38px; font-weight: 200;
+      letter-spacing: -0.04em; color: var(--white);
+      line-height: 1; margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gray); line-height: 1.5;
+    }
+
+    /* ── LAYOUT ──────────────────────────────── */
+    .section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 120px 80px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 52px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-eyebrow::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+
+    .section-title {
+      font-size: clamp(30px, 4vw, 54px);
+      font-weight: 200; letter-spacing: -0.02em;
+      line-height: 1.1; color: var(--white);
+      margin-bottom: 24px;
+    }
+    .section-title em { font-style: italic; font-weight: 300; }
+
+    .section-body {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.8; max-width: 560px;
+    }
+
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* ── PRESS ───────────────────────────────── */
+    .press-card {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; border: 1px solid var(--border);
+    }
+    @media(max-width:900px) { .press-card { grid-template-columns: 1fr; } }
+
+    .press-image {
+      aspect-ratio: 4/3; overflow: hidden; background: #111;
+    }
+    .press-image img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(20%);
+      transition: filter 0.4s, transform 0.4s;
+    }
+    .press-card:hover .press-image img {
+      filter: grayscale(0%); transform: scale(1.02);
+    }
+
+    .press-content {
+      padding: 56px 52px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .press-tag {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 20px;
+    }
+
+    .press-title {
+      font-size: clamp(20px, 2.5vw, 32px);
+      font-weight: 300; letter-spacing: -0.02em;
+      line-height: 1.2; color: var(--white); margin-bottom: 18px;
+    }
+
+    .press-body {
+      font-size: 14px; font-weight: 300;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.75; margin-bottom: 36px;
+    }
+
+    .press-link {
+      font-size: 13px; font-weight: 400;
+      color: var(--white); letter-spacing: 0.04em;
+      display: inline-flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 2px; width: fit-content;
+      transition: border-color 0.2s;
+    }
+    .press-link:hover { border-color: var(--white); }
+
+    .press-date {
+      margin-top: 40px;
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* ── PROJECTS GRID ───────────────────────── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media(max-width:1000px) { .projects-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:640px)  { .projects-grid { grid-template-columns: 1fr; } }
+
+    .project-card {
+      background: var(--black);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: background 0.3s;
+    }
+    .project-card:hover { background: #0a0a0a; }
+
+    /* featured card spans 2 columns */
+    .project-card.featured { grid-column: span 2; }
+    .project-card.featured .project-media { aspect-ratio: 21/9; }
+    @media(max-width:1000px) {
+      .project-card.featured { grid-column: span 1; }
+      .project-card.featured .project-media { aspect-ratio: 16/9; }
+    }
+
+    .project-media {
+      position: relative;
+      aspect-ratio: 16/9; overflow: hidden;
+      background: #0a0a0a; flex-shrink: 0;
+    }
+    .project-media img,
+    .project-media video {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.85);
+      transition: filter 0.4s, transform 0.5s;
+    }
+    .project-media iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+      pointer-events: none;
+    }
+    .project-card:hover .project-media img,
+    .project-card:hover .project-media video {
+      filter: brightness(1); transform: scale(1.03);
+    }
+
+    .project-body {
+      padding: 28px 28px 32px;
+      flex: 1; display: flex; flex-direction: column;
+    }
+
+    .project-tag {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 10px;
+    }
+
+    .project-title {
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.01em; color: var(--white);
+      margin-bottom: 10px; line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 13px; font-weight: 300;
+      color: rgba(255,255,255,0.4); line-height: 1.65;
+      flex: 1;
+    }
+
+    .project-link {
+      margin-top: 20px;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
+    }
+    .project-card:hover .project-link { color: var(--white); }
+
+    /* ── ABOUT ───────────────────────────────── */
+    .skills-list { list-style: none; padding: 0; }
+    .skills-list li {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 300;
+      color: rgba(255,255,255,0.55);
+    }
+    .skills-list li:first-child { border-top: 1px solid var(--border); }
+    .skill-name { color: var(--white); font-weight: 400; }
+    .skill-tag {
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── CONTACT ─────────────────────────────── */
+    .contact-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 120px 80px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    @media(max-width:900px) {
+      .contact-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+    }
+
+    .contact-title {
+      font-size: clamp(32px, 4vw, 58px);
+      font-weight: 200; letter-spacing: -0.02em;
+      line-height: 1.1; color: var(--white);
+    }
+    .contact-title em { font-style: italic; font-weight: 300; }
+
+    .contact-right { display: flex; flex-direction: column; gap: 16px; }
+
+    .contact-body {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.45); line-height: 1.75;
+    }
+
+    .contact-email {
+      font-size: 15px; font-weight: 300;
+      color: var(--white); letter-spacing: 0.01em;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 2px; width: fit-content;
+      transition: border-color 0.2s;
+    }
+    .contact-email:hover { border-color: var(--white); }
+
+    /* ── FOOTER ──────────────────────────────── */
+    footer {
+      padding: 40px 80px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+    .footer-copy {
+      font-size: 12px; font-weight: 300;
+      color: rgba(255,255,255,0.2); letter-spacing: 0.04em;
+    }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-link {
+      font-size: 12px; font-weight: 300;
+      color: rgba(255,255,255,0.2); letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--white); }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media(max-width:768px) {
+      nav { padding: 0 20px; }
+      .nav-center { display: none; }
+      .hero-content { padding: 0 24px 56px; }
+      .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .section { padding: 80px 24px; }
+      .stat-cell { padding: 32px 24px; }
+      .press-content { padding: 32px 24px; }
+      .project-body { padding: 20px 20px 24px; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="bg-background-dark text-gray-200 font-display flex flex-col min-h-screen">
+<!-- ── NAV ───────────────────────────────────── -->
+<nav>
+  <div class="nav-left">
+    <img src="assets/profile.webp" alt="Siddarth Dayasagar" class="nav-avatar"/>
+    <span class="nav-name">Siddarth Dayasagar</span>
+  </div>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-10 py-4 bg-background-dark border-b border-primary/20">
-    <div class="flex items-center gap-3">
-      <!-- Profile Picture -->
-      <img src="assets/profile.webp" alt="Siddarth Dayasagar" 
-           class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-primary object-cover"/>
-      <div>
-        <h2 class="text-base sm:text-lg md:text-xl font-bold text-white">Siddarth Dayasagar</h2>
-        <p class="text-[10px] sm:text-xs md:text-sm text-gray-400">Robotics • Space Systems • Research</p>
-      </div>
+  <div class="nav-center">
+    <a href="#projects" class="nav-link">Projects</a>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </div>
+
+  <div class="nav-right">
+    <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub" class="nav-icon-link">
+      <img src="assets/github-mark-white.svg" alt="GitHub"/>
+    </a>
+    <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn" class="nav-icon-link">
+      <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn"/>
+    </a>
+    <a href="assets/Siddarth_Robotics.pdf" target="_blank" class="nav-resume">Resume</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────── -->
+<div class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="assets/portfolio.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-gradient"></div>
+
+  <div class="hero-content">
+    <div class="hero-label">Robotics · Autonomy · Space Systems</div>
+    <h1 class="hero-title">
+      Building machines<br/>
+      that <em>think and act</em>
+    </h1>
+    <p class="hero-bio">
+      Robotics engineer at Northeastern University. I build systems that
+      perceive, decide, and move — from VLA models on 7-DoF arms to
+      autonomous legged robots in disaster environments.
+    </p>
+    <div class="hero-cta-row">
+      <a href="#projects" class="btn btn-primary">View Work</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
     </div>
+  </div>
+</div>
 
-    <!-- Right side -->
-    <div class="flex items-center gap-3 sm:gap-4">
-      <!-- GitHub -->
-      <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub">
-        <img src="assets/github-mark-white.svg" alt="GitHub" class="h-8 w-8 sm:h-6 sm:w-6 hover:opacity-80 transition"/>
-      </a>
-      <!-- LinkedIn -->
-      <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn">
-        <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn" class="h-8 w-8 sm:h-6 sm:w-6 hover:opacity-80 transition"/>
-      </a>
-      <!-- Dark/Light toggle -->
-      <button onclick="document.documentElement.classList.toggle('dark')" 
-              class="p-1 sm:p-2 rounded-full border border-primary/30 text-gray-400 hover:text-white">
-        🌙
-      </button>
-      <!-- Resume -->
-      <a href="assets/Siddarth_Robotics.pdf" target="_blank"
-         class="hidden sm:inline-block rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-white text-xs sm:text-sm md:text-base font-bold shadow hover:bg-primary/80 transition">
-         Resume
-      </a>
+<!-- ── STAT STRIP ─────────────────────────────── -->
+<div class="stat-strip">
+  <div class="stat-cell">
+    <div class="stat-num">&gt;90%</div>
+    <div class="stat-label">Task success rate<br/>PRANA VLA model</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">7-DoF</div>
+    <div class="stat-label">Physical robot<br/>deployed on hardware</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Projects shipped<br/>across robotics domains</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">NU</div>
+    <div class="stat-label">Featured by<br/>Northeastern University</div>
+  </div>
+</div>
+
+<!-- ── PRESS ──────────────────────────────────── -->
+<div class="section" style="padding-bottom:0">
+  <div class="section-eyebrow">Press</div>
+</div>
+
+<div style="max-width:1400px; margin:0 auto; padding:0 80px 120px">
+  <div class="press-card">
+    <div class="press-image">
+      <img src="assets/neu.png" alt="Northeastern University — Space Station OS"/>
     </div>
-  </header>
+    <div class="press-content">
+      <div class="press-tag">Featured Interview</div>
+      <h2 class="press-title">
+        Recognized for open-source work on Space Station OS
+      </h2>
+      <p class="press-body">
+        Interviewed by Northeastern University News for contributions to
+        Space Station OS — an open-source ROS 2 platform simulating ISS-inspired
+        life support, thermal control, and electrical power subsystems.
+      </p>
+      <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
+         target="_blank" class="press-link">
+        Read the article →
+      </a>
+      <div class="press-date">February 2026 · Northeastern University</div>
+    </div>
+  </div>
+</div>
 
-  <main class="flex-1">
+<!-- ── PROJECTS ───────────────────────────────── -->
+<div class="section" style="padding-bottom:0">
+  <div class="section-eyebrow" id="projects">Projects</div>
+  <div class="two-col" style="margin-bottom:64px">
+    <h2 class="section-title">
+      Work that runs<br/><em>in the real world</em>
+    </h2>
+    <p class="section-body">
+      From imitation-learned VLA policies to MPC-based autonomous racing
+      and open-source space systems — every project here was deployed,
+      not just simulated.
+    </p>
+  </div>
+</div>
 
-    <!-- Hero -->
-    <section id="hero" class="relative h-[80vh] sm:h-screen flex items-center justify-center overflow-hidden">
-      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
-        <source src="assets/portfolio.mp4" type="video/mp4">
-      </video>
-      <div class="absolute inset-0 bg-black/50"></div>
-      <div class="relative z-10 text-center px-4 sm:px-6 md:px-10">
-        <h1 id="hero-tagline" class="text-white text-2xl sm:text-4xl md:text-5xl font-bold mb-6">
-          Building across autonomy, space systems, and robotics
-        </h1>
-        <a href="#projects" class="inline-block rounded-lg h-10 sm:h-12 px-4 sm:px-6 bg-primary text-white text-sm sm:text-base font-bold shadow-lg hover:bg-primary/80 transition">
-          View Projects
-        </a>
+<div style="max-width:1400px; margin:0 auto; padding:0 80px 120px">
+  <div class="projects-grid">
+
+    <!-- PRANA — featured, spans 2 cols -->
+    <div class="project-card featured">
+      <div class="project-media">
+        <iframe
+          src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&autoplay=1&mute=1&loop=1&playlist=FkD8xybTaxQ&controls=0&modestbranding=1"
+          allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
       </div>
-    </section>
-
-    <!-- ================= PRESS FEATURE ================= -->
-    <section class="px-4 sm:px-8 md:px-10 py-12 bg-background-dark text-white">
-      <div class="max-w-6xl mx-auto">
-        
-        <div class="rounded-xl border border-primary/30 bg-background-dark/80 p-8 flex flex-col md:flex-row gap-8 items-center">
-
-          <!-- IMAGE -->
-          <div class="w-full md:w-1/3">
-            <img 
-              src="assets/neu.png" 
-              alt="Northeastern University Interview — Space Station OS"
-              class="rounded-lg border border-primary/20 shadow-lg object-cover w-full"
-            />
-          </div>
-
-          <!-- TEXT -->
-          <div class="w-full md:w-2/3">
-            <div class="text-primary font-mono text-xs tracking-widest mb-2">
-              FEATURED INTERVIEW
-            </div>
-
-            <h2 class="text-2xl sm:text-3xl font-bold">
-              Recognized for Work on Space Station OS
-            </h2>
-
-            <p class="text-gray-300 mt-4">
-              Interviewed by Northeastern University News for contributions to 
-              <strong>Space Station OS</strong>, an open-source operating system for 
-              next-generation space stations. Led subsystem development across 
-              thermal control, life support, communications, and power simulation 
-              within a ROS 2-based architecture.
-            </p>
-
-            <a 
-              href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
-              target="_blank"
-              class="inline-block mt-5 text-primary font-semibold hover:underline"
-            >
-              Read the Article →
-            </a>
-
-            <div class="text-gray-500 text-sm mt-4">
-              Feb 2026 · Northeastern University
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- Projects -->
-    <section id="projects" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white">
-      <div class="max-w-7xl mx-auto">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Featured Projects</h2>
-
-        <div
-            id="projects-grid"
-            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8"
-          >
-          
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-              <img
-                src="assets/spot_nav.png"
-                alt="Spot Indoor Navigation for Urban Search and Rescue"
-                class="w-full h-40 sm:h-48 md:h-56 object-cover"
-              />
-              <div class="p-4 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-bold">
-                  Spot — Urban Search & Rescue
-                </h3>
-                <p class="text-gray-300 text-sm sm:text-base mt-2">
-                  Autonomous indoor navigation for disaster response using legged locomotion,
-                  Isaac Sim, and ROS 2 Nav2 in GPS-denied environments.
-                </p>
-                <a
-                  href="projects/spot_isaac.html"
-                  class="mt-3 inline-block text-primary font-semibold hover:underline"
-                >
-                  View Project →
-                </a>
-              </div>
-            </div>
-
-          <!-- Project 1 -->
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-            <img src="assets/ssos.webp" alt="Space Station OS" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
-            <div class="p-4 sm:p-6">
-              <h3 class="text-lg sm:text-xl font-bold">Space Station OS</h3>
-              <p class="text-gray-300 text-sm sm:text-base mt-2">An autonomous OS for space stations built on ROS 2.</p>
-              <a href="projects/ssos.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
-            </div>
-          </div>
-
-          <!-- Project 2 -->
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-
-            <!-- VIDEO -->
-            <div class="relative w-full aspect-video">
-              <iframe
-                title="RoboRacer F1TENTH — Field Run"
-                src="https://www.youtube.com/embed/h-dFtYMnnxc?autoplay=1&mute=1&loop=1&playlist=h-dFtYMnnxc&controls=1&modestbranding=1"
-                class="absolute inset-0 w-full h-full"
-                frameborder="0"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowfullscreen>
-              </iframe>
-            </div>
-
-            <!-- CONTENT -->
-            <div class="p-4 sm:p-6">
-              <h3 class="text-lg sm:text-xl font-bold">
-                F1TENTH Autonomous Driving
-              </h3>
-
-              <p class="text-gray-300 text-sm sm:text-base mt-2">
-                Implemented MPC, MPCC, and learning-based controllers on a real RoboRacer
-                F1TENTH platform for high-speed autonomous racing.
-              </p>
-
-              <a
-                href="projects/f1tenth.html"
-                class="mt-3 inline-block text-primary font-semibold hover:underline"
-              >
-                View Project →
-              </a>
-            </div>
-
-          </div>
-          
-
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-            <div class="relative w-full aspect-video">
-              <iframe
-                title="PRANA — Vision-Language-Action Model"
-                src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&autoplay=1&mute=1&loop=1&playlist=FkD8xybTaxQ&controls=0&modestbranding=1"
-                class="absolute inset-0 w-full h-full"
-                frameborder="0"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowfullscreen>
-              </iframe>
-            </div>
-            <div class="p-4 sm:p-6">
-              <h3 class="text-lg sm:text-xl font-bold">PRANA — VLA Model</h3>
-              <p class="text-gray-300 text-sm sm:text-base mt-2">
-                End-to-end Vision-Language-Action model built from scratch and deployed
-                on a 7-DoF platform. &gt;90% success rate on autonomous pick-and-place tasks.
-              </p>
-              <a href="projects/prana.html" class="mt-3 inline-block text-primary font-semibold hover:underline">
-                View Project →
-              </a>
-            </div>
-          </div>
-
-          
-          <!-- Project 3 -->
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-            <video 
-                src="assets/maverick.mp4" 
-                class="w-full h-40 sm:h-48 md:h-56 object-cover" 
-                autoplay 
-                muted 
-                loop 
-                playsinline
-            ></video>
-            <div class="p-4 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-bold">GuidanceCore – MAVERICK</h3>
-                <p class="text-gray-300 text-sm sm:text-base mt-2">
-                MPC-based missile autopilot enabling accurate target engagement.
-                </p>
-                <a href="projects/maverick.html" class="mt-3 inline-block text-primary font-semibold hover:underline">
-                View Project →
-                </a>
-            </div>
-            </div>
-
-
-          
-          <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-  
-              <img
-                src="assets/panda.png"
-                alt="Panda Manipulation"
-                class="w-full h-40 sm:h-48 md:h-56 object-cover"
-              />
-
-              <div class="p-4 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-bold">
-                  Panda Pick & Place 
-                </h3>
-
-                <p class="text-gray-300 text-sm sm:text-base mt-2">
-                  Robotic manipulation with a 7-DoF Franka Panda, evolving from a classical
-                  perception–planning–IK pipeline to a PPO-based learning policy in MuJoCo.
-                </p>
-
-                <a
-                  href="projects/panda.html"
-                  class="mt-4 inline-block text-primary font-semibold hover:underline"
-                >
-                  View Project →
-                </a>
-              </div>
-            </div>
-
-
-
- 
-            <div class="min-w-[280px] sm:min-w-[340px] md:min-w-[400px] snap-center rounded-lg border border-primary/30 bg-background-dark/80 overflow-hidden">
-                <img src="assets/ditto.webp" alt="DITTO" class="w-full h-40 sm:h-48 md:h-56 object-cover"/>
-                <div class="p-4 sm:p-6">
-                <h3 class="text-lg sm:text-xl font-bold">DITTO</h3>
-                <p class="text-gray-300 text-sm sm:text-base mt-2">Outdoor delivery robot for last-mile logistics in communities.</p>
-                <a href="projects/ditto.html" class="mt-3 inline-block text-primary font-semibold hover:underline">View Project →</a>
-                </div>
-            </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="px-4 sm:px-8 md:px-10 py-12 sm:py-20 bg-background-dark text-white text-center">
-      <div class="max-w-3xl mx-auto">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-6">Let’s Connect</h2>
-        <p class="text-gray-300 mb-6 text-sm sm:text-base md:text-lg">
-          Interested in robotics, autonomy, or space systems?  
-          Let’s grab a <span class="text-primary font-semibold">coffee chat</span> or schedule a quick <span class="text-primary font-semibold">call</span>.  
+      <div class="project-body">
+        <div class="project-tag">VLA Model · Imitation Learning · 2025</div>
+        <div class="project-title">PRANA — Vision-Language-Action Model</div>
+        <p class="project-desc">
+          End-to-end multimodal policy built from scratch. Dual-camera ViT encoders,
+          PaliGemma tokenizer, 4-layer Transformer, 50-step action chunking.
+          Deployed on a physical 7-DoF arm — &gt;90% success on screwdriver retrieval.
         </p>
-        <a href="https://calendly.com/siddarth-dayasagar" target="_blank"
-           class="block sm:inline-block rounded-lg px-6 py-3 sm:py-4 bg-primary text-white font-bold text-base hover:bg-primary/80 transition mb-4 sm:mb-0">
-           ☕ Schedule Coffee Chat
-        </a>
-        <div class="text-gray-400 text-xs sm:text-sm mt-4">
-          Or email me at <a href="mailto:siddarth.dayasagar@gmail.com" class="text-primary hover:underline">siddarth.dayasagar@gmail.com</a>
-        </div>
+        <a href="projects/prana.html" class="project-link">View project →</a>
       </div>
-    </section>
-  </main>
+    </div>
 
-  <footer class="text-center py-4 sm:py-6 border-t border-primary/20 text-gray-400 text-xs sm:text-sm">
-    © 2025 Siddarth. All rights reserved.
-  </footer>
+    <!-- F1TENTH -->
+    <div class="project-card">
+      <div class="project-media">
+        <iframe
+          src="https://www.youtube.com/embed/h-dFtYMnnxc?autoplay=1&mute=1&loop=1&playlist=h-dFtYMnnxc&controls=0&modestbranding=1"
+          allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">MPC · MPCC · Real Hardware</div>
+        <div class="project-title">F1TENTH Autonomous Racing</div>
+        <p class="project-desc">
+          MPC trajectory tracking and MPCC racing-line control with CasADi/IPOPT.
+          Dynamic rollout planning with RK4. Deployed on a real Ackermann platform.
+        </p>
+        <a href="projects/f1tenth.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- SPOT -->
+    <div class="project-card">
+      <div class="project-media">
+        <img src="assets/spot_nav.png" alt="Spot — Urban Search & Rescue"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">Legged Autonomy · ROS 2 · Isaac Sim</div>
+        <div class="project-title">Spot — Urban Search & Rescue</div>
+        <p class="project-desc">
+          RL-trained locomotion in Isaac Lab composed with ROS 2 Nav2 for
+          GPS-denied indoor navigation in disaster-inspired environments.
+        </p>
+        <a href="projects/spot_isaac.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- SSOS -->
+    <div class="project-card">
+      <div class="project-media">
+        <img src="assets/ssos.webp" alt="Space Station OS"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">Open Source · ROS 2 · Space Systems</div>
+        <div class="project-title">Space Station OS</div>
+        <p class="project-desc">
+          Modular ROS 2 platform simulating ISS-inspired life support, thermal
+          control, and electrical power. Featured by Northeastern University.
+        </p>
+        <a href="projects/ssos.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- MAVERICK -->
+    <div class="project-card">
+      <div class="project-media">
+        <video autoplay muted loop playsinline src="assets/maverick.mp4"></video>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">MPC · LQR · MATLAB</div>
+        <div class="project-title">GuidanceCore — MAVERICK</div>
+        <p class="project-desc">
+          Comparative missile autopilot study: SFI, LQR, and MPC on short-period
+          longitudinal dynamics. MPC achieved fastest time-to-target at 8s with
+          lowest total control effort.
+        </p>
+        <a href="projects/maverick.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- PANDA -->
+    <div class="project-card">
+      <div class="project-media">
+        <img src="assets/panda.png" alt="Franka Panda Manipulation"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">IK · Motion Planning · PPO</div>
+        <div class="project-title">Franka Panda Manipulation</div>
+        <p class="project-desc">
+          Classical pipeline: HSV perception, Pinocchio IK, OMPL RRTConnect.
+          Evolved to a PPO-based policy trained in MuJoCo for adaptive pick and place.
+        </p>
+        <a href="projects/panda.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- DITTO -->
+    <div class="project-card">
+      <div class="project-media">
+        <img src="assets/ditto.webp" alt="DITTO"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">Delivery Robot · Last-Mile · Autonomy</div>
+        <div class="project-title">DITTO</div>
+        <p class="project-desc">
+          Outdoor delivery robot for last-mile logistics in communities.
+          Autonomous navigation, obstacle avoidance, and delivery coordination.
+        </p>
+        <a href="projects/ditto.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── ABOUT ──────────────────────────────────── -->
+<div class="section" id="about">
+  <div class="section-eyebrow">About</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">
+        Engineer.<br/><em>Builder.</em><br/>Researcher.
+      </h2>
+      <p class="section-body" style="margin-bottom:20px">
+        I'm a robotics engineer at Northeastern University working across
+        autonomy, manipulation, and space systems. My focus is building
+        systems that work on real hardware — not just in simulation.
+      </p>
+      <p class="section-body">
+        I've deployed imitation-learned VLA policies on 7-DoF arms, built
+        MPC controllers for autonomous racing, contributed to open-source
+        space station software, and trained legged robots for disaster
+        response — all with a bias toward real-world validation.
+      </p>
+    </div>
+    <div>
+      <ul class="skills-list">
+        <li>
+          <span class="skill-name">Vision-Language-Action Models</span>
+          <span class="skill-tag">PyTorch · LeRobot</span>
+        </li>
+        <li>
+          <span class="skill-name">Model Predictive Control</span>
+          <span class="skill-tag">CasADi · IPOPT · MATLAB</span>
+        </li>
+        <li>
+          <span class="skill-name">Reinforcement Learning</span>
+          <span class="skill-tag">Isaac Lab · MuJoCo · PPO</span>
+        </li>
+        <li>
+          <span class="skill-name">Robot Middleware</span>
+          <span class="skill-tag">ROS 2 · TF2 · Nav2</span>
+        </li>
+        <li>
+          <span class="skill-name">Motion Planning</span>
+          <span class="skill-tag">OMPL · MoveIt 2 · Pinocchio</span>
+        </li>
+        <li>
+          <span class="skill-name">Simulation</span>
+          <span class="skill-tag">Isaac Sim · Gazebo · MuJoCo</span>
+        </li>
+        <li>
+          <span class="skill-name">Languages</span>
+          <span class="skill-tag">Python · C++ · MATLAB</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONTACT ────────────────────────────────── -->
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <h2 class="contact-title">
+      Let's build<br/><em>something</em><br/>together
+    </h2>
+    <div class="contact-right">
+      <p class="contact-body">
+        Open to research collaborations, engineering roles, and conversations
+        about autonomy, manipulation, or space systems. Grab a coffee chat
+        or send a message.
+      </p>
+      <a href="mailto:siddarth.dayasagar@gmail.com" class="contact-email">
+        siddarth.dayasagar@gmail.com
+      </a>
+      <div>
+        <a href="https://calendly.com/siddarth-dayasagar" target="_blank"
+           class="btn btn-primary" style="margin-top:16px">
+          ☕ &nbsp;Schedule a call
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
+  <div class="footer-links">
+    <a href="https://github.com/siddarth09" target="_blank" class="footer-link">GitHub</a>
+    <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" class="footer-link">LinkedIn</a>
+    <a href="assets/Siddarth_Robotics.pdf" target="_blank" class="footer-link">Resume</a>
+  </div>
+</footer>
 
 </body>
 </html>
