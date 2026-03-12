@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PRANA — Vision-Language-Action Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #e8e8e8;
+      --gray: #888888;
+      --dark-gray: #444444;
+      --black: #000000;
+      --mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .nav-logo {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .nav-back {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--gray);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    /* ─── HERO ────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.55);
+    }
+
+    /* YouTube iframe fallback */
+    .hero-iframe-wrap {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      display: none; /* shown if video src is empty */
+    }
+    .hero-iframe-wrap iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw;
+      height: 56.25vw; /* 16:9 */
+      min-height: 100vh;
+      min-width: 177.78vh;
+      pointer-events: none;
+      filter: brightness(0.55);
+    }
+
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.1) 0%,
+        rgba(0,0,0,0.0) 35%,
+        rgba(0,0,0,0.55) 75%,
+        rgba(0,0,0,0.95) 100%
+      );
+    }
+
+    .hero-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 80px 72px;
+      max-width: 1400px; margin: 0 auto; right: 0; left: 0;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(44px, 6vw, 82px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--white);
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title span { font-weight: 500; }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .hero-stats {
+      display: flex; gap: 56px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 32px;
+    }
+
+    .hero-stat-val {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ─── SECTIONS ────────────────────────────── */
+    section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 80px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 56px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .section-title {
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+    .section-title span { font-weight: 500; }
+
+    .section-body {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.8;
+      max-width: 640px;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ─── VIDEO EMBED ─────────────────────────── */
+    .video-section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 80px 120px;
+    }
+
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .video-wrap video,
+    .video-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border: none;
+    }
+
+    .video-caption {
+      margin-top: 20px;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ─── ARCHITECTURE TWO-COL ────────────────── */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    @media(max-width:900px) { .arch-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+    .arch-flow {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.45);
+      white-space: pre;
+      overflow-x: auto;
+      padding: 32px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ─── METRICS STRIP ───────────────────────── */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
+
+    .metric-cell {
+      padding: 48px 40px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .metric-cell:last-child { border-right: none; }
+
+    .metric-num {
+      font-size: 42px;
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .metric-desc {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ─── COMPONENT TABLE ─────────────────────── */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .comp-table tr {
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .comp-table tr:last-child { border-bottom: none; }
+    .comp-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      padding: 0 0 20px;
+    }
+    .comp-table td {
+      padding: 20px 0;
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      vertical-align: top;
+    }
+    .comp-table td:first-child {
+      color: var(--white);
+      font-weight: 400;
+      width: 22%;
+      padding-right: 40px;
+    }
+    .comp-table td:nth-child(2) {
+      color: var(--gray);
+      font-family: var(--mono);
+      font-size: 12px;
+      width: 28%;
+      padding-right: 40px;
+    }
+
+    /* ─── DETAILS LIST ────────────────────────── */
+    .detail-list {
+      list-style: none;
+      padding: 0;
+    }
+    .detail-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+    }
+    .detail-list li::before {
+      content: '—';
+      color: var(--dark-gray);
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .detail-list li:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    /* ─── FOOTER ──────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 40px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 100%;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--gray);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-tag {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────── */
+    @media(max-width:768px) {
+      nav { padding: 0 24px; }
+      .hero-content { padding: 0 24px 48px; }
+      .hero-stats { gap: 32px; flex-wrap: wrap; }
+      section { padding: 80px 24px; }
+      .video-section { padding: 0 24px 80px; }
+      .metric-cell { padding: 32px 24px; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────── -->
+<nav>
+  <span class="nav-logo">PRANA</span>
+  <a href="../index.html" class="nav-back">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M9 2L4 7l5 5"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────── -->
+<div class="hero">
+  <!-- Replace src with your actual video path, e.g. ../assets/pranav1.mp4 -->
+  <video
+    class="hero-video"
+    autoplay muted loop playsinline
+    src="../assets/pranav1.mp4">
+  </video>
+
+  <!-- Fallback: YouTube (remove display:none below if using YouTube instead) -->
+  <div class="hero-iframe-wrap" style="display:none">
+    <iframe
+      src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=YOUR_VIDEO_ID&controls=0&modestbranding=1"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="hero-gradient"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Vision · Language · Action &nbsp;/&nbsp; 2025</div>
+    <h1 class="hero-title">
+      <span>PRANA</span><br/>
+      Robotic Intelligence<br/>at 50 Hz
+    </h1>
+    <p class="hero-sub">
+      An end-to-end Vision-Language-Action model built from scratch and deployed
+      on a physical 7-DoF manipulator for sub-centimetre precision tasks.
+    </p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">&gt;90%</div>
+        <div class="hero-stat-label">Task Success Rate</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">50 Hz</div>
+        <div class="hero-stat-label">Control Frequency</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">500+</div>
+        <div class="hero-stat-label">Training Episodes</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">7-DoF</div>
+        <div class="hero-stat-label">Physical Platform</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── METRICS STRIP ────────────────────────────── -->
+<div class="divider"></div>
+<div class="metrics-strip">
+  <div class="metric-cell">
+    <div class="metric-num">2</div>
+    <div class="metric-desc">Camera streams<br/>table + wrist</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">50</div>
+    <div class="metric-desc">Action steps<br/>per chunk</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">256k</div>
+    <div class="metric-desc">Vocab size<br/>PaliGemma tokenizer</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">4L</div>
+    <div class="metric-desc">Transformer encoder<br/>8 attention heads</div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ── OVERVIEW ─────────────────────────────────── -->
+<section>
+  <div class="section-label">Overview</div>
+  <div class="arch-grid">
+    <div>
+      <h2 class="section-title">Built from first<br/><span>principles</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        PRANA — Perception-conditioned Robotic Network with Attention — is a
+        multimodal policy that fuses dual-camera vision, language instructions,
+        and proprioceptive state through a unified Transformer to predict full
+        action chunks at inference time.
+      </p>
+      <br/>
+      <p class="section-body">
+        Rather than adapting an existing VLA, every module was designed,
+        implemented, and validated from scratch — from the ViT vision encoders
+        and lightweight language embedding to the action-query readout mechanism
+        and the LeRobot deployment harness.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── VIDEO ─────────────────────────────────────── -->
+<div class="video-section">
+  <div style="padding-top:40px; padding-bottom:32px;">
+    <div class="section-label" style="margin-bottom:0">Deployment</div>
+  </div>
+  <div class="video-wrap">
+    <!-- Replace with your YouTube embed ID or local video -->
+    <iframe
+        width="560" height="315"
+        src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&autoplay=1&mute=1"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-caption">Autonomous screwdriver retrieval — physical 7-DoF platform, unstructured environment</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── ARCHITECTURE ──────────────────────────────── -->
+<section>
+  <div class="section-label">Architecture</div>
+  <div class="arch-grid">
+    <div>
+      <h2 class="section-title">One sequence.<br/><span>Three modalities.</span></h2>
+      <p class="section-body">
+        Visual patch tokens, language tokens, and a single proprioceptive token
+        are concatenated into a unified sequence. Fifty learnable action-query
+        tokens attend over this context through a 4-layer Transformer encoder,
+        producing an entire action horizon in a single forward pass.
+      </p>
+      <br/>
+      <p class="section-body">
+        This design eliminates autoregressive decoding overhead, enabling
+        sustained 50 Hz control on a physical platform.
+      </p>
+
+      <br/><br/>
+
+      <ul class="detail-list">
+        <li>ViT-Tiny backbone — 197 patch tokens per camera, pretrained</li>
+        <li>394 visual tokens from two cameras concatenated pre-attention</li>
+        <li>16-token language context from PaliGemma tokenizer</li>
+        <li>6-DoF state projected to a single proprioceptive token</li>
+        <li>50 learnable action queries as readout mechanism</li>
+        <li>L1 loss with padding mask for episode boundary integrity</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="arch-flow">IMG_TABLE  → ViT-Tiny → Linear → [197, 256]
+IMG_WRIST  → ViT-Tiny → Linear → [197, 256]
+                                   ↓ concat
+                             v_tokens [394, 256]
+
+LANGUAGE   → Embedding (256k) → l_tokens  [16, 256]
+STATE      → Linear           → s_tokens   [1, 256]
+QUERIES    → nn.Parameter     → q_tokens  [50, 256]
+
+sequence = [v_tokens | l_tokens | s_tokens | q_tokens]
+                        ↓
+           TransformerEncoder
+           — 4 layers
+           — 8 attention heads
+           — dim_feedforward 1024
+           — norm_first (Pre-LN)
+                        ↓
+             output[-50:, :]
+                        ↓
+            Linear → GELU → Linear
+                        ↓
+           action_chunk  [50, 6]</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── TRAINING ───────────────────────────────────── -->
+<section>
+  <div class="section-label">Training</div>
+  <div class="arch-grid">
+    <div>
+      <h2 class="section-title">Imitation learning<br/><span>at scale</span></h2>
+      <p class="section-body">
+        500+ human teleoperation episodes collected via LeRobot's recording
+        infrastructure. The dataset streams natively from parquet files with a
+        custom windowed sampler that prevents action chunks from crossing episode
+        boundaries.
+      </p>
+      <br/>
+      <p class="section-body">
+        Actions, states, and visual inputs are independently normalised using
+        per-modality mean and standard deviation. Statistics are serialised
+        alongside the checkpoint and applied at deployment to recover physical
+        motor radians from network outputs.
+      </p>
+    </div>
+
+    <div>
+      <ul class="detail-list">
+        <li>500+ demonstration episodes, dual-camera multimodal</li>
+        <li>Action chunking: 50-step horizon per inference call</li>
+        <li>L1 loss with padding mask on terminal frames</li>
+        <li>AdamW — lr 1e-4, weight decay 1e-4</li>
+        <li>MEAN_STD normalisation across Visual, State, Action</li>
+        <li>Torchvision v2 transforms — scale to [0,1], resize 224×224</li>
+        <li>PaliGemma tokenizer — max_length 16, padded</li>
+        <li>LeRobotDataset parquet streaming — no full RAM load</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── DEPLOYMENT ────────────────────────────────── -->
+<section>
+  <div class="section-label">Deployment</div>
+  <div class="arch-grid">
+    <div>
+      <h2 class="section-title">Hardware in<br/><span>the loop</span></h2>
+      <p class="section-body">
+        PranaPolicy subclasses LeRobot's PreTrainedPolicy, integrating into
+        the native recording and evaluation stack via a lightweight factory hook —
+        no framework fork required.
+      </p>
+      <br/>
+      <p class="section-body">
+        An action deque caches the full 50-step chunk on first inference.
+        Subsequent control ticks dequeue the next action, keeping per-step
+        latency near zero while sustaining closed-loop 50 Hz operation on the
+        physical arm.
+      </p>
+      <br/>
+      <p class="section-body">
+        The system was validated on autonomous screwdriver retrieval in
+        unstructured environments, achieving greater than 90% success across
+        varied object positions and lighting conditions.
+      </p>
+    </div>
+
+    <div>
+      <ul class="detail-list">
+        <li>PranaPolicy extends PreTrainedPolicy (LeRobot)</li>
+        <li>Factory hook — zero framework modifications</li>
+        <li>Action deque: 50-step cache, O(1) dequeue per tick</li>
+        <li>Un-normalisation: raw output × std + mean → motor radians</li>
+        <li>Stats serialised with checkpoint, loaded at inference</li>
+        <li>Validated on a physical 7-DoF platform, unstructured scene</li>
+        <li>Task: screwdriver retrieval to target box</li>
+        <li>Sub-centimetre terminal precision confirmed on hardware</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── COMPONENT TABLE ───────────────────────────── -->
+<section>
+  <div class="section-label">System</div>
+  <h2 class="section-title" style="margin-bottom:48px">Component <span>reference</span></h2>
+
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Technology</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Vision Encoder</td>
+        <td>vit_tiny_patch16_224</td>
+        <td>Patch-level image features from two camera streams</td>
+      </tr>
+      <tr>
+        <td>Language Encoder</td>
+        <td>nn.Embedding (256k)</td>
+        <td>Instruction token embeddings, conditioned end-to-end</td>
+      </tr>
+      <tr>
+        <td>State Encoder</td>
+        <td>nn.Linear</td>
+        <td>Projects 6-DoF proprioception to hidden dimension</td>
+      </tr>
+      <tr>
+        <td>Action Queries</td>
+        <td>nn.Parameter</td>
+        <td>Learnable readout tokens for 50-step action horizon</td>
+      </tr>
+      <tr>
+        <td>Transformer</td>
+        <td>TransformerEncoder</td>
+        <td>4-layer, 8-head cross-modal sequence model (Pre-LN)</td>
+      </tr>
+      <tr>
+        <td>Action Head</td>
+        <td>Linear → GELU → Linear</td>
+        <td>Maps updated queries to 6-DoF action chunk</td>
+      </tr>
+      <tr>
+        <td>Tokenizer</td>
+        <td>google/paligemma-3b-pt-224</td>
+        <td>Language tokenisation, max_length 16</td>
+      </tr>
+      <tr>
+        <td>Framework</td>
+        <td>LeRobot (Hugging Face)</td>
+        <td>Training, data collection, deployment harness</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────── -->
+<div class="divider"></div>
+<footer>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
+  <span class="footer-tag">PRANA · Vision-Language-Action</span>
+</footer>
+
+</body>
+</html>
