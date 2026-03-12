@@ -72,18 +72,21 @@
 
     .nav-icon-link {
       display: flex; align-items: center;
-      opacity: 0.45; transition: opacity 0.2s;
+      opacity: 0.5; transition: opacity 0.2s;
     }
     .nav-icon-link:hover { opacity: 1; }
 
+    /* github-mark.svg is black — invert to white */
+    .nav-icon-link.invert img { filter: invert(1); }
+
+    /* linkedin-svgrepo-com.svg is already white — no filter needed */
     .nav-icon-link img {
-      width: 18px; height: 18px;
-      filter: invert(1);
+      width: 20px; height: 20px;
     }
 
     .nav-resume {
       display: inline-flex; align-items: center;
-      height: 32px; padding: 0 16px;
+      height: 34px; padding: 0 18px;
       font-size: 12px; font-weight: 400;
       letter-spacing: 0.04em;
       background: var(--white); color: var(--black);
@@ -91,8 +94,6 @@
       transition: background 0.2s;
     }
     .nav-resume:hover { background: var(--off-white); }
-
-    
 
     /* ── HERO ────────────────────────────────── */
     .hero {
@@ -307,7 +308,6 @@
     }
     .project-card:hover { background: #0a0a0a; }
 
-    /* featured card spans 2 columns */
     .project-card.featured { grid-column: span 2; }
     .project-card.featured .project-media { aspect-ratio: 21/9; }
     @media(max-width:1000px) {
@@ -471,9 +471,11 @@
   </div>
 
   <div class="nav-right">
-    <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub" class="nav-icon-link">
-      <img src="assets/github-mark-white.svg" alt="GitHub"/>
+    <!-- github-mark.svg is black → needs invert to show white on dark nav -->
+    <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub" class="nav-icon-link invert">
+      <img src="assets/github-mark.svg" alt="GitHub"/>
     </a>
+    <!-- linkedin-svgrepo-com.svg is already white → no invert needed -->
     <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn" class="nav-icon-link">
       <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn"/>
     </a>
@@ -784,7 +786,7 @@
   <div class="footer-links">
     <a href="https://github.com/siddarth09" target="_blank" class="footer-link">GitHub</a>
     <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" class="footer-link">LinkedIn</a>
-    <a href="assets/Siddarth_Robotics.pdf" target="_blank" class="footer-link">Resume</a>
+    <a href="assets/Siddarth_Robotics_NEU.pdf" target="_blank" class="footer-link">Resume</a>
   </div>
 </footer>
 
