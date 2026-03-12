@@ -572,424 +572,918 @@
         allowfullscreen>
         </iframe>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RoboRacer F1TENTH — Autonomous Racing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Barlow:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <div class="overlay" aria-hidden="true"></div>
+    :root {
+      --red: #e8000d;
+      --red2: #ff1e1e;
+      --red-dim: rgba(232,0,13,0.12);
+      --red-glow: rgba(232,0,13,0.25);
+      --carbon: #080808;
+      --carbon2: #0e0e0e;
+      --carbon3: #141414;
+      --white: #f5f5f5;
+      --off: #c8c8c8;
+      --muted: #666666;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
+      --display: 'Barlow Condensed', sans-serif;
+      --body: 'Barlow', sans-serif;
+    }
 
-    <div class="hero-content">
-      <!-- Top HUD -->
-      <div class="hero-top">
-        <div class="hero-titlegroup">
-          <small>RACE PROGRAM</small>
-          <h2>Optimization-Based Autonomy on Ackermann Vehicle</h2>
-          <div class="subtitle">Dynamic trajectory sampling → CasADi MPC tracking → MPCC racing line control (RoboRacer F1TENTH)</div>
-        </div>
+    html { scroll-behavior: smooth; }
 
-        <div class="hero-status">
-          <small>STATUS</small>
-          <strong>TRACK READY</strong>
-          <div class="pill"><span class="dot"></span> REAL ROBOT DEPLOYMENT</div>
-        </div>
+    body {
+      background: var(--carbon);
+      color: var(--white);
+      font-family: var(--body);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── SPEED LINES (ambient) ─────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        105deg,
+        transparent,
+        transparent 120px,
+        rgba(232,0,13,0.018) 120px,
+        rgba(232,0,13,0.018) 121px
+      );
+      pointer-events: none; z-index: 0;
+    }
+    body > *:not(#speed-lines) { position: relative; z-index: 1; }
+
+    /* ── NAV ───────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 60px;
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--red);
+    }
+
+    .nav-left {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 15px; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--white);
+    }
+    .nav-sep {
+      width: 1px; height: 18px;
+      background: rgba(255,255,255,0.15);
+    }
+    .nav-sub {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--red2);
+    }
+    .nav-back {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 400;
+      color: var(--muted); letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 8px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+
+    /* ── RED STRIPE accent ─────────────────── */
+    .red-stripe {
+      display: block; width: 40px; height: 3px;
+      background: var(--red); margin-bottom: 14px;
+    }
+
+    /* ── HERO ──────────────────────────────── */
+    .hero {
+      position: relative; width: 100%;
+      height: 100svh; min-height: 640px;
+      overflow: hidden;
+    }
+
+    .hero-video-wrap {
+      position: absolute; inset: 0; overflow: hidden;
+    }
+    .hero-video-wrap iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw; height: 56.25vw;
+      min-height: 100vh; min-width: 177.78vh;
+      pointer-events: none;
+      filter: brightness(0.38) saturate(0.8);
+    }
+
+    /* dramatic diagonal overlay */
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(105deg, rgba(8,8,8,0.92) 0%, rgba(8,8,8,0.55) 45%, transparent 70%),
+        linear-gradient(to bottom, rgba(8,8,8,0.2) 0%, transparent 30%, rgba(8,8,8,0.6) 70%, rgba(8,8,8,1) 100%);
+    }
+
+    /* red accent bar at bottom */
+    .hero-redbar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--red), rgba(232,0,13,0.3), transparent);
+    }
+
+    .hero-content {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 80px 80px;
+      max-width: 1400px; margin: 0 auto; left: 0; right: 0;
+    }
+
+    /* race number / lap counter style */
+    .hero-lap {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--red2); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-lap::before {
+      content: '';
+      display: block; width: 28px; height: 2px;
+      background: var(--red);
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(56px, 9vw, 130px);
+      font-weight: 900; letter-spacing: -0.01em;
+      line-height: 0.92; text-transform: uppercase;
+      color: var(--white); margin-bottom: 28px;
+    }
+    .hero-title .red { color: var(--red); }
+    .hero-title .italic { font-style: italic; font-weight: 800; }
+
+    .hero-sub {
+      font-size: 15px; font-weight: 300;
+      color: rgba(245,245,245,0.55);
+      max-width: 480px; line-height: 1.7; margin-bottom: 52px;
+    }
+
+    /* race telemetry strip */
+    .hero-telem {
+      display: flex; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 28px;
+    }
+    .telem-cell {
+      padding-right: 44px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      margin-right: 44px;
+    }
+    .telem-cell:last-child { border-right: none; margin-right: 0; }
+    .telem-val {
+      font-family: var(--display);
+      font-size: 32px; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--white);
+      line-height: 1; margin-bottom: 4px;
+    }
+    .telem-val .unit {
+      font-size: 14px; font-weight: 500;
+      color: var(--muted); margin-left: 2px;
+    }
+    .telem-label {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── DIVIDER ───────────────────────────── */
+    .divider {
+      height: 1px; max-width: 100%;
+      background: linear-gradient(90deg, var(--red), rgba(232,0,13,0.2), transparent);
+    }
+
+    /* ── SECTOR BANNER ─────────────────────── */
+    .sector-banner {
+      background: var(--red);
+      padding: 14px 80px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sector-banner-text {
+      font-family: var(--display);
+      font-size: 13px; font-weight: 800;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: #fff;
+    }
+    .sector-banner-mono {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* ── SECTIONS ──────────────────────────── */
+    section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 100px 80px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--red2); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      display: block; width: 20px; height: 2px;
+      background: var(--red);
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 4.5vw, 68px);
+      font-weight: 800; text-transform: uppercase;
+      letter-spacing: -0.01em; line-height: 1.0;
+      color: var(--white); margin-bottom: 24px;
+    }
+    .section-title .red { color: var(--red); }
+    .section-title .italic { font-style: italic; }
+
+    .section-body {
+      font-size: 15px; font-weight: 300;
+      color: rgba(245,245,245,0.55); line-height: 1.8;
+      max-width: 560px;
+    }
+
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* ── VIDEO ─────────────────────────────── */
+    .video-section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 80px 100px;
+    }
+    .video-wrap {
+      position: relative; width: 100%;
+      aspect-ratio: 16/9; background: #000; overflow: hidden;
+      border: 1px solid rgba(232,0,13,0.2);
+    }
+    .video-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+    .video-caption {
+      margin-top: 14px;
+      font-family: var(--mono); font-size: 10px; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .video-caption::before {
+      content: '●'; color: var(--red); font-size: 8px;
+    }
+
+    /* ── METRICS STRIP ─────────────────────── */
+    .metrics-strip {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 2px solid var(--red);
+      border-bottom: 1px solid rgba(232,0,13,0.2);
+    }
+    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
+    .metric-cell {
+      padding: 40px 36px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .metric-cell:last-child { border-right: none; }
+    .metric-cell::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: transparent;
+      transition: background 0.3s;
+    }
+    .metric-cell:hover::after { background: var(--red); }
+    .metric-num {
+      font-family: var(--display);
+      font-size: 44px; font-weight: 900;
+      letter-spacing: -0.03em; color: var(--white);
+      line-height: 1; margin-bottom: 8px; text-transform: uppercase;
+    }
+    .metric-desc {
+      font-family: var(--mono);
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); line-height: 1.5;
+    }
+
+    /* ── DETAIL LIST ───────────────────────── */
+    .detail-list { list-style: none; padding: 0; }
+    .detail-list li {
+      display: flex; align-items: baseline; gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px; font-weight: 300;
+      color: rgba(245,245,245,0.6);
+    }
+    .detail-list li::before {
+      content: '—';
+      color: var(--red); flex-shrink: 0;
+      font-family: var(--mono); font-size: 11px;
+    }
+    .detail-list li:first-child { border-top: 1px solid rgba(255,255,255,0.05); }
+
+    /* ── CODE / MATH BLOCKS ────────────────── */
+    .code-block {
+      font-family: var(--mono);
+      font-size: 12px; line-height: 1.9;
+      color: rgba(245,245,245,0.5);
+      white-space: pre;
+      overflow-x: auto;
+      padding: 28px 24px;
+      background: var(--carbon2);
+      border-left: 3px solid var(--red);
+      border-top: 1px solid rgba(232,0,13,0.15);
+      border-right: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .code-title {
+      font-family: var(--mono); font-size: 9px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--red2); margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(232,0,13,0.15);
+    }
+    .hl { color: #ff6b6b; }
+    .hl2 { color: #ffa94d; }
+    .hl3 { color: #69db7c; }
+    .cm { color: rgba(245,245,245,0.28); font-style: italic; }
+
+    /* ── EQUATION CALLOUT ──────────────────── */
+    .eq-card {
+      background: var(--carbon2);
+      border-left: 3px solid var(--red);
+      border-top: 1px solid rgba(232,0,13,0.12);
+      border-right: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 24px;
+      margin-top: 12px;
+    }
+    .eq-label {
+      font-family: var(--mono); font-size: 9px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--red2); margin-bottom: 12px;
+    }
+    .eq-body {
+      font-family: var(--mono); font-size: 13px;
+      color: rgba(245,245,245,0.75); line-height: 1.9;
+    }
+    .eq-body .var { color: #ffa94d; }
+    .eq-body .op { color: rgba(245,245,245,0.35); }
+
+    /* ── RACE CARD (lap/sector style) ──────── */
+    .race-cards {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px; background: rgba(232,0,13,0.08);
+      border: 1px solid rgba(232,0,13,0.12);
+    }
+    @media(max-width:900px) { .race-cards { grid-template-columns: 1fr; } }
+
+    .race-card {
+      background: var(--carbon2); padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: background 0.25s;
+    }
+    .race-card:hover { background: var(--carbon3); }
+    .race-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--red);
+    }
+    .race-card-num {
+      font-family: var(--display);
+      font-size: 48px; font-weight: 900;
+      color: rgba(232,0,13,0.12); line-height: 1;
+      margin-bottom: 12px; letter-spacing: -0.02em;
+    }
+    .race-card-title {
+      font-family: var(--display);
+      font-size: 16px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 10px;
+    }
+    .race-card-body {
+      font-size: 13px; font-weight: 300;
+      color: rgba(245,245,245,0.5); line-height: 1.65;
+    }
+    .race-card-tag {
+      margin-top: 18px;
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--red2);
+    }
+
+    /* ── TABLE ─────────────────────────────── */
+    .perf-table {
+      width: 100%; border-collapse: collapse;
+      border: 1px solid rgba(232,0,13,0.12);
+    }
+    .perf-table th {
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); text-align: left;
+      padding: 14px 20px;
+      background: var(--carbon2);
+      border-bottom: 2px solid var(--red);
+    }
+    .perf-table td {
+      padding: 16px 20px;
+      font-family: var(--mono); font-size: 13px;
+      color: rgba(245,245,245,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .perf-table tr:last-child td { border-bottom: none; }
+    .perf-table td:first-child { color: var(--white); font-weight: 500; }
+    .perf-table .best { color: var(--red2); }
+
+    /* ── FOOTER ────────────────────────────── */
+    .footer-banner {
+      background: var(--red);
+      padding: 0 80px;
+      height: 4px;
+    }
+    footer {
+      background: var(--carbon2);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding: 36px 80px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--mono); font-size: 11px; font-weight: 300;
+      color: var(--muted); letter-spacing: 0.06em;
+    }
+    .footer-tag {
+      font-family: var(--display);
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.12);
+    }
+
+    @media(max-width:768px) {
+      nav { padding: 0 20px; }
+      .hero-content { padding: 0 20px 52px; }
+      .hero-telem { flex-wrap: wrap; gap: 24px; }
+      .telem-cell { border-right: none; margin-right: 0; padding-right: 0; }
+      section { padding: 72px 20px; }
+      .video-section { padding: 0 20px 72px; }
+      .sector-banner { padding: 12px 20px; }
+      footer { padding: 28px 20px; flex-direction: column; gap: 12px; }
+      .footer-banner { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────── -->
+<nav>
+  <div class="nav-left">
+    <span class="nav-logo">RoboRacer</span>
+    <div class="nav-sep"></div>
+    <span class="nav-sub">F1TENTH · Autonomous Racing</span>
+  </div>
+  <a href="../index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M9 2L4 7l5 5"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-video-wrap">
+    <iframe
+        title="RoboRacer F1TENTH — Field Run"
+        src="https://www.youtube.com/embed/KNlxPzRS_G8?autoplay=1&mute=1&loop=1&playlist=KNlxPzRS_G8&controls=0&modestbranding=1&rel=0"
+        class="absolute inset-0 w-full h-full"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+        </iframe>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-redbar"></div>
+
+  <div class="hero-content">
+    <div class="hero-lap">Race Deployment · Real Hardware · 2025</div>
+    <h1 class="hero-title">
+      <span class="italic red">Full</span><br/>
+      Throttle<br/>
+      Autonomy
+    </h1>
+    <p class="hero-sub">
+      MPC trajectory tracking, MPCC racing-line control, and dynamic
+      rollout planning — all running live on a real Ackermann platform.
+    </p>
+    <div class="hero-telem">
+      <div class="telem-cell">
+        <div class="telem-val">MPC <span class="unit">+</span> MPCC</div>
+        <div class="telem-label">Control stack</div>
       </div>
-
-      <!-- Center -->
-      <div class="hero-center">
-        <div>
-          <h1>Real-World Deployment on RoboRacer F1TENTH</h1>
-          <p>
-            Built and deployed a full local autonomy stack for a real F1TENTH Ackermann platform:
-            (1) online trajectory generation using RK4 rollouts scored with obstacle distance transforms,
-            (2) trajectory tracking using nonlinear MPC solved with CasADi/IPOPT, and
-            (3) MPCC for high-speed racing line control with contouring/lag errors and explicit progress optimization.
-          </p>
-
-          <div class="cta-row">
-            <a class="cta" href="#stack">Explore the Stack ↓</a>
-            <a class="cta secondary" href="#math">Math & Formulation</a>
-          </div>
-
-          <!-- Telemetry -->
-          <div class="telemetry" aria-label="Telemetry">
-            <div class="telemetry-header">
-              <span>LIVE HUD</span>
-              <span>MODE: AUTONOMOUS</span>
-            </div>
-            <div class="telemetry-grid">
-              <div class="tile"><small>PLANNER</small><strong>DYNAMIC ROLLOUT</strong></div>
-              <div class="tile"><small>TRACKER</small><strong>CASADI MPC</strong></div>
-              <div class="tile"><small>RACING</small><strong>MPCC</strong></div>
-              <div class="tile"><small>PLATFORM</small><strong>ROBORACER F1TENTH</strong></div>
-            </div>
-          </div>
-        </div>
+      <div class="telem-cell">
+        <div class="telem-val">IPOPT</div>
+        <div class="telem-label">NLP solver</div>
       </div>
-
-      <!-- Bottom strip -->
-      <div class="hero-bottom">
-        <div>ACKERMANN: ENABLED</div>
-        <div>OPTIMIZER: IPOPT</div>
-        <div>HORIZON: ONLINE</div>
+      <div class="telem-cell">
+        <div class="telem-val">RK4</div>
+        <div class="telem-label">Rollout integrator</div>
+      </div>
+      <div class="telem-cell">
+        <div class="telem-val">Real</div>
+        <div class="telem-label">Robot deployed</div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- MAIN -->
-  <main>
+<!-- ── SECTOR BANNER ─────────────────────────── -->
+<div class="sector-banner">
+  <span class="sector-banner-text">RoboRacer F1TENTH Platform · Ackermann Steering · ROS 2 · CasADi</span>
+  <span class="sector-banner-mono">Sector 1: Planner &nbsp;|&nbsp; Sector 2: MPC &nbsp;|&nbsp; Sector 3: MPCC</span>
+</div>
 
-    <!-- Overview / Stack -->
-    <section id="stack" class="block">
-      <div class="block-head">
-        <div>
-          <div class="kicker">SYSTEM OVERVIEW</div>
-          <h2 class="section-title">Autonomy Stack (Real Robot)</h2>
-        </div>
-        <div class="chips">
-          <span class="chip hot">F1TENTH</span>
-          <span class="chip">Ackermann</span>
-          <span class="chip">ROS 2</span>
-          <span class="chip">TF2</span>
-          <span class="chip">CasADi</span>
-          <span class="chip">IPOPT</span>
-        </div>
+<!-- ── METRICS STRIP ─────────────────────────── -->
+<div class="metrics-strip">
+  <div class="metric-cell">
+    <div class="metric-num">3</div>
+    <div class="metric-desc">Control modes<br/>Rollout · MPC · MPCC</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">N=10</div>
+    <div class="metric-desc">MPC horizon<br/>Online solve</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">50+</div>
+    <div class="metric-desc">Rollout candidates<br/>Per planning tick</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">LIVE</div>
+    <div class="metric-desc">Real platform<br/>Not simulation-only</div>
+  </div>
+</div>
+
+<!-- ── VIDEO ──────────────────────────────────── -->
+<div class="video-section" style="padding-top:0">
+  <div style="max-width:1400px; margin:0 auto; padding:48px 0 28px">
+    <div class="section-eyebrow">Race footage</div>
+  </div>
+  <div class="video-wrap">
+    <iframe
+        title="RoboRacer F1TENTH — Field Run"
+        src="https://www.youtube.com/embed/KNlxPzRS_G8?autoplay=1&mute=1&loop=1&playlist=KNlxPzRS_G8&controls=0&modestbranding=1&rel=0"
+        class="absolute inset-0 w-full h-full"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+  </div>
+  <div class="video-caption">Real-world deployment run — RoboRacer F1TENTH · Ackermann platform · MPC + MPCC stack</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── OVERVIEW ──────────────────────────────── -->
+<section>
+  <div class="section-eyebrow">System overview</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Built to<br/><span class="italic red">Race</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        This is not a simulation project. Every algorithm was deployed and
+        validated on a real RoboRacer F1TENTH Ackermann platform — real
+        constraints, real timing, real consequences for bad tuning.
+      </p>
+      <br/>
+      <p class="section-body">
+        The autonomy stack separates trajectory generation from execution:
+        a fast rollout planner scores candidates against obstacle distance
+        transforms, while MPC and MPCC handle precise closed-loop control.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── THREE CONTROL MODES ───────────────────── -->
+<section>
+  <div class="section-eyebrow">Control architecture</div>
+  <h2 class="section-title" style="margin-bottom:40px">Three<br/><span class="italic red">Sectors</span></h2>
+
+  <div class="race-cards">
+    <div class="race-card">
+      <div class="race-card-num">01</div>
+      <div class="race-card-title">Dynamic Rollout Planner</div>
+      <div class="race-card-body">
+        Samples steering commands across the feasible range and forward-simulates
+        the bicycle kinematics over a fixed horizon using RK4. Each candidate is
+        scored on obstacle clearance, curvature, and goal deviation.
+        The best rollout is published as the MPC reference path.
       </div>
-
-      <div class="grid-2">
-        <div>
-          <p class="muted">
-            This project is a “racing-style” autonomy pipeline: generate feasible motion candidates fast,
-            then apply optimization-based control to execute them safely and smoothly on hardware.
-            I implemented both a general MPC tracker (for arbitrary trajectories) and an MPCC controller
-            (for racing line following + progress maximization).
-          </p>
-
-          <div class="divider"></div>
-
-          <div class="code-block">
-            SENSOR / MAP → LOCAL TRAJ GEN (RK4 rollouts + scoring)
-            ↓
-            MPC TRACKER (CasADi/IPOPT) → /drive
-            </div>
-          <p class="muted">
-            The key engineering decision: separate “what to do next” (trajectory choice) from “how to execute”
-            (MPC/MPCC optimization), so each component stays debuggable and swappable.
-          </p>
-        </div>
-
-        <div class="panel">
-          <div class="kicker">HARDWARE NOTE</div>
-          <p>
-            Platform: <strong>RoboRacer F1TENTH</strong> (Ackermann steering).
-            Control published as <code style="font-family:var(--mono)">AckermannDriveStamped</code>
-            with steering angle and speed. Robot pose obtained via TF:
-            <code style="font-family:var(--mono)">map → ego_racecar/base_link</code>.
-          </p>
-
-          <div class="divider"></div>
-
-          <div class="callout">
-            WHY THIS MATTERS:<br/>
-            This is not simulation-only control. Constraints, timing, TF availability, and safety margins
-            (distance-to-obstacle) directly affect whether the robot runs cleanly on track.
-          </div>
-        </div>
+      <div class="race-card-tag">RK4 · Distance Transform · Scoring</div>
+    </div>
+    <div class="race-card">
+      <div class="race-card-num">02</div>
+      <div class="race-card-title">Nonlinear MPC Tracker</div>
+      <div class="race-card-body">
+        Solves a finite-horizon nonlinear optimisation problem every control
+        cycle via CasADi and IPOPT. State includes pose and speed; controls
+        are commanded speed and steering angle. Enforces actuator bounds and
+        applies receding horizon control.
       </div>
-    </section>
-
-    <!-- Section: Dynamic Trajectory Generation -->
-    <section id="planner" class="block">
-      <div class="block-head">
-        <div>
-          <div class="kicker">LOCAL PLANNER</div>
-          <h2 class="section-title">Dynamic Trajectory Generation (RK4 Rollouts + Distance Transform)</h2>
-        </div>
-        <div class="chips">
-          <span class="chip hot">RK4</span>
-          <span class="chip">Distance Transform</span>
-          <span class="chip">Sampling</span>
-          <span class="chip">Safety Margin</span>
-        </div>
+      <div class="race-card-tag">CasADi · IPOPT · Ackermann Model</div>
+    </div>
+    <div class="race-card">
+      <div class="race-card-num">03</div>
+      <div class="race-card-title">MPCC Racing Controller</div>
+      <div class="race-card-body">
+        Augments MPC with a progress state θ along the centerline arc.
+        Penalises contouring and lag errors while explicitly rewarding
+        forward progress — the car "wants" to move fast, not just reduce
+        reference error.
       </div>
+      <div class="race-card-tag">Contouring Error · Lag Error · Progress</div>
+    </div>
+  </div>
+</section>
 
-      <p>
-        The trajectory generator samples steering commands \( \delta \) across the feasible range and forward-simulates
-        the bicycle model for a fixed horizon \(N\) with timestep \(\Delta t\). Each rollout produces a candidate path
-        \(\{(x_k,y_k,\theta_k)\}_{k=1}^N\) which is scored using obstacle clearance from a distance transform map and
-        penalties for curvature and goal deviation.
+<div class="divider"></div>
+
+<!-- ── PLANNER MATH ───────────────────────────── -->
+<section>
+  <div class="section-eyebrow">Sector 01 — Planner</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Rollout<br/><span class="italic red">Scoring</span></h2>
+      <p class="section-body">
+        Steering commands δ are sampled across the feasible range and
+        forward-integrated using RK4 over N steps. Any candidate whose
+        minimum clearance drops below d_safe is immediately rejected.
+        Surviving rollouts compete on a three-term objective.
       </p>
 
-      <div class="grid-2">
-        <div>
-          <div class="kicker">KINEMATIC MODEL</div>
-          <div class="eq">
-            $$\dot{x}=v\cos\theta,\qquad \dot{y}=v\sin\theta,\qquad \dot{\theta}=\frac{v}{L}\tan(\delta)$$
-          </div>
-
-          <p class="muted">
-            Integration is done via RK4:
-            \(x_{k+1}=x_k+\frac{\Delta t}{6}(k_1+2k_2+2k_3+k_4)\) (applied to all state components),
-            which reduces numerical drift compared to Euler at higher speeds / longer horizons.
-          </p>
-
-          <div class="kicker">OBSTACLE CLEARANCE</div>
-          <p class="muted">
-            From an occupancy grid, free cells are binarized and passed through an Euclidean distance transform
-            \(d(x,y)\), giving approximate clearance (in meters) for each map cell. Any rollout with
-            \(\min_k d(x_k,y_k) < d_{\text{safe}}\) is rejected.
-          </p>
-
-          <div class="eq">
-            $$\text{Reject if }\;\min_{k\in[1,N]} d(x_k,y_k) < d_{\text{safe}}$$
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="kicker">SCORING FUNCTION</div>
-          <p class="muted">
-            A simple, interpretable objective works well for fast online selection:
-          </p>
-          <div class="eq">
-            $$J(\tau)=\sum_{k=1}^{N} d(x_k,y_k)\;-\;\alpha\,\underbrace{\sum_{k=2}^{N}|\Delta\theta_k|}_{\text{curvature}}\;-\;\beta\,\underbrace{\|[x_N,y_N]-g\|_2}_{\text{goal}}$$
-          </div>
-
-          <ul>
-            <li><strong>Clearance term</strong> prefers trajectories farther from obstacles.</li>
-            <li><strong>Curvature term</strong> discourages aggressive yaw oscillations.</li>
-            <li><strong>Goal term</strong> pulls the rollout endpoint toward a target.</li>
-          </ul>
-
-          <div class="divider"></div>
-
-          <div class="kicker">OUTPUT</div>
-          <p class="muted">
-            The best rollout is published as <code style="font-family:var(--mono)">nav_msgs/Path</code> on
-            <code style="font-family:var(--mono)">/dynamic_trajectory</code>, which becomes the MPC reference.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: MPC -->
-    <section id="mpc" class="block">
-      <div class="block-head">
-        <div>
-          <div class="kicker">TRACKING CONTROLLER</div>
-          <h2 class="section-title">Nonlinear MPC Tracking (CasADi + IPOPT)</h2>
-        </div>
-        <div class="chips">
-          <span class="chip hot">MPC</span>
-          <span class="chip">CasADi</span>
-          <span class="chip">IPOPT</span>
-          <span class="chip">Ackermann</span>
+      <div class="eq-card">
+        <div class="eq-label">Bicycle Kinematics</div>
+        <div class="eq-body">
+<span class="var">ẋ</span> <span class="op">=</span> v·cos(θ)
+<span class="var">ẏ</span> <span class="op">=</span> v·sin(θ)
+<span class="var">θ̇</span> <span class="op">=</span> (v/L)·tan(δ)
         </div>
       </div>
 
-      <p>
-        The MPC tracker consumes the reference path and solves a finite-horizon nonlinear optimization problem every
-        control cycle. The state includes pose and speed:
-        \(\mathbf{x}=[x, y, \psi, v]^T\). Controls are commanded speed and steering:
-        \(\mathbf{u}=[v_c,\delta]^T\).
+      <div class="eq-card">
+        <div class="eq-label">Safety Rejection</div>
+        <div class="eq-body">
+Reject if  min<sub>k∈[1,N]</sub> d(xₖ,yₖ) <span class="op">&lt;</span> <span class="var">d_safe</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="code-block">
+        <div class="code-title">Rollout Scoring Objective</div>
+<span class="hl">J(τ)</span> = Σ<sub>k=1..N</sub> <span class="hl3">d(xₖ,yₖ)</span>
+       − α · Σ<sub>k=2..N</sub> <span class="hl2">|Δθₖ|</span>       <span class="cm">← curvature penalty</span>
+       − β · <span class="hl2">‖[xₙ,yₙ] − g‖₂</span>         <span class="cm">← goal attraction</span>
+
+<span class="cm">Clearance term   — prefers paths far from obstacles</span>
+<span class="cm">Curvature term   — discourages yaw oscillations</span>
+<span class="cm">Goal term        — pulls endpoint toward target</span>
+
+Output → <span class="hl">nav_msgs/Path</span> on <span class="hl3">/dynamic_trajectory</span>
+      </div>
+
+      <ul class="detail-list" style="margin-top:8px">
+        <li>RK4 integration reduces drift vs Euler at high speed</li>
+        <li>Distance transform pre-computed from occupancy grid</li>
+        <li>Best rollout published as MPC reference each tick</li>
+        <li>Separates "what to do" from "how to execute"</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── MPC MATH ───────────────────────────────── -->
+<section>
+  <div class="section-eyebrow">Sector 02 — MPC</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Nonlinear<br/><span class="italic red">Tracking</span></h2>
+      <p class="section-body">
+        State x = [x, y, ψ, v]ᵀ. Controls u = [v_c, δ]ᵀ.
+        The bicycle model includes a slip-angle approximation for
+        more accurate high-speed cornering behaviour. IPOPT solves
+        the constrained NLP; only the first control action is applied.
       </p>
 
-      <div class="grid-2">
-        <div>
-          <div class="kicker">DYNAMICS (WITH SLIP ANGLE)</div>
-          <p class="muted">
-            The model uses a small slip-angle approximation:
-            \(\beta=\tan^{-1}\!\left(\frac{L_r}{L}\tan\delta\right)\).
-          </p>
-
-          <div class="eq">
-            $$\beta=\tan^{-1}\!\left(\frac{L_r}{L}\tan\delta\right)$$
-            $$\begin{aligned}
-            x_{k+1}&=x_k+v_c\cos(\psi_k+\beta)\Delta t\\
-            y_{k+1}&=y_k+v_c\sin(\psi_k+\beta)\Delta t\\
-            \psi_{k+1}&=\psi_k+\frac{v_c\cos\beta}{L}\tan\delta\,\Delta t\\
-            v_{k+1}&=v_c
-            \end{aligned}$$
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="kicker">OPTIMIZATION PROBLEM</div>
-          <p class="muted">Minimize tracking error + control effort with input bounds:</p>
-
-          <div class="eq">
-            $$\min_{\{\mathbf{x}_k,\mathbf{u}_k\}}
-            \sum_{k=0}^{N-1}\left(\|\mathbf{x}_k-\mathbf{x}^{ref}_k\|_Q^2+\|\mathbf{u}_k\|_R^2\right)
-            +\|\mathbf{x}_N-\mathbf{x}^{ref}_N\|_{Q_f}^2$$
-            $$\text{s.t.}\;\;\mathbf{x}_{k+1}=f(\mathbf{x}_k,\mathbf{u}_k),\;\;
-            v_{\min}\le v_c\le v_{\max},\;\;\delta_{\min}\le \delta\le \delta_{\max}$$
-          </div>
-
-          <p class="muted">
-            Implemented with CasADi symbolic variables and solved using IPOPT.
-            The first control action \((v_0,\delta_0)\) is applied (receding horizon control).
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section: MPCC -->
-    <section id="mpcc" class="block">
-      <div class="block-head">
-        <div>
-          <div class="kicker">RACING CONTROLLER</div>
-          <h2 class="section-title">Model Predictive Contouring Control (MPCC)</h2>
-        </div>
-        <div class="chips">
-          <span class="chip hot">MPCC</span>
-          <span class="chip">Contouring</span>
-          <span class="chip">Progress</span>
-          <span class="chip">Racing Line</span>
+      <div class="eq-card">
+        <div class="eq-label">Slip Angle</div>
+        <div class="eq-body">
+β <span class="op">=</span> arctan(<span class="var">Lᵣ</span>/L · tan(δ))
         </div>
       </div>
 
-      <p>
-        MPCC differs from standard tracking MPC by introducing a <strong>progress state</strong> \(\theta\)
-        (arc-length along the centerline) and penalizing <em>contouring</em> and <em>lag</em> errors relative to the
-        racing line. The optimizer simultaneously decides how to steer and how quickly to advance along the track.
+      <div class="eq-card">
+        <div class="eq-label">MPC Cost</div>
+        <div class="eq-body">
+min Σ<sub>k=0..N-1</sub> ‖<span class="var">xₖ − xᵣₑ𝒻</span>‖²_Q <span class="op">+</span> ‖<span class="var">uₖ</span>‖²_R
+               <span class="op">+</span> ‖<span class="var">xₙ − xᵣₑ𝒻</span>‖²_Q𝒻
+
+s.t.  xₖ₊₁ = f(xₖ,uₖ)
+      v_min ≤ vc ≤ v_max
+      δ_min ≤  δ ≤ δ_max
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="code-block">
+        <div class="code-title">CasADi / IPOPT Implementation</div>
+<span class="cm"># Symbolic state + control variables</span>
+x  <span class="op">=</span> <span class="hl">MX.sym</span>(<span class="hl2">'x'</span>, 4)   <span class="cm"># [x, y, ψ, v]</span>
+u  <span class="op">=</span> <span class="hl">MX.sym</span>(<span class="hl2">'u'</span>, 2)   <span class="cm"># [v_c, δ]</span>
+
+<span class="cm"># Nonlinear bicycle model (with slip)</span>
+β  <span class="op">=</span> atan2(Lr <span class="op">*</span> tan(u[1]), L)
+ẋ  <span class="op">=</span> u[0] <span class="op">*</span> cos(x[2] <span class="op">+</span> β)
+ẏ  <span class="op">=</span> u[0] <span class="op">*</span> sin(x[2] <span class="op">+</span> β)
+ψ̇  <span class="op">=</span> u[0] <span class="op">*</span> cos(β) <span class="op">/</span> L <span class="op">*</span> tan(u[1])
+
+<span class="cm"># Receding horizon — apply u[:,0] to robot</span>
+pub <span class="hl3">AckermannDriveStamped</span> → /drive
+      </div>
+
+      <ul class="detail-list" style="margin-top:8px">
+        <li>Symbolic differentiation via CasADi — analytic Jacobians</li>
+        <li>IPOPT interior-point solver for constrained NLP</li>
+        <li>Warm-started each tick from previous solution</li>
+        <li>Robot pose from TF: map → ego_racecar/base_link</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── MPCC MATH ──────────────────────────────── -->
+<section>
+  <div class="section-eyebrow">Sector 03 — MPCC</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Racing<br/><span class="italic red">Line Control</span></h2>
+      <p class="section-body">
+        MPCC adds a progress state θ (arc-length along the centerline).
+        Rather than chasing waypoints, it balances a race-style tradeoff:
+        staying near the line while maximising forward progress.
+        The result is naturally faster lap times and cleaner cornering.
       </p>
 
-      <div class="grid-2">
-        <div>
-          <div class="kicker">STATE & DYNAMICS</div>
-          <p class="muted">
-            Augmented state: \(\mathbf{x}=[x,y,\psi,v,\theta]^T\), with progress update:
-            \(\theta_{k+1}=\theta_k+v_k\Delta t\).
-          </p>
-          <div class="eq">
-            $$\theta_{k+1}=\theta_k+v_k\Delta t$$
-            $$\begin{aligned}
-            x_{k+1}&=x_k+v_c\cos(\psi_k)\Delta t\\
-            y_{k+1}&=y_k+v_c\sin(\psi_k)\Delta t\\
-            \psi_{k+1}&=\psi_k+\frac{v_c}{L}\tan\delta\,\Delta t\\
-            v_{k+1}&=v_c
-            \end{aligned}$$
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="kicker">CONTOURING / LAG ERRORS</div>
-          <p class="muted">
-            Let the nearest centerline reference be \((x_{cl},y_{cl},\phi_{cl},s_{cl})\).
-            With \(dx=x-x_{cl}\), \(dy=y-y_{cl}\):
-          </p>
-          <div class="eq">
-            $$\varepsilon_c=\sin(\phi_{cl})\,dx-\cos(\phi_{cl})\,dy$$
-            $$\varepsilon_l=-\cos(\phi_{cl})\,dx-\sin(\phi_{cl})\,dy$$
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="kicker">MPCC OBJECTIVE</div>
-          <p class="muted">
-            Penalize contouring/lag errors and encourage progress by rewarding \(\theta\) toward \(s_{cl}\):
-          </p>
-          <div class="eq">
-            $$\min \sum_{k=0}^{N-1}\left(q_c\varepsilon_{c,k}^2+q_l\varepsilon_{l,k}^2
-            -q_\theta(\theta_k-s_{cl,k})+\|\mathbf{u}_k\|_R^2\right)$$
-          </div>
-
-          <p class="muted">
-            In practice: MPCC “doesn’t blindly chase waypoints”; it optimizes a <em>race-style tradeoff</em> between
-            staying near the line and maximizing forward progress.
-          </p>
+      <div class="eq-card">
+        <div class="eq-label">Contouring & Lag Errors</div>
+        <div class="eq-body">
+εc <span class="op">=</span>  sin(φ_cl)·dx <span class="op">−</span> cos(φ_cl)·dy
+εl <span class="op">=</span> −cos(φ_cl)·dx <span class="op">−</span> sin(φ_cl)·dy
         </div>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="grid-2">
-        <div class="panel">
-          <div class="kicker">WHY MPCC OVER TRACKING MPC?</div>
-          <ul>
-            <li><strong>Explicit progress</strong> makes the controller “want” to move forward, not just reduce error.</li>
-            <li><strong>Stable at speed</strong> because it avoids overreacting to noisy reference points.</li>
-            <li><strong>Racing line behavior</strong>: controls naturally balance corner cutting vs stability.</li>
-          </ul>
-        </div>
-        <div class="panel">
-          <div class="kicker">ROS INTERFACES</div>
-          <ul>
-            <li><code style="font-family:var(--mono)">/racing_trajectory</code> → custom Trajectory msg (with arc-length \(s\))</li>
-            <li><code style="font-family:var(--mono)">/mpcc_predicted_horizon</code> → MarkerArray (visual horizon points)</li>
-            <li><code style="font-family:var(--mono)">/drive</code> → AckermannDriveStamped (applied control)</li>
-          </ul>
+      <div class="eq-card">
+        <div class="eq-label">MPCC Objective</div>
+        <div class="eq-body">
+min Σ <span class="var">qc·εc²</span> <span class="op">+</span> <span class="var">ql·εl²</span>
+         <span class="op">−</span> <span class="var">qθ·(θk − scl,k)</span>   <span class="cm">← progress reward</span>
+         <span class="op">+</span> ‖uₖ‖²_R
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Math index + Implementation Notes -->
-    <section id="math" class="block">
-      <div class="block-head">
-        <div>
-          <div class="kicker">MATH INDEX</div>
-          <h2 class="section-title">Key Equations (Quick Reference)</h2>
-        </div>
-        <div class="chips">
-          <span class="chip">Bicycle Model</span>
-          <span class="chip">Distance Transform</span>
-          <span class="chip">MPC Cost</span>
-          <span class="chip hot">MPCC Errors</span>
-        </div>
+    <div>
+      <div class="code-block">
+        <div class="code-title">Why MPCC beats standard MPC on track</div>
+<span class="hl2">Standard MPC</span>
+  minimises distance to reference waypoints
+  → fights to reach each point in sequence
+  → can brake unnecessarily before corners
+
+<span class="hl3">MPCC</span>
+  minimises contouring error (stay near line)
+  maximises progress (θ → s_cl reward)
+  → naturally cuts corners when optimal
+  → stable at speed — no waypoint chasing
+
+<span class="cm">ROS topics:</span>
+  <span class="hl">/racing_trajectory</span>   <span class="cm">← arc-length parameterised</span>
+  <span class="hl">/mpcc_predicted_horizon</span> <span class="cm">← MarkerArray viz</span>
+  <span class="hl3">/drive</span>               <span class="cm">← AckermannDriveStamped</span>
       </div>
 
-      <table class="table" aria-label="Equation index">
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th>Equation</th>
-            <th>Purpose</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Planner</td>
-            <td>\(\dot{\theta}=\frac{v}{L}\tan\delta\)</td>
-            <td>Rollout curvature / turning</td>
-          </tr>
-          <tr>
-            <td>Planner</td>
-            <td>\(\min_k d(x_k,y_k)\ge d_{\text{safe}}\)</td>
-            <td>Obstacle safety margin</td>
-          </tr>
-          <tr>
-            <td>MPC</td>
-            <td>\(\min \sum \|\mathbf{x}-\mathbf{x}^{ref}\|_Q^2+\|\mathbf{u}\|_R^2\)</td>
-            <td>Trajectory tracking</td>
-          </tr>
-          <tr>
-            <td>MPCC</td>
-            <td>\(\varepsilon_c=\sin\phi\,dx-\cos\phi\,dy\)</td>
-            <td>Contouring error</td>
-          </tr>
-          <tr>
-            <td>MPCC</td>
-            <td>\(\varepsilon_l=-\cos\phi\,dx-\sin\phi\,dy\)</td>
-            <td>Lag error</td>
-          </tr>
-          <tr>
-            <td>MPCC</td>
-            <td>\(\theta_{k+1}=\theta_k+v_k\Delta t\)</td>
-            <td>Progress along track</td>
-          </tr>
-        </tbody>
-      </table>
+      <ul class="detail-list" style="margin-top:8px">
+        <li>Progress state θ augmented into system state vector</li>
+        <li>θ updated: θₖ₊₁ = θₖ + vₖ·Δt at each horizon step</li>
+        <li>Contouring error penalises lateral deviation from line</li>
+        <li>Lag error penalises falling behind the reference arc</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-      <div class="divider"></div>
+<div class="divider"></div>
 
-      <div class="callout">
-        NOTE ON EQUATIONS:<br/>
-        This page uses <strong>KaTeX</strong> (already included in &lt;head&gt;). Use inline math with <code>\( ... \)</code>
-        and block math with <code>$$ ... $$</code>. No additional LaTeX extensions are needed beyond KaTeX.
-      </div>
-    </section>
+<!-- ── EQUATION TABLE ─────────────────────────── -->
+<section>
+  <div class="section-eyebrow">Quick reference</div>
+  <h2 class="section-title" style="margin-bottom:40px">Key<br/><span class="italic red">Equations</span></h2>
 
-    </main>
+  <table class="perf-table">
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Equation</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Planner</td>
+        <td>θ̇ = (v/L)·tan(δ)</td>
+        <td>Rollout turning rate — bicycle model</td>
+      </tr>
+      <tr>
+        <td>Planner</td>
+        <td>min d(xₖ,yₖ) ≥ d_safe</td>
+        <td>Obstacle safety rejection criterion</td>
+      </tr>
+      <tr>
+        <td>Planner</td>
+        <td>J(τ) = Σ d − α·Σ|Δθ| − β·‖pₙ−g‖</td>
+        <td>Three-term rollout scoring objective</td>
+      </tr>
+      <tr>
+        <td>MPC</td>
+        <td>β = arctan(Lᵣ/L · tan δ)</td>
+        <td>Slip angle for accurate cornering model</td>
+      </tr>
+      <tr>
+        <td>MPC</td>
+        <td class="best">min Σ ‖x−xᵣ‖²_Q + ‖u‖²_R</td>
+        <td>Trajectory tracking cost function</td>
+      </tr>
+      <tr>
+        <td>MPCC</td>
+        <td>εc = sin(φ)·dx − cos(φ)·dy</td>
+        <td>Lateral contouring error from racing line</td>
+      </tr>
+      <tr>
+        <td>MPCC</td>
+        <td>εl = −cos(φ)·dx − sin(φ)·dy</td>
+        <td>Longitudinal lag error along arc</td>
+      </tr>
+      <tr>
+        <td>MPCC</td>
+        <td class="best">θₖ₊₁ = θₖ + vₖ·Δt</td>
+        <td>Arc-length progress state update</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
 
-  <footer>
-    <p>© 2025 Siddarth — RoboRacer F1TENTH · MPC + MPCC</p>
-  </footer>
+<!-- ── FOOTER ─────────────────────────────────── -->
+<div class="footer-banner"></div>
+<footer>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
+  <span class="footer-tag">RoboRacer · F1TENTH</span>
+</footer>
 
-  
 </body>
 </html>
