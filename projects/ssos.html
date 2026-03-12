@@ -1,138 +1,1019 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Station OS (SSOS)</title>
-  <link rel="stylesheet" href="../style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Space Station OS — SSOS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --black: #000008;
+      --deep: #02030f;
+      --panel: rgba(6, 12, 30, 0.85);
+      --panel-border: rgba(56, 120, 255, 0.15);
+      --blue: #3878ff;
+      --blue-dim: rgba(56,120,255,0.12);
+      --cyan: #22d3ee;
+      --cyan-dim: rgba(34,211,238,0.1);
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --white: #f0f4ff;
+      --muted: #6b7a99;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── STARFIELD ─────────────────────────── */
+    #stars {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--d, 4s) ease-in-out infinite var(--delay, 0s);
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: var(--max-op, 0.7); }
+    }
+
+    /* all content above stars */
+    body > *:not(#stars) { position: relative; z-index: 1; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ───────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 64px;
+      background: rgba(0,0,8,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(56,120,255,0.12);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--white);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 6px var(--green); }
+      50% { box-shadow: 0 0 14px var(--green), 0 0 28px rgba(34,197,94,0.3); }
+    }
+    .nav-back {
+      font-size: 13px; font-weight: 400;
+      color: var(--muted); letter-spacing: 0.04em;
+      transition: color 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    /* ── HERO ──────────────────────────────── */
+    .hero {
+      position: relative; width: 100%;
+      height: 100svh; min-height: 620px;
+      overflow: hidden;
+      display: flex; align-items: flex-end;
+    }
+
+    .hero-video-wrap {
+      position: absolute; inset: 0; overflow: hidden;
+    }
+    .hero-video-wrap iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw; height: 56.25vw;
+      min-height: 100vh; min-width: 177.78vh;
+      pointer-events: none;
+      filter: brightness(0.35) saturate(0.6);
+    }
+
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,8,0.3) 0%,
+        transparent 25%,
+        transparent 55%,
+        rgba(0,0,8,0.7) 80%,
+        rgba(0,0,8,0.98) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 1400px; margin: 0 auto;
+      padding: 0 80px 80px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 11px; font-weight: 400;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid rgba(34,211,238,0.25);
+      background: rgba(34,211,238,0.06);
+      padding: 5px 12px; border-radius: 999px;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-size: clamp(46px, 6.5vw, 90px);
+      font-weight: 300; letter-spacing: -0.025em; line-height: 1.02;
+      color: var(--white); max-width: 780px; margin-bottom: 24px;
+    }
+    .hero-title span { font-weight: 600; color: #fff; }
+
+    .hero-sub {
+      font-size: 16px; font-weight: 300;
+      color: rgba(240,244,255,0.55);
+      max-width: 500px; line-height: 1.75; margin-bottom: 52px;
+    }
+
+    .hero-stats {
+      display: flex; gap: 0;
+      border-top: 1px solid rgba(56,120,255,0.18);
+      padding-top: 36px;
+    }
+    .hero-stat {
+      padding-right: 52px;
+      border-right: 1px solid rgba(56,120,255,0.12);
+      margin-right: 52px;
+    }
+    .hero-stat:last-child { border-right: none; margin-right: 0; }
+    .hero-stat-val {
+      font-size: 30px; font-weight: 300;
+      letter-spacing: -0.03em; color: var(--white);
+      line-height: 1; margin-bottom: 6px;
+      font-family: var(--mono);
+    }
+    .hero-stat-label {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── LAYOUT HELPERS ────────────────────── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56,120,255,0.15), transparent);
+      margin: 0 auto; max-width: 1400px;
+    }
+
+    section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 100px 80px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 52px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(56,120,255,0.2), transparent);
+    }
+
+    .section-title {
+      font-size: clamp(28px, 3.5vw, 50px);
+      font-weight: 300; letter-spacing: -0.02em;
+      line-height: 1.12; color: var(--white); margin-bottom: 28px;
+    }
+    .section-title span { font-weight: 600; }
+
+    .section-body {
+      font-size: 16px; font-weight: 300;
+      color: rgba(240,244,255,0.55); line-height: 1.8; max-width: 580px;
+    }
+
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* ── DETAIL LIST ───────────────────────── */
+    .detail-list { list-style: none; padding: 0; }
+    .detail-list li {
+      display: flex; align-items: baseline; gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(56,120,255,0.08);
+      font-size: 14px; font-weight: 300;
+      color: rgba(240,244,255,0.6);
+    }
+    .detail-list li::before {
+      content: '›';
+      color: var(--blue); flex-shrink: 0; font-size: 14px; font-weight: 500;
+    }
+    .detail-list li:first-child { border-top: 1px solid rgba(56,120,255,0.08); }
+
+    /* ── VIDEO ─────────────────────────────── */
+    .video-section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 80px 100px;
+    }
+    .video-wrap {
+      position: relative; width: 100%;
+      aspect-ratio: 16/9; background: #01010a; overflow: hidden;
+      border: 1px solid rgba(56,120,255,0.12);
+    }
+    .video-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+    .video-caption {
+      margin-top: 16px;
+      font-family: var(--mono); font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── SUBSYSTEM CARDS ───────────────────── */
+    .subsystem-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 2px;
+      background: rgba(56,120,255,0.08);
+      border: 1px solid rgba(56,120,255,0.12);
+      margin-top: 16px;
+    }
+    @media(max-width:900px) { .subsystem-grid { grid-template-columns: 1fr; } }
+
+    .sub-card {
+      background: var(--deep);
+      padding: 36px 32px;
+      transition: background 0.25s;
+    }
+    .sub-card:hover { background: rgba(6,15,40,0.95); }
+
+    .sub-card-icon {
+      font-size: 28px; margin-bottom: 16px; line-height: 1;
+    }
+    .sub-card-title {
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .sub-card-abbr {
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .sub-card-body {
+      font-size: 13px; font-weight: 300;
+      color: rgba(240,244,255,0.55); line-height: 1.7;
+    }
+    .sub-card-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 20px;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .dot-green { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot-amber { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .text-green { color: var(--green); }
+    .text-amber { color: var(--amber); }
+    .text-cyan { color: var(--cyan); }
+
+    /* ── FLOW DIAGRAMS ─────────────────────── */
+    .flow-diagram {
+      background: rgba(2,3,20,0.9);
+      border: 1px solid rgba(56,120,255,0.15);
+      padding: 28px;
+      font-family: var(--mono);
+      font-size: 12px; line-height: 2;
+      overflow-x: auto;
+    }
+    .flow-title {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 20px;
+      border-bottom: 1px solid rgba(56,120,255,0.1);
+      padding-bottom: 12px;
+    }
+    .flow-node {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+    .fn-blue { background: rgba(56,120,255,0.15); color: #7aa4ff; border: 1px solid rgba(56,120,255,0.25); }
+    .fn-cyan { background: rgba(34,211,238,0.1); color: var(--cyan); border: 1px solid rgba(34,211,238,0.2); }
+    .fn-green { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .fn-amber { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+    .flow-arrow { color: rgba(56,120,255,0.5); }
+    .flow-comment { color: rgba(107,122,153,0.7); font-style: italic; }
+
+    /* ── ECLSS DEEP DIVE ───────────────────── */
+    .eclss-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px; background: rgba(56,120,255,0.06);
+      border: 1px solid rgba(56,120,255,0.1);
+    }
+    @media(max-width:900px) { .eclss-grid { grid-template-columns: 1fr; } }
+
+    .eclss-cell {
+      background: var(--deep); padding: 28px 24px;
+    }
+    .eclss-cell-label {
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 10px;
+    }
+    .eclss-cell-title {
+      font-size: 15px; font-weight: 500; color: var(--white);
+      margin-bottom: 10px;
+    }
+    .eclss-cell-body {
+      font-size: 13px; font-weight: 300;
+      color: rgba(240,244,255,0.5); line-height: 1.65;
+    }
+    .eclss-metric {
+      margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid rgba(56,120,255,0.08);
+    }
+    .eclss-metric-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .eclss-metric-key {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted); letter-spacing: 0.08em;
+    }
+    .eclss-metric-val {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--cyan);
+    }
+
+    /* ── EPS DIAGRAM ───────────────────────── */
+    .eps-chain {
+      display: flex; align-items: stretch; gap: 0;
+      border: 1px solid rgba(56,120,255,0.12);
+      overflow-x: auto;
+    }
+    .eps-node {
+      flex: 1; min-width: 120px;
+      background: var(--deep); padding: 24px 16px;
+      border-right: 1px solid rgba(56,120,255,0.08);
+      text-align: center;
+      position: relative;
+    }
+    .eps-node:last-child { border-right: none; }
+    .eps-node-icon { font-size: 22px; margin-bottom: 10px; }
+    .eps-node-name {
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .eps-node-desc {
+      font-size: 11px; font-weight: 300;
+      color: var(--muted); line-height: 1.5;
+    }
+    .eps-arrow {
+      display: flex; align-items: center;
+      padding: 0 4px; background: var(--deep);
+      border-right: 1px solid rgba(56,120,255,0.08);
+      color: rgba(56,120,255,0.35); font-size: 16px;
+    }
+
+    /* ── THERMAL DIAGRAM ───────────────────── */
+    .thermal-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 2px; background: rgba(56,120,255,0.06);
+      border: 1px solid rgba(56,120,255,0.1);
+    }
+    @media(max-width:900px) { .thermal-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .thermal-node {
+      background: var(--deep); padding: 24px 20px;
+      text-align: center;
+    }
+    .thermal-temp {
+      font-family: var(--mono); font-size: 26px; font-weight: 300;
+      letter-spacing: -0.03em; margin-bottom: 6px;
+    }
+    .thermal-label {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .thermal-bar {
+      height: 3px; border-radius: 2px;
+      margin-top: 14px; overflow: hidden;
+    }
+    .thermal-bar-fill {
+      height: 100%; border-radius: 2px;
+      transition: width 1s ease;
+    }
+
+    /* ── METRICS STRIP ─────────────────────── */
+    .metrics-strip {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid rgba(56,120,255,0.12);
+      border-bottom: 1px solid rgba(56,120,255,0.12);
+    }
+    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
+    .metric-cell {
+      padding: 44px 40px;
+      border-right: 1px solid rgba(56,120,255,0.08);
+    }
+    .metric-cell:last-child { border-right: none; }
+    .metric-num {
+      font-family: var(--mono);
+      font-size: 38px; font-weight: 300;
+      letter-spacing: -0.04em; color: var(--white);
+      line-height: 1; margin-bottom: 10px;
+    }
+    .metric-desc {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); line-height: 1.5;
+    }
+
+    /* ── FOOTER ────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(56,120,255,0.1);
+      padding: 40px 80px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-size: 12px; font-weight: 300; color: var(--muted);
+    }
+    .footer-links {
+      display: flex; gap: 28px;
+    }
+    .footer-link {
+      font-family: var(--mono); font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(240,244,255,0.2);
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--white); }
+
+    @media(max-width:768px) {
+      nav { padding: 0 24px; }
+      .hero-content { padding: 0 24px 56px; }
+      .hero-stats { flex-wrap: wrap; gap: 28px; }
+      .hero-stat { border-right: none; margin-right: 0; padding-right: 0; }
+      section { padding: 72px 24px; }
+      .video-section { padding: 0 24px 72px; }
+      .metric-cell { padding: 28px 20px; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .eps-chain { flex-direction: column; }
+      .eps-arrow { transform: rotate(90deg); justify-content: center; padding: 4px 0; }
+    }
+  </style>
 </head>
 <body>
-  <header class="header">
-    <h1>
-      Space Station OS (SSOS)
-      <a href="https://github.com/space-station-os/space_station_os" target="_blank" class="github-link" aria-label="GitHub">
-        <img src="../assets/github-mark-white.svg" alt="GitHub" class="github-icon">
-      </a>
+
+<!-- ── STARFIELD ──────────────────────────────── -->
+<div id="stars"></div>
+<script>
+  const sf = document.getElementById('stars');
+  for (let i = 0; i < 180; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 1.8 + 0.4;
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --d:${3+Math.random()*5}s;
+      --delay:-${Math.random()*8}s;
+      --max-op:${0.3+Math.random()*0.65};
+    `;
+    sf.appendChild(s);
+  }
+</script>
+
+<!-- ── NAV ──────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-dot"></span>
+    Space Station OS
+  </div>
+  <a href="../index.html" class="nav-back">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M9 2L4 7l5 5"/>
+    </svg>
+    Portfolio
+  </a>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-video-wrap">
+    <iframe width="1280" height="720" 
+      src="https://www.youtube.com/embed/tY0hkvOLNjk?autoplay=1&mute=1&loop=1&playlist=tY0hkvOLNjk&controls=0&modestbranding=1&showinfo=0" 
+      title="YouTube video player" frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🛰 Open Source · ROS 2 · Space Infrastructure</div>
+    <h1 class="hero-title">
+      <span>Open-source</span><br/>
+      software for the<br/>next space station
     </h1>
-    <p><em>Open-Source ROS 2 Platform for Modular Space Station Subsystems</em></p>
-  </header>
-
-  <section class="video-banner">
-   <iframe width="1280" height="720" 
-   src="https://www.youtube.com/embed/tY0hkvOLNjk?autoplay=1&mute=1&loop=1&playlist=tY0hkvOLNjk&controls=0&modestbranding=1&showinfo=0" 
-   title="YouTube video player" frameborder="0" 
-   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-   referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    
-  </section>
-
-
-  <section id="overview">
-    <h2>Overview</h2>
-    <p>
-      Space Station OS (SSOS) is an open-source platform built on <strong>ROS 2</strong> to unify 
-      the development, simulation, and real-time control of modular space station subsystems. 
-      By simulating critical life support, thermal regulation, and power systems, SSOS provides 
-      an accessible environment for testing autonomous behaviors, validating hardware interfaces, 
-      and developing future space infrastructure software.
+    <p class="hero-sub">
+      A modular ROS 2 platform that simulates and controls the critical
+      life support, thermal, and power systems of a space station — built
+      to be hardware-ready from day one.
     </p>
-    <p>
-      SSOS draws inspiration from the International Space Station (ISS) and adopts a 
-      <strong>software-defined space station</strong> philosophy. Each subsystem is modularized 
-      into ROS 2 nodes with standardized interfaces, allowing flexibility, scalability, and reusability. 
-      While SSOS is a simulation, its architecture is hardware-ready, enabling integration with 
-      future testbeds and research facilities.
-    </p>
-  </section>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">ROS 2</div>
+        <div class="hero-stat-label">Middleware</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">3</div>
+        <div class="hero-stat-label">Core subsystems</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">ISS</div>
+        <div class="hero-stat-label">Architecture reference</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">NU</div>
+        <div class="hero-stat-label">Featured · Feb 2026</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <section id="skills">
-    <h2>Skills and Contributions</h2>
-    <ul>
-      <li>ROS 2 middleware design with publishers, services, and action servers</li>
-      <li>C++ and Python development for subsystem logic and GUI integration</li>
-      <li>ISS-inspired system modeling: ECLSS, Thermal Control, EPS</li>
-      <li>Project management: GitHub maintenance, Docker-based reproducibility, documentation</li>
-      <li>PyQt5 GUI development for astronauts and mission control panels</li>
-      <li>Diagnostics, telemetry, and failure injection for robust simulation</li>
+<!-- ── METRICS ────────────────────────────────── -->
+<div class="divider"></div>
+<div class="metrics-strip">
+  <div class="metric-cell">
+    <div class="metric-num">ECLSS</div>
+    <div class="metric-desc">Life support<br/>air + water + O₂</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">TCS</div>
+    <div class="metric-desc">Thermal control<br/>RK4 integration</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">EPS</div>
+    <div class="metric-desc">Electrical power<br/>solar + battery</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">C++/Py</div>
+    <div class="metric-desc">Dual-language<br/>subsystem nodes</div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ── OVERVIEW ───────────────────────────────── -->
+<section>
+  <div class="section-label">Overview</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Software-defined<br/><span>space station</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        Space Station OS (SSOS) is an open-source platform built on ROS 2
+        to unify the development, simulation, and real-time control of modular
+        space station subsystems. Inspired by the ISS, each subsystem is a
+        standalone ROS 2 node with standardised interfaces — making the system
+        flexible, testable, and hardware-ready.
+      </p>
+      <br/>
+      <p class="section-body">
+        The platform was featured by Northeastern University in February 2026
+        for its contribution to open-source space infrastructure software.
+      </p>
+      <br/>
+      <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
+         target="_blank"
+         style="font-size:13px; font-weight:500; color:var(--cyan); letter-spacing:0.04em; transition:opacity 0.2s;"
+         onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        Read the Northeastern feature →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIDEO ──────────────────────────────────── -->
+<div class="divider"></div>
+<div class="video-section" style="padding-top:0">
+  <div style="max-width:1400px; margin:0 auto; padding-top:40px; padding-bottom:28px;">
+    <div class="section-label" style="margin-bottom:0; padding:0 0px">System Demo</div>
+  </div>
+  <div class="video-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/tY0hkvOLNjk?controls=1&modestbranding=1&rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-caption">SSOS — Subsystem integration demo · ROS 2 · C++ + Python</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── SUBSYSTEM OVERVIEW ─────────────────────── -->
+<section>
+  <div class="section-label">Subsystems</div>
+  <h2 class="section-title" style="margin-bottom:12px">Three critical systems.<br/><span>One unified platform.</span></h2>
+  <p class="section-body" style="margin-bottom:40px">
+    Every subsystem mirrors real ISS architecture, implemented as ROS 2 nodes
+    communicating via publishers, services, and action servers.
+  </p>
+
+  <div class="subsystem-grid">
+    <div class="sub-card">
+      <div class="sub-card-icon">🌬</div>
+      <div class="sub-card-title">Life Support</div>
+      <div class="sub-card-abbr">ECLSS — Environmental Control & Life Support</div>
+      <div class="sub-card-body">
+        Closed-loop air revitalisation, oxygen generation via electrolysis,
+        and water recovery from waste streams. Mirrors the ISS CDRA, OGS, and WPA.
+      </div>
+      <div class="sub-card-status text-green"><span class="dot-green"></span>Operational</div>
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-icon">🌡</div>
+      <div class="sub-card-title">Thermal Control</div>
+      <div class="sub-card-abbr">TCS — Active Thermal Control System</div>
+      <div class="sub-card-body">
+        RK4-based thermal node simulation across avionics, tanks, and equipment.
+        Cooling loops activate dynamically when temperature thresholds are exceeded.
+      </div>
+      <div class="sub-card-status text-green"><span class="dot-green"></span>Operational</div>
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-icon">⚡</div>
+      <div class="sub-card-title">Electrical Power</div>
+      <div class="sub-card-abbr">EPS — Electrical Power System</div>
+      <div class="sub-card-body">
+        Solar array tracking, 24 battery ORU management, bus switching via MBSU,
+        and regulated DC-to-DC conversion through BCDU and DDCU.
+      </div>
+      <div class="sub-card-status text-amber"><span class="dot-amber"></span>DDCU in progress</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── ECLSS DEEP DIVE ────────────────────────── -->
+<section id="eclss">
+  <div class="section-label">ECLSS — Life Support</div>
+  <div class="two-col" style="margin-bottom:48px">
+    <div>
+      <h2 class="section-title">Keeping humans<br/><span>alive in orbit</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        The ECLSS simulation models the three core processes needed to sustain
+        life: removing CO₂ from the cabin, generating fresh oxygen, and recovering
+        clean water from waste. Each is a separate ROS 2 node connected by
+        well-defined service and topic interfaces.
+      </p>
+    </div>
+  </div>
+
+  <!-- ECLSS flow diagram -->
+  <div class="flow-diagram" style="margin-bottom:2px">
+    <div class="flow-title">ECLSS Closed-Loop Flow</div>
+    <div style="color:rgba(240,244,255,0.75); line-height:2.4; font-size:12px">
+
+      <span class="fn-blue flow-node">Cabin Air</span>
+      <span class="flow-arrow">  ──CO₂──►  </span>
+      <span class="fn-cyan flow-node">ARS / CDRA</span>
+      <span class="flow-arrow">  ──CO₂ stored──►  </span>
+      <span class="fn-amber flow-node">Sabatier Reactor</span>
+      <span class="flow-arrow">  ──H₂O + CH₄──►  </span>
+      <span class="fn-green flow-node">WRS</span>
+      <br/>
+
+      <span class="flow-comment">                              ↑ H₂ feed                             ↓ product H₂O</span>
+      <br/>
+
+      <span style="visibility:hidden" class="fn-blue flow-node">Cabin Air</span>
+      <span class="flow-arrow">  ◄──O₂──  </span>
+      <span class="fn-green flow-node">OGS (electrolysis)</span>
+      <span class="flow-arrow">  ◄──clean H₂O──  </span>
+      <span class="fn-cyan flow-node">WRS / WPA</span>
+      <span class="flow-arrow">  ◄──wastewater──  </span>
+      <span class="fn-amber flow-node">Crew / Systems</span>
+    </div>
+  </div>
+
+  <!-- ECLSS three cells -->
+  <div class="eclss-grid">
+    <div class="eclss-cell">
+      <div class="eclss-cell-label">ARS</div>
+      <div class="eclss-cell-title">Air Revitalisation System</div>
+      <div class="eclss-cell-body">
+        Simulates the Carbon Dioxide Removal Assembly (CDRA). CO₂ is scrubbed
+        from cabin air, stored, and optionally routed to the Sabatier reactor.
+        Contaminant diagnostics published via ROS 2 topics.
+      </div>
+      <div class="eclss-metric">
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Interface</span>
+          <span class="eclss-metric-val">Action server + service</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Output topic</span>
+          <span class="eclss-metric-val">/co2_storage_telemetry</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Failure modes</span>
+          <span class="eclss-metric-val text-amber">Modelled</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eclss-cell">
+      <div class="eclss-cell-label">OGS</div>
+      <div class="eclss-cell-title">Oxygen Generation System</div>
+      <div class="eclss-cell-body">
+        Models water electrolysis and the Sabatier reaction. O₂ is generated
+        and returned to the cabin; H₂ byproduct is fed back to ARS. Integrates
+        with both ARS and WRS for full loop closure.
+      </div>
+      <div class="eclss-metric">
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Reaction</span>
+          <span class="eclss-metric-val">H₂O → H₂ + ½O₂</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Sabatier</span>
+          <span class="eclss-metric-val">CO₂ + 4H₂ → CH₄ + 2H₂O</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Diagnostics</span>
+          <span class="eclss-metric-val text-green">Published</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eclss-cell">
+      <div class="eclss-cell-label">WRS</div>
+      <div class="eclss-cell-title">Water Recovery System</div>
+      <div class="eclss-cell-body">
+        Inspired by the ISS Urine Processor and Water Processor Assemblies.
+        Wastewater is purified through staged processing back to product water,
+        closing the loop with OGS.
+      </div>
+      <div class="eclss-metric">
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Stages</span>
+          <span class="eclss-metric-val">Multi-stage purification</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Grey water</span>
+          <span class="eclss-metric-val text-green">Handled</span>
+        </div>
+        <div class="eclss-metric-row">
+          <span class="eclss-metric-key">Service</span>
+          <span class="eclss-metric-val">/request_water</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── TCS DEEP DIVE ──────────────────────────── -->
+<section id="tcs">
+  <div class="section-label">TCS — Thermal Control</div>
+  <div class="two-col" style="margin-bottom:48px">
+    <div>
+      <h2 class="section-title">Managing heat<br/><span>at the extremes</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        In low Earth orbit, a space station swings between +120°C in sunlight
+        and −160°C in shadow every 90 minutes. The TCS simulation abstracts the
+        ISS Active Thermal Control System using configurable thermal nodes and
+        RK4 numerical integration for accurate dynamic behaviour.
+      </p>
+    </div>
+  </div>
+
+  <!-- Thermal node mockup -->
+  <div class="thermal-grid" style="margin-bottom:2px">
+    <div class="thermal-node">
+      <div class="thermal-temp" style="color:#f87171">+85°C</div>
+      <div class="thermal-label">Avionics Bay</div>
+      <div class="thermal-bar"><div class="thermal-bar-fill" style="width:85%;background:linear-gradient(90deg,#f87171,#ef4444)"></div></div>
+    </div>
+    <div class="thermal-node">
+      <div class="thermal-temp" style="color:#fb923c">+42°C</div>
+      <div class="thermal-label">Propellant Tank</div>
+      <div class="thermal-bar"><div class="thermal-bar-fill" style="width:42%;background:linear-gradient(90deg,#fb923c,#f97316)"></div></div>
+    </div>
+    <div class="thermal-node">
+      <div class="thermal-temp" style="color:#34d399">+21°C</div>
+      <div class="thermal-label">Crew Module</div>
+      <div class="thermal-bar"><div class="thermal-bar-fill" style="width:21%;background:linear-gradient(90deg,#34d399,#10b981)"></div></div>
+    </div>
+    <div class="thermal-node">
+      <div class="thermal-temp" style="color:#60a5fa">−18°C</div>
+      <div class="thermal-label">External Radiator</div>
+      <div class="thermal-bar"><div class="thermal-bar-fill" style="width:18%;background:linear-gradient(90deg,#60a5fa,#3b82f6)"></div></div>
+    </div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-title">TCS — Thermal Node Simulation Loop</div>
+    <div style="color:rgba(240,244,255,0.7); font-size:12px; line-height:2.2">
+      <span class="fn-blue flow-node">YAML Config</span>
+      <span class="flow-arrow">  ──nodes + links──►  </span>
+      <span class="fn-cyan flow-node">TCS Node</span>
+      <span class="flow-arrow">  ──ΔT every tick──►  </span>
+      <span class="fn-green flow-node">RK4 Integrator</span>
+      <br/>
+      <span class="flow-comment">  (heat capacity, internal power, conduction coefficients)          (dT/dt = Q_in − Q_out / C)</span>
+      <br/><br/>
+      <span class="fn-green flow-node">RK4 Integrator</span>
+      <span class="flow-arrow">  ──T_node[]──►  </span>
+      <span class="fn-amber flow-node">Threshold Check</span>
+      <span class="flow-arrow">  ──if T > T_max──►  </span>
+      <span class="fn-cyan flow-node">Cooling Loop</span>
+      <span class="flow-comment">  (water/ammonia loop)</span>
+      <br/>
+      <span style="margin-left:280px" class="flow-arrow">  ──FDIR event──►  </span>
+      <span class="fn-amber flow-node">/diagnostics</span>
+    </div>
+  </div>
+
+  <div style="margin-top:2px">
+    <ul class="detail-list">
+      <li>Thermal nodes represent equipment with temperature, heat capacity, and internal power dissipation</li>
+      <li>Thermal links define conduction-based heat flow between adjacent nodes</li>
+      <li>RK4 integration provides accurate temperature evolution over simulation time</li>
+      <li>Cooling logic activates dynamically when node temperature exceeds configured threshold</li>
+      <li>FDIR events (overheating, loop failure) published to /diagnostics for monitoring</li>
     </ul>
-  </section>
+  </div>
+</section>
 
-  <section id="eclss">
-    <h2> Environmental Control and Life Support System (ECLSS)</h2>
-    <p>
-      The ECLSS simulation models the core processes needed to sustain life aboard a spacecraft:
-      air revitalization, oxygen generation, and water recovery. Implemented as ROS 2 action servers 
-      and services, these subsystems replicate ISS-inspired closed-loop functionality.
-    </p>
-    <h3>Key Subsystems</h3>
-    <ul>
-      <li><strong>Air Revitalisation System (ARS):</strong> Simulates the Carbon Dioxide Removal Assembly (CDRA), 
-      handling CO₂ scrubbing, contaminant management, and diagnostics. Publishes CO₂ storage telemetry 
-      and supports a service interface for CO₂ requests.</li>
-      <li><strong>Oxygen Generation System (OGS):</strong> Models electrolysis and Sabatier reaction, 
-      generating O₂ from water and recycling hydrogen with CO₂. Integrates with ARS and WRS subsystems, 
-      publishing diagnostics and handling failure modes.</li>
-      <li><strong>Water Recovery System (WRS):</strong> Inspired by the Urine Processor and Water Processor Assemblies, 
-      this subsystem purifies wastewater into product water. Implements staged purification, grey water handling, 
-      and provides a service for water requests.</li>
-    </ul>
-    <img src="../assets/ssos/eclss.webp" alt="ECLSS Screenshot" width="800">
-  </section>
+<div class="divider"></div>
 
-  <section id="thermal">
-    <h2> Thermal Control System (TCS)</h2>
-    <p>
-      The Thermal Control System simulation abstracts the ISS Active Thermal Control System (ATCS), 
-      modeling heat transfer across avionics, tanks, and environmental hardware. It uses configurable 
-      YAML files to define thermal nodes and links, with an <strong>RK4-based solver</strong> for accurate 
-      numerical integration.
-    </p>
-    <h3>Core Features</h3>
-    <ul>
-      <li>Thermal nodes represent equipment with temperature, heat capacity, and internal power.</li>
-      <li>Thermal links define conduction-based heat flow between nodes.</li>
-      <li>RK4 integration simulates dynamic thermal evolution over time.</li>
-      <li>Cooling logic triggers when thresholds are exceeded, simulating water/ammonia loop behavior.</li>
-      <li>Diagnostics publish overheating, loop failures, and FDIR (Fault Detection, Isolation, Recovery) events.</li>
-    </ul>
-    <img src="../assets/ssos/thermals.webp" alt="Thermal Control Screenshot" width="800">
-  </section>
+<!-- ── EPS DEEP DIVE ──────────────────────────── -->
+<section id="eps">
+  <div class="section-label">EPS — Electrical Power</div>
+  <div class="two-col" style="margin-bottom:48px">
+    <div>
+      <h2 class="section-title">Power from<br/><span>the Sun to the rack</span></h2>
+    </div>
+    <div>
+      <p class="section-body">
+        The EPS models the full ISS power chain — from solar array tracking
+        through battery storage, bus switching, and regulated DC conversion to
+        station loads. Each component is a ROS 2 node, communicating via
+        action servers and topics.
+      </p>
+    </div>
+  </div>
 
-  <section id="eps">
-    <h2> Electrical Power System (EPS)</h2>
-    <p>
-      The EPS simulation models ISS-style primary and secondary power distribution, including solar arrays, 
-      battery ORUs, bus switching, and regulated DC-to-DC conversion. Each component is abstracted as a ROS 2 node, 
-      reflecting real hardware operations.
-    </p>
-    <h3>Core Components</h3>
-    <ul>
-      <li><strong>SARJ Mock:</strong> Simulates solar array tracking and publishes solar voltage.</li>
-      <li><strong>Battery Manager:</strong> Models 24 Orbital Replacement Unit (ORU) batteries with charging, 
-      discharging, and voltage safety limits.</li>
-      <li><strong>BCDU:</strong> Action server that coordinates parallel charging/discharging of all healthy batteries. 
-      Monitors current/voltage thresholds and enters safe mode on fault.</li>
-      <li><strong>MBSU:</strong> Routes power from healthy channels, averages voltage, and provides input to DDCU.</li>
-      <li><strong>DDCU (Planned):</strong> Converts high-voltage bus to 124.5 V regulated output for station loads.</li>
-    </ul>
-    <img src="../assets/ssos/EPS.webp" alt="EPS Screenshot" width="800">
-  </section>
+  <!-- Power chain visual -->
+  <div class="eps-chain" style="margin-bottom:2px">
+    <div class="eps-node">
+      <div class="eps-node-icon">☀️</div>
+      <div class="eps-node-name">SARJ</div>
+      <div class="eps-node-desc">Solar array rotation & tracking. Publishes solar voltage.</div>
+    </div>
+    <div class="eps-arrow">→</div>
+    <div class="eps-node">
+      <div class="eps-node-icon">🔋</div>
+      <div class="eps-node-name">Battery ORUs</div>
+      <div class="eps-node-desc">24 orbital replacement units. Charge / discharge management.</div>
+    </div>
+    <div class="eps-arrow">→</div>
+    <div class="eps-node">
+      <div class="eps-node-icon">⚙️</div>
+      <div class="eps-node-name">BCDU</div>
+      <div class="eps-node-desc">Action server. Coordinates parallel battery ops. Safe-mode on fault.</div>
+    </div>
+    <div class="eps-arrow">→</div>
+    <div class="eps-node">
+      <div class="eps-node-icon">🔀</div>
+      <div class="eps-node-name">MBSU</div>
+      <div class="eps-node-desc">Routes power from healthy channels. Averages bus voltage.</div>
+    </div>
+    <div class="eps-arrow">→</div>
+    <div class="eps-node">
+      <div class="eps-node-icon">🔌</div>
+      <div class="eps-node-name">DDCU</div>
+      <div class="eps-node-desc">High-voltage → 124.5V regulated output for station loads. <span style="color:var(--amber)">In progress.</span></div>
+    </div>
+    <div class="eps-arrow">→</div>
+    <div class="eps-node">
+      <div class="eps-node-icon">🛰</div>
+      <div class="eps-node-name">Station Loads</div>
+      <div class="eps-node-desc">ECLSS, TCS, avionics, crew systems.</div>
+    </div>
+  </div>
 
-  <section id="conclusion">
-    <h2> Conclusion</h2>
-    <p>
-      SSOS demonstrates how complex, safety-critical space systems can be translated into modular 
-      ROS 2 simulations for better testing, integration, and research. By blending 
-      <strong>systems engineering, software architecture, and collaborative open-source development</strong>, 
-      SSOS lowers the barrier for space station software innovation and provides a foundation 
-      for autonomous, sustainable space habitats.
-    </p>
-  </section>
+  <div class="flow-diagram">
+    <div class="flow-title">EPS — Fault Detection & Bus Switching</div>
+    <div style="color:rgba(240,244,255,0.7); font-size:12px; line-height:2.2">
+      <span class="fn-blue flow-node">BCDU monitor</span>
+      <span class="flow-arrow">  ──voltage check──►  </span>
+      <span class="fn-amber flow-node">V_bat &lt; V_min ?</span>
+      <span class="flow-arrow">  ──yes──►  </span>
+      <span class="fn-amber flow-node">Safe mode</span>
+      <span class="flow-comment">  (isolate battery ORU)</span>
+      <br/>
+      <span style="visibility:hidden" class="fn-blue flow-node">spacer</span>
+      <span class="flow-arrow">                         ──no───►  </span>
+      <span class="fn-green flow-node">Continue charging</span>
+      <br/><br/>
+      <span class="fn-blue flow-node">MBSU</span>
+      <span class="flow-arrow">  ──channel health──►  </span>
+      <span class="fn-cyan flow-node">Route healthy channels</span>
+      <span class="flow-arrow">  ──averaged V_bus──►  </span>
+      <span class="fn-green flow-node">DDCU input</span>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p>© 2025 Space Station OS Contributors. Built with ROS 2, C++, Python, and a passion for space systems.</p>
-  </footer>
+<div class="divider"></div>
+
+<!-- ── ARCHITECTURE ───────────────────────────── -->
+<section>
+  <div class="section-label">Architecture</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Hardware-ready<br/><span>from day one</span></h2>
+      <p class="section-body">
+        Every subsystem node exposes the same interface pattern — standardised
+        ROS 2 topics, services, and action servers — so swapping a simulated
+        node for a real hardware driver requires minimal code changes.
+      </p>
+    </div>
+    <div>
+      <div class="flow-diagram">
+        <div class="flow-title">ROS 2 Interface Pattern (per subsystem)</div>
+        <div style="color:rgba(240,244,255,0.65); font-size:12px; line-height:2.1">
+  <span class="fn-blue flow-node">Subsystem Node</span>
+  <br/>
+  <span style="color:var(--muted)">  ├─ </span><span class="fn-green flow-node">/telemetry topic</span><span class="flow-comment">   (publish state @ rate)</span>
+  <br/>
+  <span style="color:var(--muted)">  ├─ </span><span class="fn-cyan flow-node">/request service</span><span class="flow-comment">  (synchronous request)</span>
+  <br/>
+  <span style="color:var(--muted)">  ├─ </span><span class="fn-amber flow-node">/control action</span><span class="flow-comment">   (long-running ops)</span>
+  <br/>
+  <span style="color:var(--muted)">  └─ </span><span class="fn-blue flow-node">/diagnostics topic</span><span class="flow-comment"> (FDIR events)</span>
+        </div>
+      </div>
+
+      <ul class="detail-list" style="margin-top:8px">
+        <li>C++ and Python nodes within the same ROS 2 workspace</li>
+        <li>PyQt5 GUI panels for both crew and mission control views</li>
+        <li>Docker-based reproducibility for any contributor</li>
+        <li>GitHub-maintained with full documentation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<div class="divider"></div>
+<footer>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar & SSOS Contributors</span>
+  <div class="footer-links">
+    <a href="https://github.com/space-station-os/space_station_os" target="_blank" class="footer-link">GitHub</a>
+    <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/" target="_blank" class="footer-link">Press</a>
+    <a href="../index.html" class="footer-link">Portfolio</a>
+  </div>
+</footer>
+
 </body>
 </html>
