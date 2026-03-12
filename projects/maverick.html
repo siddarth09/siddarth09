@@ -1,31 +1,616 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GuidanceCore — MAVERICK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <!-- Your site stylesheet -->
-  <link rel="stylesheet" href="../style.css" />
-  <!-- Space Grotesk -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet"/>
+    :root {
+      --black:   #010408;
+      --navy:    #040c18;
+      --panel:   #060e1c;
+      --panel2:  #081222;
+      --amber:   #e8a020;
+      --amber2:  #ffb833;
+      --amber-dim: rgba(232,160,32,0.10);
+      --amber-glow: rgba(232,160,32,0.22);
+      --cyan:    #00e5ff;
+      --cyan-dim: rgba(0,229,255,0.08);
+      --red:     #ff2a2a;
+      --green:   #00ff88;
+      --white:   #dce8f0;
+      --muted:   #4a6070;
+      --mono:    'Share Tech Mono', 'JetBrains Mono', monospace;
+      --display: 'Barlow Condensed', sans-serif;
+      --body:    'Barlow', sans-serif;
+    }
 
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--body);
+      font-weight: 300;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── SCANLINES ───────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 999;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.06) 0px,
+        rgba(0,0,0,0.06) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+    }
+
+    /* ── AMBIENT GRID ────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    body > *:not(style) { position: relative; z-index: 1; }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(1,4,8,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(232,160,32,0.25);
+    }
+
+    .nav-left {
+      display: flex; align-items: center; gap: 20px;
+    }
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber);
+      border: 1px solid rgba(232,160,32,0.4);
+      padding: 3px 10px;
+    }
+    .nav-title {
+      font-family: var(--mono);
+      font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--white);
+    }
+
+    /* animated lock indicator */
+    .nav-lock {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--amber2);
+    }
+    .lock-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--amber2);
+      animation: lock-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes lock-pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 6px var(--amber2); }
+      50% { opacity: 0.4; box-shadow: none; }
+    }
+
+    .nav-back {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--muted); letter-spacing: 0.1em;
+      display: flex; align-items: center; gap: 8px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--amber); }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      position: relative; width: 100%;
+      height: 100svh; min-height: 640px;
+      overflow: hidden;
+    }
+
+    .hero-video-wrap {
+      position: absolute; inset: 0; overflow: hidden;
+    }
+    .hero-video-wrap iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw; height: 56.25vw;
+      min-height: 100vh; min-width: 177.78vh;
+      pointer-events: none;
+      filter: brightness(0.28) saturate(0.5) sepia(0.3);
+    }
+
+    /* vignette + colour grade */
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at center, transparent 30%, rgba(1,4,8,0.7) 100%),
+        linear-gradient(to bottom, rgba(1,4,8,0.4) 0%, transparent 20%, transparent 60%, rgba(1,4,8,0.95) 100%),
+        linear-gradient(to right, rgba(1,4,8,0.55) 0%, transparent 50%);
+    }
+
+    /* amber scan bar */
+    .hero-scanbar {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      animation: scanbar 6s ease-in-out infinite;
+      opacity: 0.6;
+    }
+    @keyframes scanbar {
+      0%   { top: 0; opacity: 0; }
+      5%   { opacity: 0.6; }
+      95%  { opacity: 0.4; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* HUD corner brackets */
+    .hud-bracket {
+      position: absolute; width: 40px; height: 40px;
+    }
+    .hud-bracket.tl { top: 80px; left: 24px;
+      border-top: 1px solid var(--amber); border-left: 1px solid var(--amber); }
+    .hud-bracket.tr { top: 80px; right: 24px;
+      border-top: 1px solid var(--amber); border-right: 1px solid var(--amber); }
+    .hud-bracket.bl { bottom: 24px; left: 24px;
+      border-bottom: 1px solid var(--amber); border-left: 1px solid var(--amber); }
+    .hud-bracket.br { bottom: 24px; right: 24px;
+      border-bottom: 1px solid var(--amber); border-right: 1px solid var(--amber); }
+
+    /* crosshair reticle */
+    .reticle {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px; height: 80px;
+      opacity: 0.18;
+    }
+    .reticle::before, .reticle::after {
+      content: ''; position: absolute;
+      background: var(--amber);
+    }
+    .reticle::before { width: 1px; height: 100%; left: 50%; top: 0; }
+    .reticle::after  { height: 1px; width: 100%; top: 50%; left: 0; }
+    .reticle-ring {
+      position: absolute; inset: 10px;
+      border: 1px solid var(--amber);
+      border-radius: 50%; opacity: 0.18;
+    }
+
+    .hero-content {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 64px 72px;
+      max-width: 1400px; margin: 0 auto; left: 0; right: 0;
+    }
+
+    /* top-left classified tag */
+    .hero-classified {
+      position: absolute; top: 72px; left: 64px;
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--amber); opacity: 0.75;
+    }
+
+    /* top-right telemetry HUD */
+    .hero-hud-right {
+      position: absolute; top: 72px; right: 64px;
+      text-align: right;
+    }
+    .hud-readout {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--amber2); opacity: 0.7;
+      line-height: 1.9;
+    }
+    .hud-readout .val { color: var(--amber2); opacity: 1; }
+
+    .hero-callsign {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-callsign::before {
+      content: '';
+      display: block; width: 32px; height: 1px;
+      background: var(--amber);
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(52px, 9.5vw, 138px);
+      font-weight: 900; letter-spacing: -0.01em;
+      line-height: 0.88; text-transform: uppercase;
+      color: var(--white); margin-bottom: 6px;
+    }
+    .hero-title .amber { color: var(--amber); }
+    .hero-title .outline {
+      -webkit-text-stroke: 1px rgba(220,232,240,0.35);
+      color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 14px; font-weight: 300;
+      color: rgba(220,232,240,0.45);
+      max-width: 440px; line-height: 1.7;
+      margin: 20px 0 44px;
+      font-family: var(--mono); letter-spacing: 0.04em;
+    }
+
+    /* bottom telemetry bar */
+    .hero-telem {
+      display: flex; gap: 0;
+      border-top: 1px solid rgba(232,160,32,0.2);
+      padding-top: 24px;
+    }
+    .telem-cell {
+      padding-right: 40px; margin-right: 40px;
+      border-right: 1px solid rgba(232,160,32,0.12);
+    }
+    .telem-cell:last-child { border-right: none; margin-right: 0; }
+    .telem-val {
+      font-family: var(--mono);
+      font-size: 24px; font-weight: 400;
+      color: var(--amber2); line-height: 1; margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+    .telem-label {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── MISSION BANNER ──────────────────────── */
+    .mission-banner {
+      background: rgba(232,160,32,0.08);
+      border-top: 1px solid rgba(232,160,32,0.3);
+      border-bottom: 1px solid rgba(232,160,32,0.3);
+      padding: 12px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .mission-banner-id {
+      font-family: var(--mono); font-size: 10px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber);
+    }
+    .mission-banner-right {
+      display: flex; gap: 40px;
+    }
+    .mission-banner-item {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    }
+    .mission-banner-item span { color: var(--amber2); }
+
+    /* ── DIVIDER ─────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,160,32,0.2), transparent);
+    }
+
+    /* ── SECTIONS ────────────────────────────── */
+    section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 96px 64px;
+    }
+
+    .section-tag {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .section-tag::before {
+      content: '';
+      display: block; width: 24px; height: 1px; background: var(--amber);
+    }
+    .section-tag::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(232,160,32,0.2), transparent);
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(34px, 4.5vw, 64px);
+      font-weight: 900; text-transform: uppercase;
+      letter-spacing: -0.01em; line-height: 0.95;
+      color: var(--white); margin-bottom: 28px;
+    }
+    .section-title .amber { color: var(--amber); }
+    .section-title .italic { font-style: italic; }
+
+    .section-body {
+      font-size: 14px; font-weight: 300;
+      color: rgba(220,232,240,0.5); line-height: 1.8;
+      max-width: 540px; font-family: var(--body);
+    }
+
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 72px; align-items: start;
+    }
+    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* ── VIDEO ───────────────────────────────── */
+    .video-section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 64px 96px;
+    }
+    .video-wrap {
+      position: relative; width: 100%;
+      aspect-ratio: 16/9; background: #000; overflow: hidden;
+      border: 1px solid rgba(232,160,32,0.18);
+      box-shadow: 0 0 60px rgba(232,160,32,0.05), inset 0 0 40px rgba(0,0,0,0.5);
+    }
+    .video-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+    /* amber corner overlays on video */
+    .video-wrap::before, .video-wrap::after {
+      content: ''; position: absolute; width: 20px; height: 20px; z-index: 2;
+    }
+    .video-wrap::before {
+      top: 0; left: 0;
+      border-top: 1px solid var(--amber); border-left: 1px solid var(--amber);
+    }
+    .video-wrap::after {
+      bottom: 0; right: 0;
+      border-bottom: 1px solid var(--amber); border-right: 1px solid var(--amber);
+    }
+    .video-caption {
+      margin-top: 12px;
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .video-caption::before { content: '▶'; color: var(--amber); font-size: 7px; }
+
+    /* ── DOSSIER CARDS (controller modules) ──── */
+    .dossier-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px; background: rgba(232,160,32,0.07);
+      border: 1px solid rgba(232,160,32,0.12);
+    }
+    @media(max-width:900px) { .dossier-grid { grid-template-columns: 1fr; } }
+
+    .dossier-card {
+      background: var(--panel); padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: background 0.2s;
+    }
+    .dossier-card:hover { background: var(--panel2); }
+    .dossier-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px; background: var(--amber); opacity: 0.4;
+    }
+
+    .dossier-callsign {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 8px;
+    }
+    .dossier-title {
+      font-family: var(--display);
+      font-size: 20px; font-weight: 800;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 14px;
+    }
+    .dossier-body {
+      font-size: 13px; font-weight: 300;
+      color: rgba(220,232,240,0.5); line-height: 1.65;
+    }
+
+    /* performance rating bar */
+    .rating-row {
+      margin-top: 20px; padding-top: 16px;
+      border-top: 1px solid rgba(232,160,32,0.1);
+    }
+    .rating-item {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .rating-label {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); width: 80px; flex-shrink: 0;
+    }
+    .rating-bar {
+      flex: 1; height: 3px; background: rgba(232,160,32,0.1); border-radius: 2px;
+    }
+    .rating-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--amber), var(--amber2));
+    }
+    .rating-val {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--amber2); width: 28px; text-align: right; flex-shrink: 0;
+    }
+
+    /* ── PERFORMANCE MATRIX ──────────────────── */
+    .perf-matrix {
+      width: 100%; border-collapse: collapse;
+      border: 1px solid rgba(232,160,32,0.12);
+    }
+    .perf-matrix th {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-align: left;
+      padding: 12px 18px;
+      background: rgba(232,160,32,0.04);
+      border-bottom: 1px solid rgba(232,160,32,0.2);
+    }
+    .perf-matrix td {
+      padding: 15px 18px;
+      font-family: var(--mono); font-size: 13px;
+      color: rgba(220,232,240,0.65);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .perf-matrix tr:last-child td { border-bottom: none; }
+    .perf-matrix td:first-child { color: var(--white); }
+    .perf-matrix .best { color: var(--amber2); }
+    .perf-matrix .warn { color: var(--red); }
+
+    /* ── CODE BLOCK ──────────────────────────── */
+    .code-block {
+      font-family: var(--mono); font-size: 12px;
+      line-height: 1.85; color: rgba(220,232,240,0.45);
+      white-space: pre; overflow-x: auto;
+      padding: 24px 22px;
+      background: rgba(0,0,0,0.4);
+      border-left: 2px solid var(--amber);
+      border-top: 1px solid rgba(232,160,32,0.12);
+      border-right: 1px solid rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .code-title {
+      font-size: 9px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(232,160,32,0.12);
+    }
+    .hl  { color: #ffc966; }
+    .hl2 { color: #ff9f43; }
+    .hl3 { color: #00e676; }
+    .cm  { color: rgba(220,232,240,0.22); font-style: italic; }
+
+    /* ── DETAIL LIST ─────────────────────────── */
+    .detail-list { list-style: none; padding: 0; }
+    .detail-list li {
+      display: flex; align-items: baseline; gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(232,160,32,0.06);
+      font-size: 13px; font-weight: 300;
+      color: rgba(220,232,240,0.55);
+      font-family: var(--body);
+    }
+    .detail-list li::before {
+      content: '›'; color: var(--amber); flex-shrink: 0;
+      font-family: var(--mono); font-size: 13px;
+    }
+    .detail-list li:first-child { border-top: 1px solid rgba(232,160,32,0.06); }
+
+    /* ── COUNTDOWN-STYLE METRICS ─────────────── */
+    .metrics-strip {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid rgba(232,160,32,0.2);
+      border-bottom: 1px solid rgba(232,160,32,0.1);
+      background: rgba(232,160,32,0.02);
+    }
+    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
+
+    .metric-cell {
+      padding: 38px 32px;
+      border-right: 1px solid rgba(232,160,32,0.08);
+      position: relative;
+    }
+    .metric-cell:last-child { border-right: none; }
+    .metric-cell::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 2px; height: 100%; background: transparent;
+      transition: background 0.3s;
+    }
+    .metric-cell:hover::after { background: var(--amber); }
+    .metric-num {
+      font-family: var(--mono);
+      font-size: 36px; font-weight: 400;
+      letter-spacing: -0.02em; color: var(--amber2);
+      line-height: 1; margin-bottom: 8px;
+    }
+    .metric-desc {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); line-height: 1.55;
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+    .footer-amber-bar {
+      height: 2px;
+      background: linear-gradient(90deg, var(--amber), rgba(232,160,32,0.2), transparent);
+    }
+    footer {
+      background: var(--panel);
+      border-top: 1px solid rgba(232,160,32,0.08);
+      padding: 32px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-family: var(--mono); font-size: 10px; font-weight: 400;
+      color: var(--muted); letter-spacing: 0.1em;
+    }
+    .footer-tag {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(232,160,32,0.2);
+    }
+
+    /* ── LINKS ───────────────────────────────── */
+    .amber-link {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.1em; color: var(--amber);
+      border-bottom: 1px solid rgba(232,160,32,0.3);
+      padding-bottom: 1px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .amber-link:hover { color: var(--amber2); border-color: var(--amber2); }
+
+    @media(max-width:768px) {
+      nav { padding: 0 20px; }
+      .hero-content { padding: 0 20px 52px; }
+      .hero-classified, .hero-hud-right { display: none; }
+      .hero-telem { flex-wrap: wrap; gap: 24px; }
+      .telem-cell { border-right: none; margin-right: 0; padding-right: 0; }
+      .hud-bracket { display: none; }
+      .reticle, .reticle-ring { display: none; }
+      section { padding: 64px 20px; }
+      .video-section { padding: 0 20px 64px; }
+      .mission-banner { padding: 10px 20px; flex-direction: column; gap: 8px; }
+      footer { padding: 28px 20px; flex-direction: column; gap: 10px; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <h1>
-        GuidanceCore — MAVERICK
-      <a href="https://github.com/siddarth09/Guidance_Core_Maverick/tree/main" target="_blank" class="github-link" aria-label="GitHub">
-        <img src="../assets/github-mark-white.svg" alt="GitHub" class="github-icon">
-      </a>
-    </h1>
-    <p><em>Autonomous Missile Guidance Systems</em></p>
-  </header>
+<!-- ── NAV ───────────────────────────────────── -->
+<nav>
+  <div class="nav-left">
+    <span class="nav-badge">CLASSIFIED</span>
+    <span class="nav-title">GuidanceCore — MAVERICK</span>
+  </div>
+  <div style="display:flex; align-items:center; gap:32px">
+    <div class="nav-lock"><span class="lock-dot"></span>LOCK ACQUIRED</div>
+    <a href="../index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 2L4 7l5 5"/>
+      </svg>
+      RTB
+    </a>
+  </div>
+</nav>
 
-  <!-- HERO with YouTube background -->
-  <section class="hero" aria-label="Hero video background">
+<!-- ── HERO ──────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-video-wrap">
     <iframe
       title="GuidanceCore — MAVERICK"
       src="https://www.youtube.com/embed/nJwKAhgWHOc?autoplay=1&mute=1&loop=1&controls=0&rel=0&modestbranding=1&playlist=nJwKAhgWHOc"
@@ -33,292 +618,105 @@
       allow="autoplay; encrypted-media; picture-in-picture"
       allowfullscreen
     ></iframe>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-scanbar"></div>
 
-    <div class="overlay" aria-hidden="true"></div>
+  <!-- HUD brackets -->
+  <div class="hud-bracket tl"></div>
+  <div class="hud-bracket tr"></div>
+  <div class="hud-bracket bl"></div>
+  <div class="hud-bracket br"></div>
 
-    <div class="hero-content">
-      <!-- Top HUD -->
-      <div class="hero-top">
-        <div class="hero-titlegroup">
-          <small>MISSION</small>
-          <h2>GuidanceCore — MAVERICK</h2>
-          <div class="subtitle">Autonomous Missile Guidance using Model Predictive Control</div>
-        </div>
-        <div class="hero-status">
-          <small>STATUS</small>
-          <strong>TACTICAL READY</strong>
-        </div>
+  <!-- reticle -->
+  <div class="reticle"></div>
+  <div class="reticle-ring"></div>
+
+  <!-- classified tag -->
+  <div class="hero-classified">
+    ██ CLEARANCE: ALPHA-01 &nbsp;·&nbsp; MISSION: ENGAGE &nbsp;·&nbsp; PLATFORM: SIM
+  </div>
+
+  <!-- top-right HUD readout -->
+  <div class="hero-hud-right">
+    <div class="hud-readout">
+      ALT &nbsp;&nbsp;<span class="val">10,000</span> M<br/>
+      VEL &nbsp;&nbsp;<span class="val">1021.08</span> M/S<br/>
+      G-FORCE <span class="val">32.6</span> G<br/>
+      T-I-M-E &nbsp;<span class="val" id="tof">00:08.00</span>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-callsign">Callsign: MAVERICK &nbsp;·&nbsp; Autonomous Guidance &nbsp;·&nbsp; 2025</div>
+    <h1 class="hero-title">
+      <span class="amber">Guidance</span><br/>
+      <span class="outline">Core</span><br/>
+      Maverick
+    </h1>
+    <p class="hero-sub">
+      Comparative autopilot study: SFI, LQR, and MPC guidance laws
+      evaluated against missile longitudinal dynamics. Fastest time-to-target
+      confirmed at 8 seconds. Built in MATLAB with CasADi/IPOPT.
+    </p>
+    <div class="hero-telem">
+      <div class="telem-cell">
+        <div class="telem-val">8.00s</div>
+        <div class="telem-label">MPC Time-to-Target</div>
       </div>
-
-      <!-- Center: Title, desc, CTA, Telemetry -->
-      <div class="hero-center">
-        <div>
-          <h1>GuidanceCore — MAVERICK</h1>
-          <p>
-            Autonomous guidance system — comparative study of State-Integral (SFI),
-            LQR (with integral), and MPC. Built &amp; simulated in MATLAB; MPC
-            implemented with CasADi/IPOPT for optimization.
-          </p>
-          <a class="cta" href="#mission" aria-label="Jump to mission brief">
-            <span>Mission Brief ↓</span>
-          </a>
-
-          <!-- Telemetry -->
-          <div class="telemetry">
-            <div class="telemetry-grid">
-              <div class="tile">
-                <small>TARGET</small>
-                <strong>ACQUIRED</strong>
-              </div>
-              <div class="tile">
-                <small>AUTO-TRACK</small>
-                <strong>ENGAGED</strong>
-              </div>
-              <div class="tile">
-                <small>RANGE</small>
-                <strong id="t-range">12.40 km</strong>
-              </div>
-              <div class="tile">
-                <small>G-FORCE</small>
-                <strong id="t-g">32.60 g</strong>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="telem-cell">
+        <div class="telem-val">IPOPT</div>
+        <div class="telem-label">NLP Solver</div>
       </div>
-
-      <!-- Bottom strip -->
-      <div class="hero-bottom">
-        <div>LOCK: FULL</div>
-        <div>RANGE TO IMPACT: 00:00:12</div>
-        <div>MODE: AUTONOMOUS</div>
+      <div class="telem-cell">
+        <div class="telem-val">1021</div>
+        <div class="telem-label">M/S Velocity</div>
+      </div>
+      <div class="telem-cell">
+        <div class="telem-val">3</div>
+        <div class="telem-label">Controllers Compared</div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- MAIN CONTENT -->
-  <main>
-    <!-- =========================
-   MISSION BRIEFING [ALPHA-01]
-   ========================= -->
-    <section id="mission" class="dossier-panel">
-    <div class="dossier-header">
-        [ MISSION BRIEFING // CLEARANCE: ALPHA ]
-    </div>
+<!-- ── MISSION BANNER ────────────────────────── -->
+<div class="mission-banner">
+  <span class="mission-banner-id">MISSION ID: MAVERICK-01 &nbsp;·&nbsp; OBJECTIVE: INTERCEPT &nbsp;·&nbsp; STATUS: COMPLETE</span>
+  <div class="mission-banner-right">
+    <div class="mission-banner-item">MODULE SFI &nbsp;<span>EAGLE</span></div>
+    <div class="mission-banner-item">MODULE LQR &nbsp;<span>TALON</span></div>
+    <div class="mission-banner-item">MODULE MPC &nbsp;<span>VIPER</span></div>
+  </div>
+</div>
 
-    <div class="dossier-body">
-        <p>
-        Objective: Evaluate three autonomous guidance laws—State-Integral (SFI),
-        Linear Quadratic Regulator with Integral action (LQR+I), and Model Predictive Control (MPC)—for
-        engagement in a short-period missile environment. Each controller shall be assessed across:
-        </p>
+<!-- ── METRICS ────────────────────────────────── -->
+<div class="metrics-strip">
+  <div class="metric-cell">
+    <div class="metric-num">13.8s</div>
+    <div class="metric-desc">SFI time-to-target<br/>baseline</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">10.0s</div>
+    <div class="metric-desc">LQR time-to-target<br/>optimal regulator</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">8.0s</div>
+    <div class="metric-desc">MPC time-to-target<br/>fastest · confirmed</div>
+  </div>
+  <div class="metric-cell">
+    <div class="metric-num">6.06</div>
+    <div class="metric-desc">MPC total Σ|u|<br/>lowest effort</div>
+  </div>
+</div>
 
-        <ul class="mission-criteria">
-        <li>Trajectory tracking accuracy under dynamic load</li>
-        <li>Control effort and actuator stress</li>
-        <li>Terminal constraint handling and stabilization time</li>
-        </ul>
-
-        <p>
-        Intel Source: Missile dynamics are modeled using a linear short-period approximation
-        <em>(Ref. Mracek & Ridgely)</em>, simulating autonomous interception without pilot override.
-        Simulations executed using MATLAB and CasADi/IPOPT for comparative fairness.
-        </p>
-
-        <div class="mission-notice">
-        [ NOTE ]<br>
-        Legacy controllers (SFI/LQR) provide baseline doctrine. MPC introduces predictive capability
-        for next-gen AI-guided interceptors.
-        </div>
-    </div>
-    </section>
-
-
-    <!-- =========================
-     CONTROLLER MODULES (DOSSIER)
-     ========================= -->
-
-    <section id="controllers" class="dossier-modules">
-    <!-- SFI / EAGLE -->
-    <article class="module-card">
-        <div class="module-header">
-        <div class="callsign">[ MODULE SFI // CALLSIGN: EAGLE ]</div>
-        <div class="tagline">State-Integral Augmented Feedback — Low energy, educational baseline</div>
-        </div>
-
-        <div class="module-body">
-        <p class="lead">
-            Role: Augmented state-feedback with integral action to eliminate steady-state Az error. Designed via pole-placement for an augmented short-period model (α, q) with integral of acceleration error.
-        </p>
-
-        <div class="module-blocks">
-            <div class="block">
-            <h4>Design</h4>
-            <ul>
-                <li>Augmented integral state: <code>ė_int = Az_ref − Az_m</code></li>
-                <li>Control law: <code>u = −K x − K_i e_int</code></li>
-                <li>Gains via pole-placement on augmented system</li>
-            </ul>
-            </div>
-
-            <div class="block">
-            <h4>Characteristics</h4>
-            <ul>
-                <li>Low average control effort; smooth actuator commands</li>
-                <li>Slower time-to-target versus LQR/MPC</li>
-                <li>Useful for teaching/intuition about integral compensation</li>
-            </ul>
-            </div>
-
-            <div class="block">
-            <h4>Experimental Notes</h4>
-            <p class="muted">
-                SFI exhibits an initial corrective spike followed by smooth convergence in control deflection (δp).
-                However, during aggressive line-of-sight (LOS) maneuvers, it may show higher tracking error in Az.
-                Refer to the project plots for full time-series behavior and actuator response.
-            </p>
-            </div>
-        </div>
-        </div>
-    </article>
-
-    <!-- LQR / TALON -->
-    <article class="module-card">
-        <div class="module-header">
-        <div class="callsign">[ MODULE LQR // CALLSIGN: TALON ]</div>
-        <div class="tagline">LQR with Integral — Balanced optimal regulator with zero steady-state error</div>
-        </div>
-
-        <div class="module-body">
-        <p class="lead">
-            Role: Optimal infinite-horizon state-feedback augmented with an integral state to remove steady-state acceleration error. Gains computed by solving the Discrete Algebraic Riccati Equation (DARE).
-        </p>
-
-        <div class="module-blocks">
-            <div class="block">
-            <h4>Design</h4>
-            <ul>
-                <li>Cost minimized: <code>J = Σ (xᵀQx + uᵀRu)</code></li>
-                <li>Augmented matrices build integral into state vector; solve DARE → K_aug = [K, K_i]</li>
-                <li>Tuned via Qy and R weighting (Qy = CᵀQyC formulation)</li>
-            </ul>
-            </div>
-
-            <div class="block">
-            <h4>Characteristics</h4>
-            <ul>
-                <li>Best Az tracking among studied controllers (zero steady-state error)</li>
-                <li>Moderate control effort and reliable transient behavior</li>
-                <li>Computationally lightweight — suitable for embedded autopilots</li>
-            </ul>
-            </div>
-
-            <div class="block">
-            <h4>Experimental Notes</h4>
-            <p class="muted">
-                LQR+I shows quick stabilization of α and q with smooth control surface deflections (δp).
-                It is effective when computational efficiency and predictable optimality are required.
-                Refer to the project documentation for Riccati derivations and full state trajectories.
-            </p>
-            </div>
-
-        </div>
-        </div>
-    </article>
-
-    <!-- MPC / VIPER -->
-    <article class="module-card">
-        <div class="module-header">
-        <div class="callsign">[ MODULE MPC // CALLSIGN: VIPER ]</div>
-        <div class="tagline">Model Predictive Control — Predictive, constraint-aware, fastest response</div>
-        </div>
-
-        <div class="module-body">
-        <p class="lead">
-            Role: Finite-horizon optimization solved online (CasADi + IPOPT). Balances tracking, control effort, and terminal position cost while enforcing input bounds to respect actuator limits.
-        </p>
-
-        <div class="module-blocks">
-            <div class="block">
-            <h4>Formulation</h4>
-            <ul>
-                <li>Horizon cost: <code>min_U Σ [(C x_k − y_ref_k)ᵀQy(C x_k − y_ref_k) + u_kᵀ R u_k] + terminal</code></li>
-                <li>Dynamics: <code>x_{k+1} = A_d x_k + B_d u_k</code>, input bounds <code>u_min ≤ u_k ≤ u_max</code></li>
-                <li>Terminal cost penalizes deviation from impact point (p_N)</li>
-            </ul>
-            </div>
-
-            <div class="block">
-            <h4>Characteristics</h4>
-            <ul>
-                <li>Fastest time-to-target and lowest total control effort in simulations</li>
-                <li>Handles input bounds directly (u_min = −0.3, u_max = 0.2 in experiments)</li>
-                <li>Computationally intensive — requires solver tuning and warm-starting for real-time use</li>
-            </ul>
-            </div>
-            <a href="model_predictive_control_final.html" class="module-btn">
-                // EXECUTE: OPEN MATLAB CODE
-            </a>
-            <div class="block">
-            <h4>Experimental Notes</h4>
-            <p class="muted">
-                MPC produced superior response (Time-to-target ≈ 8s) and efficient actuator use, 
-                but soft terminal penalties caused some Az tracking trade-offs. 
-                See Tables & Figures in the report for numeric metrics.
-            </p>
-            </div>
-        </div>
-        </div>
-    </article>
-    </section>
-
-    <!-- ================================
-    < HANGAR BAY // AUTOPILOT COMPARATIVES >
-    ================================ -->
-    <section class="hangar-section">
-    <h2 class="hangar-title">&lt; HANGAR BAY // AUTOPILOT COMPARATIVES &gt;</h2>
-
-    <!-- Performance Matrix -->
-    <div class="perf-table">
-    <div class="table-head-row">
-        <div class="head-metric">PERFORMANCE METRICS</div>
-        <div class="head-col">SFI</div>
-        <div class="head-col">LQR</div>
-        <div class="head-col">MPC</div>
-    </div>
-
-    <div class="table-row">
-        <div class="metric">Time to Target (s)</div>
-        <div class="sfi">13.80</div>
-        <div class="lqr">10.00</div>
-        <div class="mpc">8.00</div>
-    </div>
-    <div class="table-row">
-        <div class="metric">Avg Control Effort (rad)</div>
-        <div class="sfi">0.04</div>
-        <div class="lqr">0.10</div>
-        <div class="mpc">0.08</div>
-    </div>
-    <div class="table-row">
-        <div class="metric">Final Az Error (g)</div>
-        <div class="sfi">19.91</div>
-        <div class="lqr">0.00</div>
-        <div class="mpc">14.97</div>
-    </div>
-    <div class="table-row">
-        <div class="metric">Total Control Effort (Σ|u|)</div>
-        <div class="sfi">48.94</div>
-        <div class="lqr">10.34</div>
-        <div class="mpc">6.06</div>
-    </div>
-    </div>
-
-
-   <div class="video-block">
-        <div class="video-title">[ VIDEO FEED // FIELD TEST RUN ]</div>
-        
-        <div class="hud-video">
-            <iframe 
+<!-- ── VIDEO ──────────────────────────────────── -->
+<div class="video-section" style="padding-top:0">
+  <div style="max-width:1400px; margin:0 auto; padding:48px 0 24px">
+    <div class="section-tag">Mission footage</div>
+  </div>
+  <div class="video-wrap">
+    <iframe 
             width="100%" 
             height="380" 
             src="https://www.youtube.com/embed/UJg14tBe5wE?autoplay=1&mute=1&loop=1&controls=1&playlist=UJg14tBe5wE"
@@ -326,49 +724,273 @@
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
-            </iframe>
+    </iframe>
+    
+  </div>
+  <div class="video-caption">MATLAB simulation — SFI vs LQR vs MPC · Missile longitudinal dynamics · CasADi / IPOPT</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── MISSION BRIEFING ───────────────────────── -->
+<section>
+  <div class="section-tag">Mission briefing</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Engage.<br/><span class="italic amber">Intercept.</span><br/>Evaluate.</h2>
+    </div>
+    <div>
+      <p class="section-body">
+        Objective: evaluate three autonomous guidance laws against a linear
+        short-period missile model. Each controller is assessed on trajectory
+        accuracy, control effort, and time-to-target. Simulations executed
+        in MATLAB; MPC solved online with CasADi and IPOPT for every
+        timestep across a 50-step engagement.
+      </p>
+      <br/>
+      <p class="section-body">
+        The missile dynamics model is based on Mracek & Ridgely's short-period
+        approximation — a two-state system (angle of attack α, pitch rate q)
+        driven by fin deflection δp. Both controllability and observability
+        confirmed analytically before controller synthesis.
+      </p>
+      <br/>
+      <a href="https://github.com/siddarth09/Guidance_Core_Maverick" target="_blank" class="amber-link">
+        VIEW MISSION FILES ON GITHUB →
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTROLLER DOSSIERS ───────────────────── -->
+<section>
+  <div class="section-tag">Controller dossiers</div>
+  <h2 class="section-title" style="margin-bottom:36px">
+    Three <span class="italic amber">Pilots</span>
+  </h2>
+
+  <div class="dossier-grid">
+
+    <!-- SFI -->
+    <div class="dossier-card">
+      <div class="dossier-callsign">Module SFI &nbsp;·&nbsp; Callsign: EAGLE</div>
+      <div class="dossier-title">State-Feedback Integral</div>
+      <div class="dossier-body">
+        Augmented state-feedback with integral action. Gains placed via
+        pole-placement on the augmented short-period model. Low average
+        actuator effort — the educational baseline that everything else
+        is measured against.
+      </div>
+      <div class="rating-row">
+        <div class="rating-item">
+          <span class="rating-label">Speed</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:38%"></div></div>
+          <span class="rating-val">38</span>
         </div>
+        <div class="rating-item">
+          <span class="rating-label">Accuracy</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:45%"></div></div>
+          <span class="rating-val">45</span>
         </div>
+        <div class="rating-item">
+          <span class="rating-label">Efficiency</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:82%"></div></div>
+          <span class="rating-val">82</span>
+        </div>
+      </div>
+    </div>
 
-        <a href="https://github.com/siddarth09/Guidance_Core_Maverick/blob/main/Comparative_analysis_of_controllers.pdf" class="briefing-btn" target="_blank">
-        // OPEN THE COMPLETE MISSION BRIEFING
-        </a>
+    <!-- LQR -->
+    <div class="dossier-card">
+      <div class="dossier-callsign">Module LQR &nbsp;·&nbsp; Callsign: TALON</div>
+      <div class="dossier-title">LQR with Integral</div>
+      <div class="dossier-body">
+        Optimal infinite-horizon regulator. DARE solved to obtain
+        K_aug = [K, K_i]. Zero steady-state Az error, reliable
+        transient response, computationally lightweight — suitable
+        for embedded autopilots.
+      </div>
+      <div class="rating-row">
+        <div class="rating-item">
+          <span class="rating-label">Speed</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:62%"></div></div>
+          <span class="rating-val">62</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-label">Accuracy</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:95%"></div></div>
+          <span class="rating-val">95</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-label">Efficiency</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:71%"></div></div>
+          <span class="rating-val">71</span>
+        </div>
+      </div>
+    </div>
 
-  </main>
+    <!-- MPC -->
+    <div class="dossier-card">
+      <div class="dossier-callsign">Module MPC &nbsp;·&nbsp; Callsign: VIPER</div>
+      <div class="dossier-title">Model Predictive Control</div>
+      <div class="dossier-body">
+        Finite-horizon NLP solved online via CasADi + IPOPT. Enforces
+        actuator bounds (u ∈ [−0.3, 0.2]) directly. Fastest engagement,
+        lowest total Σ|u|. Requires solver warm-starting for real-time ops.
+      </div>
+      <div class="rating-row">
+        <div class="rating-item">
+          <span class="rating-label">Speed</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:95%"></div></div>
+          <span class="rating-val">95</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-label">Accuracy</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:68%"></div></div>
+          <span class="rating-val">68</span>
+        </div>
+        <div class="rating-item">
+          <span class="rating-label">Efficiency</span>
+          <div class="rating-bar"><div class="rating-fill" style="width:88%"></div></div>
+          <span class="rating-val">88</span>
+        </div>
+      </div>
+    </div>
 
-  <footer>
-    <p>© 2025 Siddarth — GuidanceCore · MAVERICK</p>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Simple telemetry oscillation to mimic the React useEffect animation
-    (function(){
-      const rng = document.getElementById('t-range');
-      const gf  = document.getElementById('t-g');
-      function fmt(v, unit){ return v.toFixed(2) + ' ' + unit; }
+<div class="divider"></div>
 
-      let tId = setInterval(() => {
-        const now = Date.now();
-        const range = 12.2 + Math.sin(now / 1300) * 0.25; // km
-        const g     = 32.0 + Math.cos(now / 1000) * 0.6;  // g
-        if (rng) rng.textContent = fmt(range, 'km');
-        if (gf)  gf.textContent  = fmt(g, 'g');
-      }, 300);
+<!-- ── MPC FORMULATION ────────────────────────── -->
+<section>
+  <div class="section-tag">Viper — MPC Formulation</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">Predictive<br/><span class="italic amber">Intercept</span></h2>
+      <p class="section-body">
+        The MPC problem is solved fresh at every timestep over a horizon of
+        N=10 steps. The CasADi symbolic model uses discretised longitudinal
+        dynamics, minimising tracking cost plus control effort while enforcing
+        actuator bounds throughout the horizon.
+      </p>
+      <br/>
+      <p class="section-body">
+        A soft terminal constraint steers the predicted 3D position toward
+        the impact point [10500m, 300m] — giving the controller spatial
+        awareness beyond the immediate tracking objective.
+      </p>
 
-      // Safety: clear if page hidden for long time
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden && tId) { clearInterval(tId); tId = null; }
-        else if (!document.hidden && !tId) {
-          tId = setInterval(() => {
-            const now = Date.now();
-            const range = 12.2 + Math.sin(now / 1300) * 0.25;
-            const g     = 32.0 + Math.cos(now / 1000) * 0.6;
-            if (rng) rng.textContent = fmt(range, 'km');
-            if (gf)  gf.textContent  = fmt(g, 'g');
-          }, 300);
-        }
-      });
-    })();
-  </script>
+      <ul class="detail-list" style="margin-top:24px">
+        <li>State: α (angle of attack), q (pitch rate)</li>
+        <li>Control: δp (fin deflection) — bounded [−0.3, 0.2] rad</li>
+        <li>Horizon: N=10, timestep Ts=0.1s, 50 simulation steps</li>
+        <li>Qy = diag([2, 0.5]), R = 1 — tracking vs effort tradeoff</li>
+        <li>Terminal cost: Qterm = 0.01·I on 3D position error</li>
+        <li>3D trajectory integrated symbolically inside the NLP</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="code-block">
+        <div class="code-title">CasADi / IPOPT — MPC Loop</div>
+<span class="cm"># Symbolic short-period dynamics</span>
+<span class="hl">x_next</span> = Ad·x + Bd·u
+
+<span class="cm"># Tracking cost across horizon</span>
+cost += (<span class="hl2">Cx - y_ref</span>)ᵀ · Qy · (Cx - y_ref)
+     + u_k · R · u_k
+
+<span class="cm"># 3D trajectory integrated symbolically</span>
+x_pred(k+1) = x_pred(k) + Vel·cos(θ)·Ts
+z_pred(k+1) = z_pred(k) + Vel·sin(θ)·Ts
+
+<span class="cm"># Soft terminal constraint → impact point</span>
+cost += (p_N - <span class="hl3">target</span>)ᵀ · Qterm · (p_N - target)
+
+<span class="cm"># Solve with IPOPT, apply u[:,0]</span>
+<span class="hl">sol</span> = nlpsol(<span class="hl2">'ipopt'</span>, nlp, opts)
+u0  = sol.x[nx*(N+1):][:,0]   <span class="cm"># receding horizon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PERFORMANCE TABLE ──────────────────────── -->
+<section>
+  <div class="section-tag">After-action report</div>
+  <h2 class="section-title" style="margin-bottom:36px">
+    Performance <span class="italic amber">Matrix</span>
+  </h2>
+
+  <table class="perf-matrix">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>SFI — Eagle</th>
+        <th>LQR — Talon</th>
+        <th>MPC — Viper</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Time to Target (s)</td>
+        <td>13.80</td>
+        <td>10.00</td>
+        <td class="best">8.00 ✓</td>
+      </tr>
+      <tr>
+        <td>Avg Control Effort (rad)</td>
+        <td class="best">0.04</td>
+        <td>0.10</td>
+        <td>0.08</td>
+      </tr>
+      <tr>
+        <td>Final Az Error (g)</td>
+        <td class="warn">19.91</td>
+        <td class="best">0.00 ✓</td>
+        <td>14.97</td>
+      </tr>
+      <tr>
+        <td>Total Control Effort Σ|u|</td>
+        <td>48.94</td>
+        <td>10.34</td>
+        <td class="best">6.06 ✓</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px; font-family:var(--mono); font-size:9px; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase">
+    ✓ = best in category &nbsp;·&nbsp; MPC: fastest engagement and lowest total effort &nbsp;·&nbsp; LQR: perfect steady-state accuracy
+  </p>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<div class="footer-amber-bar"></div>
+<footer>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar &nbsp;·&nbsp; Mission debrief complete</span>
+  <span class="footer-tag">GuidanceCore · MAVERICK</span>
+</footer>
+
+<!-- ── LIVE TELEMETRY COUNTER ─────────────────── -->
+<script>
+  // Animate the time-of-flight readout in hero HUD
+  let t = 0;
+  const tofEl = document.getElementById('tof');
+  if (tofEl) {
+    setInterval(() => {
+      t += 0.1;
+      if (t > 15) t = 0;
+      const secs = t.toFixed(1);
+      const [s, ms] = secs.split('.');
+      tofEl.textContent = `00:${s.padStart(2,'0')}.${ms}0`;
+    }, 100);
+  }
+</script>
+
 </body>
 </html>
