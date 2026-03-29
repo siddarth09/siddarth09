@@ -36,7 +36,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 56px; height: 80px;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -75,14 +75,8 @@
       opacity: 0.5; transition: opacity 0.2s;
     }
     .nav-icon-link:hover { opacity: 1; }
-
-    /* github-mark.svg is black — invert to white */
     .nav-icon-link.invert img { filter: invert(1); }
-
-    /* linkedin-svgrepo-com.svg is already white — no filter needed */
-    .nav-icon-link img {
-      width: 20px; height: 20px;
-    }
+    .nav-icon-link img { width: 20px; height: 20px; }
 
     .nav-resume {
       display: inline-flex; align-items: center;
@@ -95,10 +89,43 @@
     }
     .nav-resume:hover { background: var(--off-white); }
 
+    /* mobile hamburger */
+    .nav-hamburger {
+      display: none; flex-direction: column;
+      gap: 5px; cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--white); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 80px; left: 0; right: 0;
+      background: rgba(0,0,0,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 24px 24px 32px;
+      flex-direction: column; gap: 0;
+      z-index: 99;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 18px; font-weight: 300;
+      color: var(--gray); padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--white); }
+
     /* ── HERO ────────────────────────────────── */
     .hero {
       position: relative; width: 100%;
-      height: 100svh; min-height: 640px;
+      height: 100svh; min-height: 580px;
       overflow: hidden;
     }
 
@@ -115,7 +142,7 @@
         rgba(0,0,0,0.15) 0%,
         rgba(0,0,0,0.0) 25%,
         rgba(0,0,0,0.0) 50%,
-        rgba(0,0,0,0.65) 80%,
+        rgba(0,0,0,0.7) 80%,
         rgba(0,0,0,1) 100%
       );
     }
@@ -135,7 +162,7 @@
     }
 
     .hero-title {
-      font-size: clamp(48px, 7vw, 104px);
+      font-size: clamp(40px, 7vw, 104px);
       font-weight: 200; letter-spacing: -0.03em;
       line-height: 1.0; color: var(--white);
       max-width: 900px; margin-bottom: 28px;
@@ -144,12 +171,12 @@
 
     .hero-bio {
       font-size: 15px; font-weight: 300;
-      color: rgba(255,255,255,0.5);
-      max-width: 420px; line-height: 1.7;
+      color: rgba(255,255,255,0.55);
+      max-width: 440px; line-height: 1.75;
       margin-bottom: 48px;
     }
 
-    .hero-cta-row { display: flex; align-items: center; gap: 16px; }
+    .hero-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex; align-items: center;
@@ -174,7 +201,6 @@
       display: grid; grid-template-columns: repeat(4,1fr);
       border-bottom: 1px solid var(--border);
     }
-    @media(max-width:700px) { .stat-strip { grid-template-columns: repeat(2,1fr); } }
 
     .stat-cell {
       padding: 44px 48px;
@@ -196,7 +222,7 @@
     /* ── LAYOUT ──────────────────────────────── */
     .section {
       max-width: 1400px; margin: 0 auto;
-      padding: 120px 80px;
+      padding: 100px 80px;
     }
 
     .section-eyebrow {
@@ -211,7 +237,7 @@
     }
 
     .section-title {
-      font-size: clamp(30px, 4vw, 54px);
+      font-size: clamp(28px, 4vw, 54px);
       font-weight: 200; letter-spacing: -0.02em;
       line-height: 1.1; color: var(--white);
       margin-bottom: 24px;
@@ -228,17 +254,16 @@
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 80px; align-items: start;
     }
-    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
 
     /* ── PRESS ───────────────────────────────── */
     .press-card {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 0; border: 1px solid var(--border);
     }
-    @media(max-width:900px) { .press-card { grid-template-columns: 1fr; } }
 
     .press-image {
-      aspect-ratio: 4/3; overflow: hidden; background: #111;
+      overflow: hidden; background: #111;
+      min-height: 260px;
     }
     .press-image img {
       width: 100%; height: 100%; object-fit: cover;
@@ -250,26 +275,26 @@
     }
 
     .press-content {
-      padding: 56px 52px;
+      padding: 52px 48px;
       display: flex; flex-direction: column; justify-content: center;
     }
 
     .press-tag {
       font-size: 10px; font-weight: 500;
       letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gray); margin-bottom: 20px;
+      color: var(--gray); margin-bottom: 18px;
     }
 
     .press-title {
-      font-size: clamp(20px, 2.5vw, 32px);
+      font-size: clamp(18px, 2.5vw, 30px);
       font-weight: 300; letter-spacing: -0.02em;
-      line-height: 1.2; color: var(--white); margin-bottom: 18px;
+      line-height: 1.2; color: var(--white); margin-bottom: 16px;
     }
 
     .press-body {
       font-size: 14px; font-weight: 300;
       color: rgba(255,255,255,0.45);
-      line-height: 1.75; margin-bottom: 36px;
+      line-height: 1.75; margin-bottom: 32px;
     }
 
     .press-link {
@@ -283,7 +308,7 @@
     .press-link:hover { border-color: var(--white); }
 
     .press-date {
-      margin-top: 40px;
+      margin-top: 36px;
       font-size: 11px; font-weight: 400;
       letter-spacing: 0.1em; text-transform: uppercase;
       color: rgba(255,255,255,0.18);
@@ -297,8 +322,6 @@
       background: var(--border);
       border: 1px solid var(--border);
     }
-    @media(max-width:1000px) { .projects-grid { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:640px)  { .projects-grid { grid-template-columns: 1fr; } }
 
     .project-card {
       background: var(--black);
@@ -310,10 +333,6 @@
 
     .project-card.featured { grid-column: span 2; }
     .project-card.featured .project-media { aspect-ratio: 21/9; }
-    @media(max-width:1000px) {
-      .project-card.featured { grid-column: span 1; }
-      .project-card.featured .project-media { aspect-ratio: 16/9; }
-    }
 
     .project-media {
       position: relative;
@@ -377,12 +396,13 @@
       border-bottom: 1px solid var(--border);
       font-size: 13px; font-weight: 300;
       color: rgba(255,255,255,0.55);
+      gap: 16px;
     }
     .skills-list li:first-child { border-top: 1px solid var(--border); }
     .skill-name { color: var(--white); font-weight: 400; }
     .skill-tag {
       font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--gray);
+      color: var(--gray); text-align: right; flex-shrink: 0;
     }
 
     /* ── CONTACT ─────────────────────────────── */
@@ -392,16 +412,13 @@
     }
     .contact-inner {
       max-width: 1400px; margin: 0 auto;
-      padding: 120px 80px;
+      padding: 100px 80px;
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 80px; align-items: center;
     }
-    @media(max-width:900px) {
-      .contact-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
-    }
 
     .contact-title {
-      font-size: clamp(32px, 4vw, 58px);
+      font-size: clamp(28px, 4vw, 58px);
       font-weight: 200; letter-spacing: -0.02em;
       line-height: 1.1; color: var(--white);
     }
@@ -420,6 +437,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       padding-bottom: 2px; width: fit-content;
       transition: border-color 0.2s;
+      word-break: break-all;
     }
     .contact-email:hover { border-color: var(--white); }
 
@@ -441,17 +459,48 @@
     }
     .footer-link:hover { color: var(--white); }
 
-    /* ── RESPONSIVE ──────────────────────────── */
+    /* ── MOBILE ──────────────────────────────── */
     @media(max-width:768px) {
-      nav { padding: 0 20px; }
+      nav { padding: 0 20px; height: 68px; }
       .nav-center { display: none; }
-      .hero-content { padding: 0 24px 56px; }
-      .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .section { padding: 80px 24px; }
-      .stat-cell { padding: 32px 24px; }
-      .press-content { padding: 32px 24px; }
+      .nav-right .nav-icon-link { display: none; }
+      .nav-right .nav-resume { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero-content { padding: 0 24px 52px; }
+      .hero-label { font-size: 10px; }
+      .hero-bio { font-size: 14px; max-width: 100%; }
+      .hero-cta-row { gap: 12px; }
+
+      .stat-strip { grid-template-columns: repeat(2,1fr); }
+      .stat-cell { padding: 28px 20px; }
+      .stat-num { font-size: 28px; }
+
+      .section { padding: 64px 24px; }
+
+      .two-col { grid-template-columns: 1fr; gap: 40px; }
+
+      .press-card { grid-template-columns: 1fr; }
+      .press-image { min-height: 200px; aspect-ratio: 16/9; }
+      .press-content { padding: 28px 24px; }
+
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; }
+      .project-card.featured .project-media { aspect-ratio: 16/9; }
       .project-body { padding: 20px 20px 24px; }
-      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .project-title { font-size: 15px; }
+      .skills-list li { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .skill-tag { text-align: left; }
+
+      .contact-inner { grid-template-columns: 1fr; gap: 40px; padding: 64px 24px; }
+
+      footer { padding: 28px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+    }
+
+    @media(max-width:480px) {
+      .hero-title { font-size: clamp(36px, 10vw, 56px); }
+      .btn { height: 42px; padding: 0 20px; font-size: 13px; }
     }
   </style>
 </head>
@@ -471,17 +520,28 @@
   </div>
 
   <div class="nav-right">
-    <!-- github-mark.svg is black → needs invert to show white on dark nav -->
     <a href="https://github.com/siddarth09" target="_blank" aria-label="GitHub" class="nav-icon-link invert">
       <img src="assets/github-mark.svg" alt="GitHub"/>
     </a>
-    <!-- linkedin-svgrepo-com.svg is already white → no invert needed -->
     <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" aria-label="LinkedIn" class="nav-icon-link">
       <img src="assets/linkedin-svgrepo-com.svg" alt="LinkedIn"/>
     </a>
     <a href="assets/Siddarth_Robotics_NEU.pdf" target="_blank" class="nav-resume">Resume</a>
+    <div class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
   </div>
 </nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#projects" onclick="toggleMenu()">Projects</a>
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+  <a href="assets/Siddarth_Robotics_NEU.pdf" target="_blank">Resume</a>
+  <a href="https://github.com/siddarth09" target="_blank">GitHub</a>
+  <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank">LinkedIn</a>
+</div>
 
 <!-- ── HERO ──────────────────────────────────── -->
 <div class="hero">
@@ -491,14 +551,14 @@
   <div class="hero-gradient"></div>
 
   <div class="hero-content">
-    <div class="hero-label">Robotics · Autonomy · Space Systems</div>
+    <div class="hero-label">Robotics &nbsp; Autonomy &nbsp; Space Systems</div>
     <h1 class="hero-title">
       Building machines<br/>
       that <em>think and act</em>
     </h1>
     <p class="hero-bio">
       Robotics engineer at Northeastern University. I build systems that
-      perceive, decide, and move — from VLA models on 7-DoF arms to
+      perceive, decide, and move. From VLA models on 7-DoF arms to
       autonomous legged robots in disaster environments.
     </p>
     <div class="hero-cta-row">
@@ -533,7 +593,7 @@
   <div class="section-eyebrow">Press</div>
 </div>
 
-<div style="max-width:1400px; margin:0 auto; padding:0 80px 120px">
+<div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="press-card">
     <div class="press-image">
       <img src="assets/neu.png" alt="Northeastern University — Space Station OS"/>
@@ -545,14 +605,14 @@
       </h2>
       <p class="press-body">
         Interviewed by Northeastern University News for contributions to
-        Space Station OS — an open-source ROS 2 platform simulating ISS-inspired
+        Space Station OS, an open-source ROS 2 platform simulating ISS-inspired
         life support, thermal control, and electrical power subsystems.
       </p>
       <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
          target="_blank" class="press-link">
         Read the article →
       </a>
-      <div class="press-date">February 2026 · Northeastern University</div>
+      <div class="press-date">February 2026 &nbsp; Northeastern University</div>
     </div>
   </div>
 </div>
@@ -560,22 +620,22 @@
 <!-- ── PROJECTS ───────────────────────────────── -->
 <div class="section" style="padding-bottom:0">
   <div class="section-eyebrow" id="projects">Projects</div>
-  <div class="two-col" style="margin-bottom:64px">
+  <div class="two-col" style="margin-bottom:60px">
     <h2 class="section-title">
       Work that runs<br/><em>in the real world</em>
     </h2>
     <p class="section-body">
       From imitation-learned VLA policies to MPC-based autonomous racing
-      and open-source space systems — every project here was deployed,
+      and open-source space systems. Every project here was deployed,
       not just simulated.
     </p>
   </div>
 </div>
 
-<div style="max-width:1400px; margin:0 auto; padding:0 80px 120px">
+<div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="projects-grid">
 
-    <!-- PRANA — featured, spans 2 cols -->
+    <!-- PRANA — featured -->
     <div class="project-card featured">
       <div class="project-media">
         <iframe
@@ -584,12 +644,12 @@
         </iframe>
       </div>
       <div class="project-body">
-        <div class="project-tag">VLA Model · Imitation Learning · 2025</div>
+        <div class="project-tag">VLA Model &nbsp; Imitation Learning &nbsp; 2025</div>
         <div class="project-title">PRANA — Vision-Language-Action Model</div>
         <p class="project-desc">
           End-to-end multimodal policy built from scratch. Dual-camera ViT encoders,
           PaliGemma tokenizer, 4-layer Transformer, 50-step action chunking.
-          Deployed on a physical 7-DoF arm — &gt;90% success on screwdriver retrieval.
+          Deployed on a physical 7-DoF arm with over 90% success on screwdriver retrieval.
         </p>
         <a href="projects/prana.html" class="project-link">View project →</a>
       </div>
@@ -604,10 +664,10 @@
         </iframe>
       </div>
       <div class="project-body">
-        <div class="project-tag">MPC · MPCC · Real Hardware</div>
+        <div class="project-tag">MPC &nbsp; MPCC &nbsp; Real Hardware</div>
         <div class="project-title">F1TENTH Autonomous Racing</div>
         <p class="project-desc">
-          MPC trajectory tracking and MPCC racing-line control with CasADi/IPOPT.
+          MPC trajectory tracking and MPCC racing-line control with CasADi and IPOPT.
           Dynamic rollout planning with RK4. Deployed on a real Ackermann platform.
         </p>
         <a href="projects/f1tenth.html" class="project-link">View project →</a>
@@ -617,11 +677,11 @@
     <!-- SPOT -->
     <div class="project-card">
       <div class="project-media">
-        <img src="assets/spot_nav.png" alt="Spot — Urban Search & Rescue"/>
+        <img src="assets/spot_nav.png" alt="Spot Urban Search and Rescue"/>
       </div>
       <div class="project-body">
-        <div class="project-tag">Legged Autonomy · ROS 2 · Isaac Sim</div>
-        <div class="project-title">Spot — Urban Search & Rescue</div>
+        <div class="project-tag">Legged Autonomy &nbsp; ROS 2 &nbsp; Isaac Sim</div>
+        <div class="project-title">Spot Urban Search and Rescue</div>
         <p class="project-desc">
           RL-trained locomotion in Isaac Lab composed with ROS 2 Nav2 for
           GPS-denied indoor navigation in disaster-inspired environments.
@@ -636,7 +696,7 @@
         <img src="assets/ssos.webp" alt="Space Station OS"/>
       </div>
       <div class="project-body">
-        <div class="project-tag">Open Source · ROS 2 · Space Systems</div>
+        <div class="project-tag">Open Source &nbsp; ROS 2 &nbsp; Space Systems</div>
         <div class="project-title">Space Station OS</div>
         <p class="project-desc">
           Modular ROS 2 platform simulating ISS-inspired life support, thermal
@@ -652,10 +712,10 @@
         <video autoplay muted loop playsinline src="assets/maverick.mp4"></video>
       </div>
       <div class="project-body">
-        <div class="project-tag">MPC · LQR · MATLAB</div>
-        <div class="project-title">GuidanceCore — MAVERICK</div>
+        <div class="project-tag">MPC &nbsp; LQR &nbsp; MATLAB</div>
+        <div class="project-title">GuidanceCore MAVERICK</div>
         <p class="project-desc">
-          Comparative missile autopilot study: SFI, LQR, and MPC on short-period
+          Comparative missile autopilot study across SFI, LQR, and MPC on short-period
           longitudinal dynamics. MPC achieved fastest time-to-target at 8s with
           lowest total control effort.
         </p>
@@ -669,10 +729,10 @@
         <img src="assets/panda.png" alt="Franka Panda Manipulation"/>
       </div>
       <div class="project-body">
-        <div class="project-tag">IK · Motion Planning · PPO</div>
+        <div class="project-tag">IK &nbsp; Motion Planning &nbsp; PPO</div>
         <div class="project-title">Franka Panda Manipulation</div>
         <p class="project-desc">
-          Classical pipeline: HSV perception, Pinocchio IK, OMPL RRTConnect.
+          Classical pipeline with HSV perception, Pinocchio IK, and OMPL RRTConnect.
           Evolved to a PPO-based policy trained in MuJoCo for adaptive pick and place.
         </p>
         <a href="projects/panda.html" class="project-link">View project →</a>
@@ -685,7 +745,7 @@
         <img src="assets/ditto.webp" alt="DITTO"/>
       </div>
       <div class="project-body">
-        <div class="project-tag">Delivery Robot · Last-Mile · Autonomy</div>
+        <div class="project-tag">Delivery Robot &nbsp; Last Mile &nbsp; Autonomy</div>
         <div class="project-title">DITTO</div>
         <p class="project-desc">
           Outdoor delivery robot for last-mile logistics in communities.
@@ -709,46 +769,46 @@
         Engineer.<br/><em>Builder.</em><br/>Researcher.
       </h2>
       <p class="section-body" style="margin-bottom:20px">
-        I'm a robotics engineer at Northeastern University working across
+        Robotics engineer at Northeastern University working across
         autonomy, manipulation, and space systems. My focus is building
-        systems that work on real hardware — not just in simulation.
+        systems that work on real hardware, not just in simulation.
       </p>
       <p class="section-body">
         I've deployed imitation-learned VLA policies on 7-DoF arms, built
         MPC controllers for autonomous racing, contributed to open-source
         space station software, and trained legged robots for disaster
-        response — all with a bias toward real-world validation.
+        response. All with a bias toward real-world validation.
       </p>
     </div>
     <div>
       <ul class="skills-list">
         <li>
           <span class="skill-name">Vision-Language-Action Models</span>
-          <span class="skill-tag">PyTorch · LeRobot</span>
+          <span class="skill-tag">PyTorch &nbsp; LeRobot</span>
         </li>
         <li>
           <span class="skill-name">Model Predictive Control</span>
-          <span class="skill-tag">CasADi · IPOPT · MATLAB</span>
+          <span class="skill-tag">CasADi &nbsp; IPOPT &nbsp; MATLAB</span>
         </li>
         <li>
           <span class="skill-name">Reinforcement Learning</span>
-          <span class="skill-tag">Isaac Lab · MuJoCo · PPO</span>
+          <span class="skill-tag">Isaac Lab &nbsp; MuJoCo &nbsp; PPO</span>
         </li>
         <li>
           <span class="skill-name">Robot Middleware</span>
-          <span class="skill-tag">ROS 2 · TF2 · Nav2</span>
+          <span class="skill-tag">ROS 2 &nbsp; TF2 &nbsp; Nav2</span>
         </li>
         <li>
           <span class="skill-name">Motion Planning</span>
-          <span class="skill-tag">OMPL · MoveIt 2 · Pinocchio</span>
+          <span class="skill-tag">OMPL &nbsp; MoveIt 2 &nbsp; Pinocchio</span>
         </li>
         <li>
           <span class="skill-name">Simulation</span>
-          <span class="skill-tag">Isaac Sim · Gazebo · MuJoCo</span>
+          <span class="skill-tag">Isaac Sim &nbsp; Gazebo &nbsp; MuJoCo</span>
         </li>
         <li>
           <span class="skill-name">Languages</span>
-          <span class="skill-tag">Python · C++ · MATLAB</span>
+          <span class="skill-tag">Python &nbsp; C++ &nbsp; MATLAB</span>
         </li>
       </ul>
     </div>
@@ -773,7 +833,7 @@
       <div>
         <a href="https://calendly.com/siddarth-dayasagar" target="_blank"
            class="btn btn-primary" style="margin-top:16px">
-          ☕ &nbsp;Schedule a call
+          Schedule a call
         </a>
       </div>
     </div>
@@ -789,6 +849,21 @@
     <a href="assets/Siddarth_Robotics_NEU.pdf" target="_blank" class="footer-link">Resume</a>
   </div>
 </footer>
+
+<script>
+  function toggleMenu() {
+    const m = document.getElementById('mobileMenu');
+    m.classList.toggle('open');
+  }
+  // close menu on outside click
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.querySelector('.nav-hamburger');
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
 
 </body>
 </html>
