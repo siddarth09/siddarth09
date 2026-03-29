@@ -28,7 +28,65 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* hide body while loading */
+    body.loading { overflow: hidden; }
+
     a { color: inherit; text-decoration: none; }
+
+    /* ── PRELOADER ───────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--black);
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 52px 64px;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden {
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+
+    .preloader-label {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 14px;
+    }
+
+    .preloader-counter {
+      font-size: clamp(72px, 14vw, 160px);
+      font-weight: 200; letter-spacing: -0.04em;
+      color: var(--white); line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .preloader-bar-wrap {
+      width: 100%; height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-top: 32px; overflow: hidden;
+    }
+    .preloader-bar {
+      height: 100%; width: 0%;
+      background: var(--white);
+      transition: width 0.05s linear;
+    }
+
+    .preloader-project {
+      margin-top: 16px;
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ── REVEAL ANIMATION ────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
     img { display: block; max-width: 100%; }
 
     /* ── NAV ─────────────────────────────────── */
@@ -461,6 +519,8 @@
 
     /* ── MOBILE ──────────────────────────────── */
     @media(max-width:768px) {
+      #preloader { padding: 36px 24px; }
+
       nav { padding: 0 20px; height: 68px; }
       .nav-center { display: none; }
       .nav-right .nav-icon-link { display: none; }
@@ -504,7 +564,17 @@
     }
   </style>
 </head>
-<body>
+<body class="loading">
+
+<!-- ── PRELOADER ─────────────────────────────── -->
+<div id="preloader">
+  <div class="preloader-label">Loading</div>
+  <div class="preloader-counter" id="counter">0</div>
+  <div class="preloader-bar-wrap">
+    <div class="preloader-bar" id="bar"></div>
+  </div>
+  <div class="preloader-project">Siddarth Dayasagar &nbsp; Robotics Portfolio</div>
+</div>
 
 <!-- ── NAV ───────────────────────────────────── -->
 <nav>
@@ -551,17 +621,17 @@
   <div class="hero-gradient"></div>
 
   <div class="hero-content">
-    <div class="hero-label">Robotics &nbsp; Autonomy &nbsp; Space Systems</div>
-    <h1 class="hero-title">
+    <div class="hero-label reveal">Robotics &nbsp; Autonomy &nbsp; Space Systems</div>
+    <h1 class="hero-title reveal">
       Building machines<br/>
       that <em>think and act</em>
     </h1>
-    <p class="hero-bio">
+    <p class="hero-bio reveal">
       Robotics engineer at Northeastern University. I build systems that
       perceive, decide, and move. From VLA models on 7-DoF arms to
       autonomous legged robots in disaster environments.
     </p>
-    <div class="hero-cta-row">
+    <div class="hero-cta-row reveal">
       <a href="#projects" class="btn btn-primary">View Work</a>
       <a href="#contact" class="btn btn-ghost">Get in Touch</a>
     </div>
@@ -569,32 +639,15 @@
 </div>
 
 <!-- ── STAT STRIP ─────────────────────────────── -->
-<div class="stat-strip">
-  <div class="stat-cell">
-    <div class="stat-num">&gt;90%</div>
-    <div class="stat-label">Task success rate<br/>PRANA VLA model</div>
-  </div>
-  <div class="stat-cell">
-    <div class="stat-num">7-DoF</div>
-    <div class="stat-label">Physical robot<br/>deployed on hardware</div>
-  </div>
-  <div class="stat-cell">
-    <div class="stat-num">6+</div>
-    <div class="stat-label">Projects shipped<br/>across robotics domains</div>
-  </div>
-  <div class="stat-cell">
-    <div class="stat-num">NU</div>
-    <div class="stat-label">Featured by<br/>Northeastern University</div>
-  </div>
-</div>
+
 
 <!-- ── PRESS ──────────────────────────────────── -->
 <div class="section" style="padding-bottom:0">
-  <div class="section-eyebrow">Press</div>
+  <div class="section-eyebrow reveal">Press</div>
 </div>
 
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
-  <div class="press-card">
+  <div class="press-card reveal">
     <div class="press-image">
       <img src="assets/neu.png" alt="Northeastern University — Space Station OS"/>
     </div>
@@ -619,12 +672,12 @@
 
 <!-- ── PROJECTS ───────────────────────────────── -->
 <div class="section" style="padding-bottom:0">
-  <div class="section-eyebrow" id="projects">Projects</div>
+  <div class="section-eyebrow reveal" id="projects">Projects</div>
   <div class="two-col" style="margin-bottom:60px">
-    <h2 class="section-title">
+    <h2 class="section-title reveal">
       Work that runs<br/><em>in the real world</em>
     </h2>
-    <p class="section-body">
+    <p class="section-body reveal">
       From imitation-learned VLA policies to MPC-based autonomous racing
       and open-source space systems. Every project here was deployed,
       not just simulated.
@@ -636,7 +689,7 @@
   <div class="projects-grid">
 
     <!-- PRANA — featured -->
-    <div class="project-card featured">
+    <div class="project-card reveal featured">
       <div class="project-media">
         <iframe
           src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&autoplay=1&mute=1&loop=1&playlist=FkD8xybTaxQ&controls=0&modestbranding=1"
@@ -656,7 +709,7 @@
     </div>
 
     <!-- F1TENTH -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <iframe
           src="https://www.youtube.com/embed/h-dFtYMnnxc?autoplay=1&mute=1&loop=1&playlist=h-dFtYMnnxc&controls=0&modestbranding=1"
@@ -675,7 +728,7 @@
     </div>
 
     <!-- SPOT -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <img src="assets/spot_nav.png" alt="Spot Urban Search and Rescue"/>
       </div>
@@ -691,7 +744,7 @@
     </div>
 
     <!-- SSOS -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <img src="assets/ssos.webp" alt="Space Station OS"/>
       </div>
@@ -707,7 +760,7 @@
     </div>
 
     <!-- MAVERICK -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <video autoplay muted loop playsinline src="assets/maverick.mp4"></video>
       </div>
@@ -724,7 +777,7 @@
     </div>
 
     <!-- PANDA -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <img src="assets/panda.png" alt="Franka Panda Manipulation"/>
       </div>
@@ -740,7 +793,7 @@
     </div>
 
     <!-- DITTO -->
-    <div class="project-card">
+    <div class="project-card reveal">
       <div class="project-media">
         <img src="assets/ditto.webp" alt="DITTO"/>
       </div>
@@ -762,10 +815,10 @@
 
 <!-- ── ABOUT ──────────────────────────────────── -->
 <div class="section" id="about">
-  <div class="section-eyebrow">About</div>
+  <div class="section-eyebrow reveal">About</div>
   <div class="two-col">
     <div>
-      <h2 class="section-title">
+      <h2 class="section-title reveal">
         Engineer.<br/><em>Builder.</em><br/>Researcher.
       </h2>
       <p class="section-body" style="margin-bottom:20px">
@@ -773,7 +826,7 @@
         autonomy, manipulation, and space systems. My focus is building
         systems that work on real hardware, not just in simulation.
       </p>
-      <p class="section-body">
+      <p class="section-body reveal">
         I've deployed imitation-learned VLA policies on 7-DoF arms, built
         MPC controllers for autonomous racing, contributed to open-source
         space station software, and trained legged robots for disaster
@@ -818,17 +871,17 @@
 <!-- ── CONTACT ────────────────────────────────── -->
 <div class="contact-section" id="contact">
   <div class="contact-inner">
-    <h2 class="contact-title">
+    <h2 class="contact-title reveal">
       Let's build<br/><em>something</em><br/>together
     </h2>
-    <div class="contact-right">
+    <div class="contact-right reveal">
       <p class="contact-body">
         Open to research collaborations, engineering roles, and conversations
         about autonomy, manipulation, or space systems. Grab a coffee chat
         or send a message.
       </p>
-      <a href="mailto:siddarth.dayasagar@gmail.com" class="contact-email">
-        siddarth.dayasagar@gmail.com
+      <a href="/cdn-cgi/l/email-protection#43302a27272231372b6d27223a22302224223103242e222a2f6d202c2e" class="contact-email">
+        <span class="__cf_email__" data-cfemail="3043595454514244581e54514951435157514270575d51595c1e535f5d">[email&#160;protected]</span>
       </a>
       <div>
         <a href="https://calendly.com/siddarth-dayasagar" target="_blank"
@@ -850,12 +903,51 @@
   </div>
 </footer>
 
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
+  // ── Preloader
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('bar');
+  const preloader = document.getElementById('preloader');
+  let count = 0;
+
+  const interval = setInterval(() => {
+    const step = count < 70 ? Math.random() * 3 + 1 : Math.random() * 6 + 2;
+    count = Math.min(100, count + step);
+    counter.textContent = Math.floor(count);
+    bar.style.width = count + '%';
+
+    if (count >= 100) {
+      clearInterval(interval);
+      counter.textContent = '100';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        document.body.classList.remove('loading');
+        // trigger hero reveal
+        document.querySelectorAll('.hero .reveal').forEach(el => {
+          el.classList.add('visible');
+        });
+      }, 400);
+    }
+  }, 40);
+
+  // ── Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Mobile menu
   function toggleMenu() {
     const m = document.getElementById('mobileMenu');
     m.classList.toggle('open');
   }
-  // close menu on outside click
   document.addEventListener('click', function(e) {
     const menu = document.getElementById('mobileMenu');
     const hamburger = document.querySelector('.nav-hamburger');
