@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Franka Panda — JARVIS Interface</title>
+  <title>Franka Panda — Manipulation</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,13 +17,9 @@
       --blue2:   #40c4ff;
       --blue3:   #0066cc;
       --blue-dim: rgba(0,168,255,0.08);
-      --blue-glow: rgba(0,168,255,0.25);
       --arc:     #00e5ff;
-      --arc-dim: rgba(0,229,255,0.07);
-      --gold:    #ffc107;
-      --red:     #ff4444;
       --white:   #e0f4ff;
-      --muted:   #2a5070;
+      --muted:   #5a7a90;
       --mono:    'Share Tech Mono', monospace;
       --display: 'Orbitron', sans-serif;
       --body:    'Barlow', sans-serif;
@@ -36,77 +32,62 @@
       color: var(--white);
       font-family: var(--body);
       font-weight: 300;
+      line-height: 1.75;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
     a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
 
-    /* ── HEXAGONAL GRID BACKGROUND ───────────── */
+    /* ── HEX GRID ────────────────────────────── */
     #hex-canvas {
       position: fixed; inset: 0; z-index: 0;
-      opacity: 0.18; pointer-events: none;
+      opacity: 0.15; pointer-events: none;
     }
-
-    /* ── RADIAL GLOW ─────────────────────────── */
     .radial-glow {
       position: fixed; top: -20%; left: 50%;
       transform: translateX(-50%);
       width: 900px; height: 900px;
-      background: radial-gradient(ellipse, rgba(0,168,255,0.07) 0%, transparent 65%);
+      background: radial-gradient(ellipse, rgba(0,168,255,0.06) 0%, transparent 65%);
       pointer-events: none; z-index: 0;
     }
-
     body > *:not(#hex-canvas):not(.radial-glow) { position: relative; z-index: 1; }
 
     /* ── NAV ─────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-      height: 58px;
+      height: 62px;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px;
-      background: rgba(1,8,16,0.85);
+      padding: 0 52px;
+      background: rgba(1,8,16,0.88);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(0,168,255,0.2);
+      border-bottom: 1px solid rgba(0,168,255,0.15);
     }
 
-    .nav-left { display: flex; align-items: center; gap: 20px; }
+    .nav-left { display: flex; align-items: center; gap: 14px; }
 
-    /* arc reactor pulse */
     .arc-reactor {
       width: 28px; height: 28px; border-radius: 50%;
-      border: 1px solid rgba(0,229,255,0.5);
+      border: 1px solid rgba(0,229,255,0.45);
       display: flex; align-items: center; justify-content: center;
       position: relative;
     }
     .arc-reactor::before {
-      content: '';
-      width: 10px; height: 10px; border-radius: 50%;
+      content: ''; width: 10px; height: 10px; border-radius: 50%;
       background: var(--arc);
-      box-shadow: 0 0 8px var(--arc), 0 0 20px rgba(0,229,255,0.5);
+      box-shadow: 0 0 8px var(--arc), 0 0 20px rgba(0,229,255,0.45);
       animation: arc-pulse 2s ease-in-out infinite;
     }
-    .arc-reactor::after {
-      content: '';
-      position: absolute; inset: 3px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,229,255,0.2);
-      animation: arc-ring 2s ease-in-out infinite reverse;
-    }
     @keyframes arc-pulse {
-      0%,100% { box-shadow: 0 0 8px var(--arc), 0 0 20px rgba(0,229,255,0.4); }
-      50% { box-shadow: 0 0 14px var(--arc), 0 0 40px rgba(0,229,255,0.7); }
-    }
-    @keyframes arc-ring {
-      0%   { transform: rotate(0deg); opacity: 0.3; }
-      100% { transform: rotate(360deg); opacity: 0.6; }
+      0%,100% { box-shadow: 0 0 8px var(--arc), 0 0 20px rgba(0,229,255,0.35); }
+      50%      { box-shadow: 0 0 14px var(--arc), 0 0 40px rgba(0,229,255,0.65); }
     }
 
     .nav-title {
       font-family: var(--display);
       font-size: 11px; font-weight: 700;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--blue2);
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue2);
     }
     .nav-sep { width: 1px; height: 16px; background: rgba(0,168,255,0.2); }
     .nav-sub {
@@ -122,137 +103,125 @@
     }
     .status-dot {
       width: 6px; height: 6px; border-radius: 50%;
-      background: var(--arc);
-      box-shadow: 0 0 8px var(--arc);
+      background: var(--arc); box-shadow: 0 0 8px var(--arc);
       animation: arc-pulse 1.8s ease-in-out infinite;
     }
-
     .nav-back {
-      font-family: var(--mono); font-size: 10px;
-      color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
-      display: flex; align-items: center; gap: 8px;
-      transition: color 0.2s;
+      font-family: var(--mono); font-size: 11px;
+      color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px; transition: color 0.2s;
     }
-    .nav-back:hover { color: var(--blue2); }
+    .nav-back:hover { color: var(--white); }
 
     /* ── HERO ────────────────────────────────── */
     .hero {
       position: relative; width: 100%;
-      height: 100svh; min-height: 660px;
-      overflow: hidden; display: flex; align-items: flex-end;
+      height: 100svh; min-height: 620px; overflow: hidden;
     }
 
-    .hero-video-wrap {
-      position: absolute; inset: 0; overflow: hidden;
-    }
+    .hero-video-wrap { position: absolute; inset: 0; overflow: hidden; }
     .hero-video-wrap iframe {
-      position: absolute;
-      top: 50%; left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: 100vw; height: 56.25vw;
       min-height: 100vh; min-width: 177.78vh;
       pointer-events: none;
-      filter: brightness(0.25) saturate(0.4) hue-rotate(190deg);
+      filter: brightness(0.22) saturate(0.4) hue-rotate(190deg);
     }
 
     .hero-overlay {
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse at 30% 50%, rgba(0,168,255,0.06) 0%, transparent 55%),
-        linear-gradient(to bottom, rgba(1,8,16,0.3) 0%, transparent 30%, rgba(1,8,16,0.7) 75%, rgba(1,8,16,1) 100%),
-        linear-gradient(to right, rgba(1,8,16,0.6) 0%, transparent 60%);
+        radial-gradient(ellipse at 30% 50%, rgba(0,168,255,0.05) 0%, transparent 55%),
+        linear-gradient(to bottom, rgba(1,8,16,0.3) 0%, transparent 28%, rgba(1,8,16,0.65) 72%, rgba(1,8,16,1) 100%),
+        linear-gradient(to right, rgba(1,8,16,0.55) 0%, transparent 60%);
     }
 
-    /* scanning arc lines */
     .hero-arc-line {
       position: absolute; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(0,168,255,0.5) 30%, rgba(0,229,255,0.8) 50%, rgba(0,168,255,0.5) 70%, transparent 100%);
-      animation: arc-scan 5s ease-in-out infinite;
-      opacity: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,168,255,0.4) 30%, rgba(0,229,255,0.7) 50%, rgba(0,168,255,0.4) 70%, transparent 100%);
+      animation: arc-scan 5s ease-in-out infinite; opacity: 0;
     }
     .hero-arc-line:nth-child(2) { animation-delay: 2.5s; }
     @keyframes arc-scan {
       0%   { top: 10%; opacity: 0; }
-      10%  { opacity: 0.6; }
+      10%  { opacity: 0.55; }
       90%  { opacity: 0.3; }
       100% { top: 90%; opacity: 0; }
     }
 
-    /* HUD corners */
     .hud-corner {
-      position: absolute; width: 48px; height: 48px;
-      border-color: rgba(0,168,255,0.5); border-style: solid;
+      position: absolute; width: 44px; height: 44px;
+      border-color: rgba(0,168,255,0.45); border-style: solid;
     }
-    .hud-corner.tl { top: 72px; left: 32px; border-width: 1px 0 0 1px; }
-    .hud-corner.tr { top: 72px; right: 32px; border-width: 1px 1px 0 0; }
-    .hud-corner.bl { bottom: 20px; left: 32px; border-width: 0 0 1px 1px; }
-    .hud-corner.br { bottom: 20px; right: 32px; border-width: 0 1px 1px 0; }
+    .hud-corner.tl { top: 72px; left: 28px; border-width: 1px 0 0 1px; }
+    .hud-corner.tr { top: 72px; right: 28px; border-width: 1px 1px 0 0; }
+    .hud-corner.bl { bottom: 18px; left: 28px; border-width: 0 0 1px 1px; }
+    .hud-corner.br { bottom: 18px; right: 28px; border-width: 0 1px 1px 0; }
 
-    /* top right JARVIS readout */
+    .jarvis-tag {
+      position: absolute; top: 80px; left: 52px;
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(0,168,255,0.38); line-height: 2;
+    }
+
     .jarvis-readout {
-      position: absolute; top: 80px; right: 56px;
+      position: absolute; top: 80px; right: 52px;
       text-align: right;
       font-family: var(--mono); font-size: 10px;
       letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(0,168,255,0.55); line-height: 2;
+      color: rgba(0,168,255,0.5); line-height: 2;
     }
     .jarvis-readout .live { color: var(--blue2); opacity: 0.9; }
-
-    /* top left system tag */
-    .jarvis-tag {
-      position: absolute; top: 80px; left: 56px;
-      font-family: var(--mono); font-size: 9px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(0,168,255,0.4); line-height: 2;
-    }
 
     .hero-content {
       position: relative; z-index: 10;
       width: 100%; max-width: 1400px; margin: 0 auto;
       padding: 0 80px 80px;
+      height: 100%; display: flex; flex-direction: column; justify-content: flex-end;
     }
 
     .hero-eyebrow {
       font-family: var(--mono); font-size: 10px;
       letter-spacing: 0.26em; text-transform: uppercase;
-      color: var(--blue); margin-bottom: 18px;
+      color: var(--blue); margin-bottom: 20px;
       display: flex; align-items: center; gap: 14px;
     }
     .hero-eyebrow::before {
-      content: '';
-      display: block; width: 28px; height: 1px; background: var(--blue);
+      content: ''; display: block;
+      width: 28px; height: 1px; background: var(--blue);
       box-shadow: 0 0 6px var(--blue);
     }
 
     .hero-title {
       font-family: var(--display);
-      font-size: clamp(42px, 7vw, 108px);
-      font-weight: 900; letter-spacing: 0.04em;
-      line-height: 0.95; text-transform: uppercase;
-      color: var(--white); margin-bottom: 8px;
-      text-shadow: 0 0 40px rgba(0,168,255,0.2);
+      font-size: clamp(40px, 7vw, 100px);
+      font-weight: 900; letter-spacing: 0.03em;
+      line-height: 0.96; text-transform: uppercase;
+      color: var(--white); margin-bottom: 10px;
+      text-shadow: 0 0 40px rgba(0,168,255,0.18);
     }
     .hero-title .blue {
       color: var(--blue2);
-      text-shadow: 0 0 30px rgba(0,168,255,0.6), 0 0 60px rgba(0,168,255,0.2);
+      text-shadow: 0 0 30px rgba(0,168,255,0.55), 0 0 60px rgba(0,168,255,0.18);
     }
     .hero-title .outline {
-      -webkit-text-stroke: 1px rgba(0,168,255,0.3);
-      color: transparent;
+      -webkit-text-stroke: 1px rgba(0,168,255,0.28); color: transparent;
     }
 
     .hero-sub {
-      font-size: 14px; font-weight: 300;
-      color: rgba(224,244,255,0.45);
-      max-width: 460px; line-height: 1.75;
-      margin: 22px 0 48px;
-      font-family: var(--mono); letter-spacing: 0.03em;
+      font-size: 17px; font-weight: 300;
+      color: rgba(224,244,255,0.5);
+      max-width: 500px; line-height: 1.75;
+      margin: 24px 0 52px;
+      font-family: var(--body); letter-spacing: 0.01em;
     }
 
     .hero-telem {
       display: flex; gap: 0;
       border-top: 1px solid rgba(0,168,255,0.15);
-      padding-top: 28px;
+      padding-top: 28px; flex-wrap: wrap;
     }
     .telem-cell {
       padding-right: 44px; margin-right: 44px;
@@ -261,10 +230,10 @@
     .telem-cell:last-child { border-right: none; margin-right: 0; }
     .telem-val {
       font-family: var(--display);
-      font-size: 22px; font-weight: 700;
+      font-size: 20px; font-weight: 700;
       color: var(--blue2); line-height: 1; margin-bottom: 5px;
       letter-spacing: 0.06em;
-      text-shadow: 0 0 20px rgba(0,168,255,0.5);
+      text-shadow: 0 0 20px rgba(0,168,255,0.45);
     }
     .telem-label {
       font-family: var(--mono); font-size: 9px;
@@ -276,16 +245,14 @@
       background: rgba(0,168,255,0.05);
       border-top: 1px solid rgba(0,168,255,0.18);
       border-bottom: 1px solid rgba(0,168,255,0.18);
-      padding: 11px 64px;
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 64px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     }
     .sys-banner-id {
       font-family: var(--mono); font-size: 9px;
       letter-spacing: 0.22em; text-transform: uppercase; color: var(--blue);
     }
-    .sys-banner-right {
-      display: flex; gap: 36px;
-    }
+    .sys-banner-right { display: flex; gap: 36px; flex-wrap: wrap; }
     .sys-banner-item {
       font-family: var(--mono); font-size: 9px;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
@@ -311,8 +278,7 @@
       display: flex; align-items: center; gap: 14px;
     }
     .section-tag::before {
-      content: '';
-      display: block; width: 20px; height: 1px;
+      content: ''; display: block; width: 20px; height: 1px;
       background: var(--blue); box-shadow: 0 0 6px var(--blue);
     }
     .section-tag::after {
@@ -322,45 +288,43 @@
 
     .section-title {
       font-family: var(--display);
-      font-size: clamp(28px, 3.8vw, 54px);
+      font-size: clamp(28px, 3.8vw, 52px);
       font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.04em; line-height: 1.05;
-      color: var(--white); margin-bottom: 24px;
+      letter-spacing: 0.03em; line-height: 1.05;
+      color: var(--white); margin-bottom: 28px;
     }
-    .section-title .blue { color: var(--blue2); text-shadow: 0 0 20px rgba(0,168,255,0.4); }
+    .section-title .blue { color: var(--blue2); text-shadow: 0 0 20px rgba(0,168,255,0.35); }
 
-    .section-body {
-      font-size: 14px; font-weight: 300;
-      color: rgba(224,244,255,0.5); line-height: 1.8;
-      max-width: 540px;
+    /* Bigger, readable body text */
+    .body-text {
+      font-size: 17px; font-weight: 300;
+      color: rgba(224,244,255,0.72);
+      line-height: 1.85; max-width: 600px;
     }
+    .body-text + .body-text { margin-top: 18px; }
 
     .two-col {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 72px; align-items: start;
     }
-    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
 
     /* ── VIDEO ───────────────────────────────── */
     .video-section {
       max-width: 1400px; margin: 0 auto;
-      padding: 0 64px 96px;
+      padding: 0 64px 100px;
     }
     .video-wrap {
       position: relative; width: 100%;
       aspect-ratio: 16/9; background: #000; overflow: hidden;
       border: 1px solid rgba(0,168,255,0.15);
-      box-shadow: 0 0 60px rgba(0,168,255,0.06), 0 0 120px rgba(0,168,255,0.03);
+      box-shadow: 0 0 60px rgba(0,168,255,0.05);
     }
     .video-wrap::before, .video-wrap::after {
-      content: ''; position: absolute;
-      width: 18px; height: 18px; z-index: 2;
+      content: ''; position: absolute; width: 18px; height: 18px; z-index: 2;
     }
     .video-wrap::before { top:0; left:0; border-top:1px solid var(--blue); border-left:1px solid var(--blue); }
     .video-wrap::after  { bottom:0; right:0; border-bottom:1px solid var(--blue); border-right:1px solid var(--blue); }
-    .video-wrap iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
-    }
+    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
     .video-caption {
       margin-top: 12px;
       font-family: var(--mono); font-size: 9px;
@@ -369,29 +333,26 @@
     }
     .video-caption::before { content: '◈'; color: var(--blue); font-size: 9px; }
 
-    /* ── METRICS STRIP ───────────────────────── */
+    /* ── METRICS ─────────────────────────────── */
     .metrics-strip {
       display: grid; grid-template-columns: repeat(4,1fr);
       border-top: 1px solid rgba(0,168,255,0.15);
       border-bottom: 1px solid rgba(0,168,255,0.1);
       background: rgba(0,168,255,0.02);
     }
-    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
-
     .metric-cell {
       padding: 40px 32px;
       border-right: 1px solid rgba(0,168,255,0.07);
-      position: relative; overflow: hidden;
       transition: background 0.3s;
     }
     .metric-cell:hover { background: rgba(0,168,255,0.04); }
     .metric-cell:last-child { border-right: none; }
     .metric-num {
       font-family: var(--display);
-      font-size: 34px; font-weight: 800;
+      font-size: 30px; font-weight: 800;
       letter-spacing: 0.04em; color: var(--blue2);
       line-height: 1; margin-bottom: 8px;
-      text-shadow: 0 0 20px rgba(0,168,255,0.4);
+      text-shadow: 0 0 20px rgba(0,168,255,0.35);
     }
     .metric-desc {
       font-family: var(--mono); font-size: 9px;
@@ -399,80 +360,75 @@
       color: var(--muted); line-height: 1.55;
     }
 
-    /* ── PIPELINE FLOW ───────────────────────── */
-    .pipeline {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .pipe-node {
-      background: var(--panel);
-      border: 1px solid rgba(0,168,255,0.12);
-      padding: 20px 24px;
-      display: flex; align-items: flex-start; gap: 20px;
-      position: relative; overflow: hidden;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .pipe-node:hover {
-      border-color: rgba(0,168,255,0.3);
-      background: var(--panel2);
-    }
-    .pipe-node::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 2px; background: var(--blue3);
-      box-shadow: 0 0 8px rgba(0,168,255,0.3);
-    }
-    .pipe-node.active::before { background: var(--blue); box-shadow: 0 0 12px rgba(0,168,255,0.6); }
+    /* ── PIPELINE ────────────────────────────── */
+    .pipeline { display: flex; flex-direction: column; gap: 2px; margin-top: 40px; }
 
-    /* connector arrow between nodes */
-    .pipe-arrow {
-      text-align: center;
-      font-family: var(--mono); font-size: 14px;
-      color: rgba(0,168,255,0.25); padding: 4px 0;
-      letter-spacing: 0.1em;
+    .pipe-step {
+      display: flex; align-items: flex-start; gap: 24px;
+      background: rgba(4,18,32,0.9);
+      border: 1px solid rgba(0,168,255,0.12);
+      padding: 24px 28px;
+      transition: background 0.2s, border-color 0.2s;
     }
+    .pipe-step:hover { background: rgba(6,24,40,0.95); border-color: rgba(0,168,255,0.25); }
 
     .pipe-num {
-      font-family: var(--display);
-      font-size: 22px; font-weight: 800;
-      color: rgba(0,168,255,0.18); flex-shrink: 0;
-      margin-top: 2px; letter-spacing: 0.06em;
+      font-family: var(--display); font-size: 28px; font-weight: 800;
+      color: rgba(0,168,255,0.15); line-height: 1;
+      flex-shrink: 0; width: 48px; text-align: right; margin-top: 2px;
     }
-    .pipe-node.active .pipe-num { color: rgba(0,168,255,0.35); }
 
     .pipe-content { flex: 1; }
     .pipe-title {
-      font-family: var(--display);
-      font-size: 13px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--white); margin-bottom: 5px;
+      font-family: var(--display); font-size: 14px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--white); margin-bottom: 8px;
     }
-    .pipe-body {
-      font-size: 13px; font-weight: 300;
-      color: rgba(224,244,255,0.5); line-height: 1.6;
+    .pipe-desc {
+      font-size: 15px; font-weight: 300;
+      color: rgba(224,244,255,0.62); line-height: 1.7;
     }
     .pipe-tag {
-      margin-top: 8px;
       font-family: var(--mono); font-size: 9px;
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue);
+      flex-shrink: 0; margin-top: 4px;
     }
 
-    /* ── CODE BLOCK ──────────────────────────── */
+    .pipe-arrow-row {
+      display: flex; align-items: center;
+      padding: 0 0 0 72px; height: 18px;
+      color: rgba(0,168,255,0.2); font-size: 13px;
+      font-family: var(--mono);
+    }
+
+    /* ── MATH / CODE BLOCKS ──────────────────── */
+    .eq-card {
+      background: rgba(0,168,255,0.04);
+      border: 1px solid rgba(0,168,255,0.12);
+      border-left: 2px solid var(--blue);
+      padding: 22px 24px; margin-top: 14px;
+    }
+    .eq-label {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 12px;
+    }
+    .eq-body {
+      font-family: var(--mono); font-size: 14px;
+      color: rgba(224,244,255,0.78); line-height: 1.9;
+    }
+    .eq-body .var { color: var(--blue2); }
+    .eq-body .op  { color: rgba(224,244,255,0.3); }
+
     .code-block {
-      font-family: var(--mono); font-size: 12px;
-      line-height: 1.9; color: rgba(224,244,255,0.4);
+      font-family: var(--mono); font-size: 13px;
+      line-height: 1.85; color: rgba(224,244,255,0.55);
       white-space: pre; overflow-x: auto;
-      padding: 24px 20px;
-      background: rgba(0,0,0,0.5);
-      border-left: 2px solid var(--blue3);
+      padding: 24px 22px;
+      background: rgba(0,0,0,0.45);
+      border-left: 2px solid var(--blue);
       border: 1px solid rgba(0,168,255,0.1);
       border-left: 2px solid var(--blue);
-      position: relative;
-    }
-    .code-block::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(0,168,255,0.03) 0%, transparent 50%);
-      pointer-events: none;
     }
     .code-title {
       font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -485,78 +441,69 @@
     .hl4 { color: #ffd740; }
     .cm  { color: rgba(224,244,255,0.2); font-style: italic; }
 
-    /* ── MATH CALLOUT ────────────────────────── */
-    .eq-card {
-      background: rgba(0,168,255,0.04);
-      border: 1px solid rgba(0,168,255,0.12);
-      border-left: 2px solid var(--blue);
-      padding: 20px 22px; margin-top: 12px;
-    }
-    .eq-label {
-      font-family: var(--mono); font-size: 9px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--blue); margin-bottom: 10px;
-    }
-    .eq-body {
-      font-family: var(--mono); font-size: 13px;
-      color: rgba(224,244,255,0.7); line-height: 1.9;
-    }
-    .eq-body .var { color: var(--blue2); }
-    .eq-body .op  { color: rgba(224,244,255,0.3); }
-
     /* ── DETAIL LIST ─────────────────────────── */
     .detail-list { list-style: none; padding: 0; }
     .detail-list li {
-      display: flex; align-items: baseline; gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(0,168,255,0.06);
-      font-size: 13px; font-weight: 300;
-      color: rgba(224,244,255,0.55);
+      display: flex; align-items: baseline; gap: 14px;
+      padding: 15px 0; border-bottom: 1px solid rgba(0,168,255,0.07);
+      font-size: 15px; font-weight: 300;
+      color: rgba(224,244,255,0.65);
     }
+    .detail-list li:first-child { border-top: 1px solid rgba(0,168,255,0.07); }
     .detail-list li::before {
       content: '◆'; color: var(--blue3); flex-shrink: 0;
-      font-size: 7px; margin-top: 4px;
+      font-size: 7px; margin-top: 5px;
     }
-    .detail-list li:first-child { border-top: 1px solid rgba(0,168,255,0.06); }
 
-    /* ── HOLOGRAPHIC PANEL ───────────────────── */
+    /* ── HOLO PANEL ──────────────────────────── */
     .holo-panel {
       background: rgba(0,168,255,0.03);
       border: 1px solid rgba(0,168,255,0.12);
-      padding: 28px 24px; position: relative;
-      overflow: hidden;
+      padding: 28px 24px; position: relative; overflow: hidden;
     }
     .holo-panel::after {
-      content: '';
-      position: absolute; top: -50%; left: -50%;
+      content: ''; position: absolute; top: -50%; left: -50%;
       width: 200%; height: 200%;
-      background: conic-gradient(from 0deg at 50% 50%,
-        transparent 0deg,
-        rgba(0,168,255,0.03) 60deg,
-        transparent 120deg
-      );
-      animation: holo-spin 12s linear infinite;
-      pointer-events: none;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(0,168,255,0.025) 60deg, transparent 120deg);
+      animation: holo-spin 12s linear infinite; pointer-events: none;
     }
     @keyframes holo-spin { 100% { transform: rotate(360deg); } }
-
     .holo-title {
       font-family: var(--display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--blue2); margin-bottom: 16px;
-      position: relative; z-index: 1;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--blue2); margin-bottom: 14px; position: relative; z-index: 1;
     }
     .holo-body {
-      font-size: 13px; font-weight: 300;
-      color: rgba(224,244,255,0.5); line-height: 1.7;
+      font-size: 15px; font-weight: 300;
+      color: rgba(224,244,255,0.58); line-height: 1.75;
       position: relative; z-index: 1;
+    }
+
+    /* ── RL FOOTNOTE ─────────────────────────── */
+    .footnote-section {
+      max-width: 1400px; margin: 0 auto;
+      padding: 60px 64px 100px;
+      border-top: 1px solid rgba(0,168,255,0.08);
+    }
+    .footnote-inner {
+      display: flex; gap: 40px; align-items: flex-start;
+    }
+    .footnote-tag {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); flex-shrink: 0; margin-top: 4px;
+    }
+    .footnote-body {
+      font-size: 15px; font-weight: 300;
+      color: rgba(224,244,255,0.45); line-height: 1.75;
+      max-width: 700px;
     }
 
     /* ── FOOTER ──────────────────────────────── */
     .footer-bar {
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--blue), rgba(0,168,255,0.3), transparent);
-      box-shadow: 0 0 8px rgba(0,168,255,0.2);
+      box-shadow: 0 0 8px rgba(0,168,255,0.18);
     }
     footer {
       background: var(--panel);
@@ -570,39 +517,44 @@
     .footer-tag {
       font-family: var(--display); font-size: 10px; font-weight: 700;
       letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(0,168,255,0.15);
+      color: rgba(0,168,255,0.12);
     }
 
+    /* ── MOBILE ──────────────────────────────── */
     @media(max-width:768px) {
       nav { padding: 0 20px; }
       .hero-content { padding: 0 20px 52px; }
-      .hero-telem { flex-wrap: wrap; gap: 24px; }
+      .hero-telem { flex-wrap: wrap; gap: 22px; }
       .telem-cell { border-right: none; margin-right: 0; padding-right: 0; }
       .hud-corner, .jarvis-readout, .jarvis-tag { display: none; }
-      section { padding: 64px 20px; }
-      .video-section { padding: 0 20px 64px; }
-      .sys-banner { padding: 10px 20px; flex-direction: column; gap: 8px; }
-      footer { padding: 28px 20px; flex-direction: column; gap: 10px; }
+      section { padding: 72px 20px; }
+      .video-section { padding: 0 20px 72px; }
+      .sys-banner { padding: 10px 20px; }
+      .metrics-strip { grid-template-columns: repeat(2,1fr); }
+      .metric-cell { padding: 28px 18px; }
+      .two-col { grid-template-columns: 1fr; gap: 48px; }
+      .pipe-step { flex-direction: column; gap: 12px; }
+      .pipe-num { width: auto; text-align: left; font-size: 22px; }
+      .pipe-tag { margin-top: 10px; }
+      .footnote-section { padding: 48px 20px 72px; }
+      .footnote-inner { flex-direction: column; gap: 16px; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 10px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── HEXAGONAL GRID ─────────────────────────── -->
+<!-- ── HEX GRID ───────────────────────────────── -->
 <canvas id="hex-canvas"></canvas>
 <div class="radial-glow"></div>
-
 <script>
-  // Draw subtle hexagonal grid
   const c = document.getElementById('hex-canvas');
   const ctx = c.getContext('2d');
   function drawHex() {
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
+    c.width = window.innerWidth; c.height = window.innerHeight;
     const s = 36, h = s * Math.sqrt(3);
     ctx.clearRect(0,0,c.width,c.height);
-    ctx.strokeStyle = 'rgba(0,168,255,0.35)';
-    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = 'rgba(0,168,255,0.32)'; ctx.lineWidth = 0.5;
     for (let row = -1; row < c.height/h + 2; row++) {
       for (let col = -1; col < c.width/(s*1.5) + 2; col++) {
         const x = col * s * 1.5;
@@ -610,16 +562,14 @@
         ctx.beginPath();
         for (let i = 0; i < 6; i++) {
           const a = Math.PI/180 * (60*i - 30);
-          const px = x + s * Math.cos(a);
-          const py = y + s * Math.sin(a);
-          i === 0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+          i === 0 ? ctx.moveTo(x + s*Math.cos(a), y + s*Math.sin(a))
+                  : ctx.lineTo(x + s*Math.cos(a), y + s*Math.sin(a));
         }
         ctx.closePath(); ctx.stroke();
       }
     }
   }
-  drawHex();
-  window.addEventListener('resize', drawHex);
+  drawHex(); window.addEventListener('resize', drawHex);
 </script>
 
 <!-- ── NAV ───────────────────────────────────── -->
@@ -628,10 +578,10 @@
     <div class="arc-reactor"></div>
     <span class="nav-title">J.A.R.V.I.S.</span>
     <div class="nav-sep"></div>
-    <span class="nav-sub">Franka Panda — Manipulation Suite</span>
+    <span class="nav-sub">Franka Panda Manipulation</span>
   </div>
-  <div style="display:flex; align-items:center; gap:28px">
-    <div class="nav-status"><span class="status-dot"></span>SYSTEMS ONLINE</div>
+  <div style="display:flex;align-items:center;gap:28px">
+    <div class="nav-status"><span class="status-dot"></span>Systems Online</div>
     <a href="../index.html" class="nav-back">
       <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M9 2L4 7l5 5"/>
@@ -645,82 +595,70 @@
 <div class="hero">
   <div class="hero-video-wrap">
     <iframe
-      width="1280"
-      height="720"
-      src="https://www.youtube.com/embed/Vw0LgdXKMdg?si=7GGlmkW147tx45h9"
-      title="Panda Manipulation"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" >
-      allowfullscreen>
+      src="https://www.youtube.com/embed/Vw0LgdXKMdg?autoplay=1&mute=1&loop=1&playlist=Vw0LgdXKMdg&controls=0&modestbranding=1&rel=0"
+      allow="autoplay; encrypted-media" allowfullscreen>
     </iframe>
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-arc-line"></div>
   <div class="hero-arc-line"></div>
-
-  <!-- HUD brackets -->
   <div class="hud-corner tl"></div>
   <div class="hud-corner tr"></div>
   <div class="hud-corner bl"></div>
   <div class="hud-corner br"></div>
 
-  <!-- top-right JARVIS readout -->
   <div class="jarvis-readout">
-    JOINTS &nbsp;&nbsp;&nbsp;<span class="live">7 DOF</span><br/>
-    DOF &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="live">ACTIVE</span><br/>
-    IK MODE &nbsp;<span class="live">JACOBIAN</span><br/>
-    PLANNER &nbsp;<span class="live">RRTCONN</span><br/>
-    ENV &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="live">MUJOCO</span>
+    Joints &nbsp;&nbsp;&nbsp;<span class="live">7 DOF</span><br/>
+    Planner &nbsp;<span class="live">RRTConnect</span><br/>
+    IK Mode &nbsp;<span class="live">Jacobian</span><br/>
+    Sensor &nbsp;&nbsp;<span class="live">RGB-D Cam</span>
   </div>
-
-  <!-- top-left system tag -->
   <div class="jarvis-tag">
-    SYSTEM: FRANKA PANDA<br/>
-    PLATFORM: 7-DOF MANIPULATOR<br/>
-    MODE: AUTONOMOUS
+    System: Franka Panda<br/>
+    Platform: 7-DoF Manipulator<br/>
+    Mode: Autonomous
   </div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">Manipulation Suite · Classical + RL · 2025</div>
+    <div class="hero-eyebrow">Perception &nbsp; Planning &nbsp; Control &nbsp; 2025</div>
     <h1 class="hero-title">
       <span class="blue">Franka</span><br/>
       <span class="outline">Panda</span><br/>
-      Autonomy
+      Manipulation
     </h1>
     <p class="hero-sub">
-      Classical perception → IK → motion planning pipeline deployed on a
-      7-DoF Franka Panda. HSV detection, Pinocchio IK, OMPL trajectory
-      planning, and a PPO-trained RL policy in MuJoCo.
+      A classical robotics pipeline built from scratch on a real 7-DoF arm.
+      HSV perception, Jacobian IK, and RRTConnect motion planning working
+      together to pick and place objects autonomously.
     </p>
     <div class="hero-telem">
       <div class="telem-cell">
         <div class="telem-val">7-DOF</div>
-        <div class="telem-label">Manipulator</div>
+        <div class="telem-label">Franka Panda</div>
       </div>
       <div class="telem-cell">
-        <div class="telem-val">IK + MPC</div>
-        <div class="telem-label">Classical Control</div>
+        <div class="telem-val">RRTConnect</div>
+        <div class="telem-label">Motion planner</div>
       </div>
       <div class="telem-cell">
-        <div class="telem-val">OMPL</div>
-        <div class="telem-label">Motion Planning</div>
+        <div class="telem-val">Pinocchio</div>
+        <div class="telem-label">IK solver</div>
       </div>
       <div class="telem-cell">
-        <div class="telem-val">PPO</div>
-        <div class="telem-label">RL Policy</div>
+        <div class="telem-val">HSV</div>
+        <div class="telem-label">Object detection</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── SYSTEM BANNER ─────────────────────────── -->
+<!-- ── SYS BANNER ────────────────────────────── -->
 <div class="sys-banner">
-  <span class="sys-banner-id">SYSTEM: FRANKA PANDA · MODE: CLASSICAL PIPELINE · ENV: MUJOCO + ROS 2</span>
+  <span class="sys-banner-id">System: Franka Panda &nbsp; Mode: Classical Pipeline &nbsp; Env: ROS 2 + MuJoCo</span>
   <div class="sys-banner-right">
-    <div class="sys-banner-item">PERCEPTION <span>HSV</span></div>
-    <div class="sys-banner-item">PLANNING <span>RRTCONNECT</span></div>
-    <div class="sys-banner-item">IK <span>PINOCCHIO</span></div>
-    <div class="sys-banner-item">RL <span>PPO</span></div>
+    <div class="sys-banner-item">Perception <span>HSV</span></div>
+    <div class="sys-banner-item">Planning <span>RRTConnect</span></div>
+    <div class="sys-banner-item">IK <span>Pinocchio</span></div>
   </div>
 </div>
 
@@ -732,11 +670,11 @@
   </div>
   <div class="metric-cell">
     <div class="metric-num">HSV</div>
-    <div class="metric-desc">Object detection<br/>color segmentation</div>
+    <div class="metric-desc">Color segmentation<br/>object detection</div>
   </div>
   <div class="metric-cell">
     <div class="metric-num">RRT</div>
-    <div class="metric-desc">Connect planner<br/>collision-free paths</div>
+    <div class="metric-desc">Sampling-based<br/>motion planning</div>
   </div>
   <div class="metric-cell">
     <div class="metric-num">J⁺</div>
@@ -746,44 +684,43 @@
 
 <!-- ── VIDEO ──────────────────────────────────── -->
 <div class="video-section" style="padding-top:0">
-  <div style="max-width:1400px; margin:0 auto; padding:48px 0 24px">
-    <div class="section-tag">System demonstration</div>
+  <div style="max-width:1400px;margin:0 auto;padding:48px 0 24px">
+    <div class="section-tag" style="margin-bottom:0">Demo</div>
   </div>
   <div class="video-wrap">
-   <iframe
-      width="1280"
-      height="720"
-      src="https://www.youtube.com/embed/Vw0LgdXKMdg?si=7GGlmkW147tx45h9"
-      title="Panda Manipulation"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" >
+    <iframe
+      src="https://www.youtube.com/embed/Vw0LgdXKMdg?controls=1&modestbranding=1&rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
-  </iframe>
+    </iframe>
   </div>
-  <div class="video-caption">Franka Panda · Classical pick & place pipeline · ROS 2 · Pinocchio IK · OMPL</div>
+  <div class="video-caption">Franka Panda pick and place &nbsp; ROS 2 &nbsp; Pinocchio IK &nbsp; OMPL</div>
 </div>
 
 <div class="divider"></div>
 
 <!-- ── OVERVIEW ──────────────────────────────── -->
 <section>
-  <div class="section-tag">System overview</div>
+  <div class="section-tag">What I built</div>
   <div class="two-col">
     <div>
-      <h2 class="section-title">Classical<br/><span class="blue">Intelligence</span></h2>
+      <h2 class="section-title">
+        Classical <span class="blue">Robotics</span><br/>
+        Done Right
+      </h2>
     </div>
     <div>
-      <p class="section-body">
-        The classical pipeline decomposes manipulation into three independently
-        debuggable stages: perceive the object, plan a collision-free path,
-        and execute with closed-loop IK control. Each stage is transparent —
-        you can see exactly what the robot knows and why it moves the way it does.
+      <p class="body-text">
+        The goal was to build a pick and place system on a real 7-DoF Franka Panda
+        arm using nothing but classical robotics tools. No end-to-end learning,
+        no pretrained policies. Just perception, planning, and control working
+        together cleanly.
       </p>
-      <br/>
-      <p class="section-body">
-        This explicitness is the key design philosophy. Unlike end-to-end
-        learned policies, every failure mode is traceable to a specific
-        module — a critical property when deploying on real hardware.
+      <p class="body-text">
+        The pipeline has three stages that are deliberately decoupled. Perception
+        finds the object. Planning computes a collision-free path to it.
+        The IK controller executes that path on the real joints.
+        Each stage is replaceable without touching the others.
       </p>
     </div>
   </div>
@@ -791,165 +728,96 @@
 
 <div class="divider"></div>
 
-<!-- ── CLASSICAL PIPELINE ─────────────────────── -->
+<!-- ── FULL PIPELINE ─────────────────────────── -->
 <section>
-  <div class="section-tag">Classical Pipeline</div>
-  <div class="two-col">
+  <div class="section-tag">The pipeline</div>
+  <div class="two-col" style="margin-bottom:0">
     <div>
-      <h2 class="section-title">Four-Stage<br/><span class="blue">Pipeline</span></h2>
-      <p class="section-body">
-        Each stage is a discrete, replaceable module. The perception block
-        feeds the planner; the planner feeds the IK controller; the
-        controller feeds the actuators. Failures localise instantly.
+      <h2 class="section-title">
+        Four stages.<br/>
+        <span class="blue">One robot.</span>
+      </h2>
+      <p class="body-text" style="margin-top:8px">
+        Separating planning from execution was the key design decision.
+        When something breaks you know exactly which stage to look at.
+        That matters on real hardware more than anything else.
       </p>
-
       <div class="holo-panel" style="margin-top:28px">
         <div class="holo-title">Autonomy Stack</div>
         <div class="holo-body">
-          Camera → Perception → World Model → Planner → IK → Motors
+          Camera → Perception → 3D Pose → Planner → IK → Joint Commands
           <br/><br/>
-          Every module exposes a clean ROS 2 interface.
-          Swapping HSV detection for a learned detector requires
-          zero changes downstream.
+          Every stage exposes a clean ROS 2 interface. Swapping HSV
+          detection for a neural detector requires zero changes downstream.
         </div>
       </div>
     </div>
-
     <div>
       <div class="pipeline">
-
-        <div class="pipe-node active">
+        <div class="pipe-step">
           <div class="pipe-num">01</div>
           <div class="pipe-content">
             <div class="pipe-title">HSV Perception</div>
-            <div class="pipe-body">
-              RGB frames converted to HSV space and thresholded.
-              Dominant contour extracted; centroid computed via image moments
-              (m₁₀/m₀₀, m₀₁/m₀₀). Projected to 3D with known intrinsics,
-              then transformed to robot base frame via ROS 2 TF.
+            <div class="pipe-desc">
+              I convert each RGB frame to HSV and threshold it to isolate
+              the target object by color. The dominant contour gives me a
+              2D centroid via image moments. I back-project that to 3D
+              using the known camera intrinsics and ROS 2 TF to transform
+              it into the robot base frame.
             </div>
-            <div class="pipe-tag">OpenCV · ROS 2 TF · Camera Intrinsics</div>
           </div>
+          <div class="pipe-tag">OpenCV &nbsp; ROS 2 TF</div>
         </div>
 
-        <div class="pipe-arrow">↓ 3D object pose</div>
+        <div class="pipe-arrow-row">↓ 3D object pose</div>
 
-        <div class="pipe-node active">
+        <div class="pipe-step">
           <div class="pipe-num">02</div>
           <div class="pipe-content">
             <div class="pipe-title">RRTConnect Motion Planner</div>
-            <div class="pipe-body">
-              Sampling-based planning in the 7-DoF configuration space
-              C ⊂ ℝ⁷. Two rapidly-exploring random trees grow from start
-              and goal until they connect. Path is time-parameterised and
-              collision-checked against the scene geometry.
+            <div class="pipe-desc">
+              Planning runs in the 7-DoF configuration space. RRTConnect
+              grows two random trees simultaneously from the start and goal
+              configurations until they connect. The result is a
+              collision-free joint trajectory that gets time-parameterised
+              before execution.
             </div>
-            <div class="pipe-tag">OMPL · RRTConnect · Collision Checking</div>
           </div>
+          <div class="pipe-tag">OMPL &nbsp; RRTConnect</div>
         </div>
 
-        <div class="pipe-arrow">↓ joint trajectory</div>
+        <div class="pipe-arrow-row">↓ joint trajectory</div>
 
-        <div class="pipe-node active">
+        <div class="pipe-step">
           <div class="pipe-num">03</div>
           <div class="pipe-content">
-            <div class="pipe-title">Jacobian IK — Pinocchio</div>
-            <div class="pipe-body">
-              Damped least-squares inverse kinematics. Task-space error
-              resolved via the damped pseudoinverse: q̇ = Jᵀ(JJᵀ + λ²I)⁻¹ε.
-              Pinocchio provides analytical Jacobians and efficient
-              frame-level kinematics for stable real-time control.
+            <div class="pipe-title">Jacobian IK via Pinocchio</div>
+            <div class="pipe-desc">
+              Each waypoint in the planned trajectory gets resolved into
+              joint angles using damped least-squares IK. Pinocchio gives
+              me analytical Jacobians so the computation is fast enough
+              to run in the real-time control loop without drift.
             </div>
-            <div class="pipe-tag">Pinocchio · Damped Least Squares · Real-time</div>
           </div>
+          <div class="pipe-tag">Pinocchio &nbsp; Damped J⁺</div>
         </div>
 
-        <div class="pipe-arrow">↓ joint commands</div>
+        <div class="pipe-arrow-row">↓ joint commands</div>
 
-        <div class="pipe-node">
+        <div class="pipe-step">
           <div class="pipe-num">04</div>
           <div class="pipe-content">
             <div class="pipe-title">State Machine Execution</div>
-            <div class="pipe-body">
-              Explicit sequencing: reach → grasp → lift → place → retreat.
-              Each state triggers the planner and IK controller with a
-              new target pose. Failure detection at each transition.
+            <div class="pipe-desc">
+              A simple state machine sequences the full pick and place task.
+              Reach, grasp, lift, move, place, retreat. Each transition
+              calls the planner and IK controller with a new target pose.
+              Failure detection at every step.
             </div>
-            <div class="pipe-tag">ROS 2 · State Machine · Franka Interface</div>
           </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── IK MATH ────────────────────────────────── -->
-<section>
-  <div class="section-tag">IK Formulation</div>
-  <div class="two-col">
-    <div>
-      <h2 class="section-title">Inverse<br/><span class="blue">Kinematics</span></h2>
-      <p class="section-body">
-        Forward kinematics define a nonlinear map from joint space to
-        task space. Inverse kinematics solves the reverse: given a desired
-        end-effector pose, find the joint configuration that achieves it.
-        Pinocchio solves this iteratively using the analytical Jacobian.
-      </p>
-
-      <div class="eq-card">
-        <div class="eq-label">Forward Kinematics</div>
-        <div class="eq-body">
-<span class="var">x</span> <span class="op">=</span> f(<span class="var">q</span>)
-<span class="var">ẋ</span> <span class="op">=</span> <span class="var">J(q)</span> · <span class="var">q̇</span>
+          <div class="pipe-tag">ROS 2 &nbsp; Franka Interface</div>
         </div>
       </div>
-
-      <div class="eq-card">
-        <div class="eq-label">Damped Least-Squares IK</div>
-        <div class="eq-body">
-<span class="var">q̇</span> <span class="op">=</span> <span class="var">Jᵀ</span>(<span class="var">JJᵀ</span> <span class="op">+</span> λ²<span class="var">I</span>)⁻¹ · ε
-
-ε <span class="op">=</span> <span class="var">x*</span> <span class="op">−</span> <span class="var">x</span>   <span class="op">(</span>task-space error<span class="op">)</span>
-λ  <span class="op">=</span> damping factor  <span class="op">(</span>prevents singularities<span class="op">)</span>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="code-block">
-        <div class="code-title">Pinocchio IK — Core Loop</div>
-<span class="cm"># Load robot model</span>
-<span class="hl">model</span>, <span class="hl2">data</span> = pinocchio.buildModelFromUrdf(urdf)
-
-<span class="cm"># Current end-effector pose</span>
-pinocchio.<span class="hl3">forwardKinematics</span>(model, data, q)
-<span class="hl">x_ee</span> = data.oMf[ee_frame].translation
-
-<span class="cm"># Task-space error</span>
-<span class="hl2">eps</span> = x_target - x_ee          <span class="cm"># position error</span>
-<span class="hl2">eps_R</span> = log3(R_target @ R_ee.T) <span class="cm"># orientation error</span>
-
-<span class="cm"># Analytical Jacobian from Pinocchio</span>
-<span class="hl">J</span> = pinocchio.<span class="hl3">computeFrameJacobian</span>(model, data, q, ee_frame)
-
-<span class="cm"># Damped least-squares IK step</span>
-<span class="hl4">damp</span> = 1e-3
-<span class="hl">dq</span> = J.T @ inv(J @ J.T + damp*eye) @ eps
-
-<span class="cm"># Update and publish joint commands</span>
-q = q + dt * dq
-publish_joint_cmd(q)
-      </div>
-
-      <ul class="detail-list" style="margin-top:8px">
-        <li>Damping λ prevents instability near kinematic singularities</li>
-        <li>Pinocchio provides analytic Jacobians — no finite differencing</li>
-        <li>Full 6-DoF control: position + orientation error minimised</li>
-        <li>Runs at control rate — fast enough for real-time execution</li>
-      </ul>
     </div>
   </div>
 </section>
@@ -958,63 +826,111 @@ publish_joint_cmd(q)
 
 <!-- ── PERCEPTION ────────────────────────────── -->
 <section>
-  <div class="section-tag">Perception Module</div>
+  <div class="section-tag">Perception in detail</div>
   <div class="two-col">
     <div>
-      <h2 class="section-title">See.<br/><span class="blue">Localise.</span><br/>Act.</h2>
-      <p class="section-body">
-        Object detection uses classical HSV color segmentation — deliberately
-        chosen for transparency and debuggability. The binary mask, contour,
-        and centroid are all directly visualisable at every step.
+      <h2 class="section-title">
+        See it.<br/>
+        <span class="blue">Locate it.</span>
+      </h2>
+      <p class="body-text">
+        I chose HSV segmentation deliberately. It is simple, transparent,
+        and every failure mode is visible — you can literally see the mask
+        and know what went wrong. For this task it is the right tool.
+      </p>
+      <p class="body-text">
+        The centroid computation uses image moments, which gives sub-pixel
+        accuracy. The depth reading at that pixel plus the camera
+        intrinsics gives a 3D point in camera frame.
+        ROS 2 TF handles the rest.
       </p>
 
       <div class="eq-card">
-        <div class="eq-label">HSV Mask</div>
+        <div class="eq-label">HSV Threshold Mask</div>
         <div class="eq-body">
-M(x,y) <span class="op">=</span> 1 &nbsp;if H_min ≤ <span class="var">H(x,y)</span> ≤ H_max
-M(x,y) <span class="op">=</span> 0 &nbsp;otherwise
+<span class="var">M(x,y)</span> <span class="op">=</span> 1 &nbsp;if H_min <span class="op">≤</span> H(x,y) <span class="op">≤</span> H_max
+<span class="var">M(x,y)</span> <span class="op">=</span> 0 &nbsp;otherwise
         </div>
       </div>
 
       <div class="eq-card">
-        <div class="eq-label">Centroid via Image Moments</div>
+        <div class="eq-label">Centroid from Image Moments</div>
         <div class="eq-body">
-c_x <span class="op">=</span> <span class="var">m₁₀</span> / <span class="var">m₀₀</span>
-c_y <span class="op">=</span> <span class="var">m₀₁</span> / <span class="var">m₀₀</span>
+c_x <span class="op">=</span> <span class="var">m₁₀</span> <span class="op">/</span> <span class="var">m₀₀</span>
+c_y <span class="op">=</span> <span class="var">m₀₁</span> <span class="op">/</span> <span class="var">m₀₀</span>
         </div>
       </div>
     </div>
 
     <div>
       <div class="code-block">
-        <div class="code-title">HSV Detection → 3D Pose</div>
+        <div class="code-title">HSV detection to 3D pose</div>
 <span class="cm"># Convert to HSV and threshold</span>
 <span class="hl">hsv</span>  = cv2.cvtColor(frame, <span class="hl2">COLOR_BGR2HSV</span>)
 <span class="hl">mask</span> = cv2.inRange(hsv, lower_hsv, upper_hsv)
 
-<span class="cm"># Extract dominant contour</span>
-contours, _ = cv2.findContours(mask, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
-<span class="hl">cnt</span> = max(contours, key=cv2.contourArea)
+<span class="cm"># Largest contour is the target</span>
+cnts, _ = cv2.findContours(mask, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+<span class="hl">cnt</span>  = max(cnts, key=cv2.contourArea)
 
-<span class="cm"># Centroid via image moments</span>
+<span class="cm"># Sub-pixel centroid via moments</span>
 <span class="hl4">M</span> = cv2.moments(cnt)
-cx = int(M[<span class="hl2">'m10'</span>] / M[<span class="hl2">'m00'</span>])
-cy = int(M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>])
+cx = M[<span class="hl2">'m10'</span>] / M[<span class="hl2">'m00'</span>]
+cy = M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>]
 
-<span class="cm"># Back-project to 3D (known depth + intrinsics)</span>
+<span class="cm"># Back-project to 3D</span>
 <span class="hl">X</span> = (cx - cx_intr) * depth / fx
 <span class="hl">Y</span> = (cy - cy_intr) * depth / fy
 <span class="hl">Z</span> = depth
 
-<span class="cm"># Transform camera → robot base via TF</span>
+<span class="cm"># Transform to robot base frame via TF</span>
 <span class="hl3">p_robot</span> = tf_buffer.transform(p_cam, <span class="hl2">'panda_link0'</span>)
       </div>
+    </div>
+  </div>
+</section>
 
-      <ul class="detail-list" style="margin-top:8px">
-        <li>HSV thresholding — robust to brightness variation vs RGB</li>
-        <li>Image moments give sub-pixel centroid accuracy</li>
-        <li>ROS 2 TF handles all coordinate frame transforms</li>
-        <li>Fully replaceable with learned detector — same output interface</li>
+<div class="divider"></div>
+
+<!-- ── PLANNING ───────────────────────────────── -->
+<section>
+  <div class="section-tag">Motion planning</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">
+        Planning in<br/>
+        <span class="blue">C-Space</span>
+      </h2>
+      <p class="body-text">
+        The Franka Panda has 7 joints, so the configuration space is
+        7-dimensional. RRTConnect builds two trees simultaneously,
+        one from the current joint configuration and one from the goal.
+        They grow toward each other with random samples until a bridge is found.
+      </p>
+      <p class="body-text">
+        The bidirectional approach converges significantly faster than a
+        single tree on high-DoF arms, which matters when the robot is
+        waiting to execute. The resulting path is time-parameterised
+        for smooth velocity profiles before it goes to the IK controller.
+      </p>
+
+      <div class="eq-card">
+        <div class="eq-label">Connection Criterion</div>
+        <div class="eq-body">
+<span class="op">‖</span><span class="var">q_start</span> <span class="op">−</span> <span class="var">q_goal</span><span class="op">‖</span> <span class="op">&lt;</span> ε
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <ul class="detail-list">
+        <li>Configuration space is ℝ⁷ — one dimension per joint</li>
+        <li>RRTConnect grows bidirectional trees for faster convergence on high-DoF arms</li>
+        <li>Full collision checking at every sample against scene geometry</li>
+        <li>Path is time-parameterised for smooth velocity profiles</li>
+        <li>OMPL handles sampling, nearest-neighbour queries, and tree extension</li>
+        <li>Integrates with MoveIt 2 for the ROS 2 planning scene</li>
+        <li>Replanning triggered automatically if a collision is detected mid-execution</li>
       </ul>
     </div>
   </div>
@@ -1022,45 +938,87 @@ cy = int(M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>])
 
 <div class="divider"></div>
 
-<!-- ── MOTION PLANNING ────────────────────────── -->
+<!-- ── IK ─────────────────────────────────────── -->
 <section>
-  <div class="section-tag">Motion Planning</div>
+  <div class="section-tag">Inverse kinematics</div>
   <div class="two-col">
     <div>
-      <h2 class="section-title">Path Through<br/><span class="blue">C-Space</span></h2>
-      <p class="section-body">
-        Planning occurs in the 7-dimensional configuration space C ⊂ ℝ⁷.
-        RRTConnect grows two trees simultaneously — one from start, one from
-        goal — until a collision-free bridge is found. Far faster than
-        single-tree RRT on high-DoF arms.
+      <h2 class="section-title">
+        Joint angles<br/>
+        from a <span class="blue">pose</span>
+      </h2>
+      <p class="body-text">
+        Forward kinematics gives you the end-effector pose from joint
+        angles. IK inverts that. For a 7-DoF arm the problem is
+        redundant — there are infinitely many joint configurations
+        that reach the same pose — so I use the damped pseudoinverse
+        Jacobian to find the minimum-norm solution.
+      </p>
+      <p class="body-text">
+        The damping factor λ keeps the solution stable near singularities
+        where the plain pseudoinverse would blow up. Pinocchio provides
+        the analytical Jacobian at each configuration so the loop runs
+        fast enough for real-time control.
       </p>
 
       <div class="eq-card">
-        <div class="eq-label">Connection Criterion</div>
+        <div class="eq-label">Damped Least-Squares IK</div>
         <div class="eq-body">
-‖<span class="var">q_start</span> <span class="op">−</span> <span class="var">q_goal</span>‖ <span class="op">&lt;</span> ε
+<span class="var">q̇</span> <span class="op">=</span> <span class="var">Jᵀ</span> <span class="op">(</span><span class="var">JJᵀ</span> <span class="op">+</span> λ²<span class="var">I</span><span class="op">)⁻¹</span> · ε
+
+ε <span class="op">=</span> <span class="var">x*</span> <span class="op">−</span> <span class="var">x</span>   <span class="cm">// task-space error</span>
+λ <span class="op">=</span> damping   <span class="cm">// prevents singularity blow-up</span>
         </div>
       </div>
     </div>
+
     <div>
-      <ul class="detail-list">
-        <li>Configuration space: C ⊂ ℝ⁷ — one dimension per joint</li>
-        <li>RRTConnect: bidirectional tree growth for faster convergence</li>
-        <li>Collision checking against full scene geometry at each sample</li>
-        <li>Path time-parameterised for smooth velocity profiles</li>
-        <li>OMPL handles all sampling, nearest-neighbour, and extension logic</li>
-        <li>Works directly with MoveIt 2 for ROS 2 integration</li>
-        <li>Replanning triggered automatically on detected collision</li>
-      </ul>
+      <div class="code-block">
+        <div class="code-title">Pinocchio IK loop</div>
+<span class="cm"># Load URDF model</span>
+<span class="hl">model</span>, <span class="hl2">data</span> = pinocchio.buildModelFromUrdf(urdf)
+
+<span class="cm"># Forward kinematics at current config</span>
+pinocchio.<span class="hl3">forwardKinematics</span>(model, data, q)
+<span class="hl">x_ee</span> = data.oMf[ee_frame].translation
+
+<span class="cm"># Task-space error</span>
+<span class="hl2">eps</span>   = x_target - x_ee
+<span class="hl2">eps_R</span> = log3(R_target @ R_ee.T)
+
+<span class="cm"># Analytical Jacobian from Pinocchio</span>
+<span class="hl">J</span> = pinocchio.<span class="hl3">computeFrameJacobian</span>(model, data, q, ee_frame)
+
+<span class="cm"># Damped least-squares step</span>
+<span class="hl4">lam</span> = 1e-3
+<span class="hl">dq</span>  = J.T @ inv(J @ J.T + lam*eye) @ eps
+
+q = q + dt * dq
+publish_joint_cmd(q)
+      </div>
     </div>
   </div>
 </section>
 
+<!-- ── RL FOOTNOTE ────────────────────────────── -->
+<div class="footnote-section">
+  <div class="footnote-inner">
+    <div class="footnote-tag">Side note</div>
+    <p class="footnote-body">
+      After getting the classical pipeline working I also trained a PPO-based
+      policy in MuJoCo to see how a learned approach compared on the same task.
+      The classical system is more interpretable and easier to debug on hardware.
+      The RL policy generalises better to object position variation once trained.
+      Both have their place — I just found the planning work more interesting to build.
+    </p>
+  </div>
+</div>
+
 <!-- ── FOOTER ─────────────────────────────────── -->
 <div class="footer-bar"></div>
 <footer>
-  <span class="footer-copy">© 2025 Siddarth Dayasagar &nbsp;·&nbsp; J.A.R.V.I.S. Manipulation Suite</span>
-  <span class="footer-tag">Franka Panda · 7-DOF</span>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar &nbsp; Franka Panda Manipulation</span>
+  <span class="footer-tag">7-DOF</span>
 </footer>
 
 </body>

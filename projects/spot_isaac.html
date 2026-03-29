@@ -3,479 +3,489 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spot — Urban Search & Rescue</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <title>Quadruped Locomotion — SpaceData Inc.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --white: #ffffff;
-      --off-white: #e8e8e8;
-      --gray: #888888;
-      --dark-gray: #444444;
-      --black: #000000;
-      --mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+      --black: #050505;
+      --white: #f0f0f0;
+      --gray: #777777;
+      --dim: #444444;
+      --border: rgba(255,255,255,0.08);
+      --text: #d8d8d8;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--black);
-      color: var(--white);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
       font-weight: 300;
-      line-height: 1.6;
+      line-height: 1.7;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: inherit; text-decoration: none; }
+    /* hide body while loading */
+    body.loading { overflow: hidden; }
 
-    /* ─── NAV ─────────────────────────────────── */
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── PRELOADER ───────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--black);
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 52px 64px;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.hidden {
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+
+    .preloader-label {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 14px;
+    }
+
+    .preloader-counter {
+      font-size: clamp(72px, 14vw, 160px);
+      font-weight: 200; letter-spacing: -0.04em;
+      color: var(--white); line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .preloader-bar-wrap {
+      width: 100%; height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-top: 32px; overflow: hidden;
+    }
+    .preloader-bar {
+      height: 100%; width: 0%;
+      background: var(--white);
+      transition: width 0.05s linear;
+    }
+
+    .preloader-project {
+      margin-top: 16px;
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── REVEAL ANIMATION ────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── NAV ─────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px;
-      height: 64px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      padding: 0 64px; height: 64px;
+      background: rgba(5,5,5,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
     }
 
     .nav-logo {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--white);
     }
 
-    .nav-back {
-      font-size: 13px;
-      font-weight: 400;
+    .nav-meta {
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--gray);
-      letter-spacing: 0.04em;
-      transition: color 0.2s;
+    }
+
+    .nav-back {
+      font-size: 11px; font-weight: 300;
+      color: var(--gray); letter-spacing: 0.08em;
       display: flex; align-items: center; gap: 8px;
+      transition: color 0.2s;
     }
     .nav-back:hover { color: var(--white); }
-    .nav-back svg { width: 14px; height: 14px; }
+    .nav-back svg { width: 12px; height: 12px; }
 
-    /* ─── HERO ────────────────────────────────── */
+    /* ── HERO ────────────────────────────────── */
     .hero {
-      position: relative;
-      width: 100%;
-      height: 100svh;
-      min-height: 600px;
+      position: relative; width: 100%;
+      height: 100svh; min-height: 580px;
       overflow: hidden;
     }
 
-    .hero-iframe-wrap {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
+    .hero-video-wrap {
+      position: absolute; inset: 0; overflow: hidden;
     }
-    .hero-iframe-wrap iframe {
+    .hero-video-wrap iframe {
       position: absolute;
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100vw;
-      height: 56.25vw;
-      min-height: 100vh;
-      min-width: 177.78vh;
+      transform: translate(-50%,-50%);
+      width: 100vw; height: 56.25vw;
+      min-height: 100vh; min-width: 177.78vh;
       pointer-events: none;
-      filter: brightness(0.45);
+      filter: brightness(0.3) grayscale(0.3);
     }
 
-    .hero-gradient {
+    .hero-overlay {
       position: absolute; inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.15) 0%,
-        rgba(0,0,0,0.0) 30%,
-        rgba(0,0,0,0.55) 72%,
-        rgba(0,0,0,0.96) 100%
+        rgba(5,5,5,0.3) 0%,
+        transparent 25%,
+        transparent 55%,
+        rgba(5,5,5,0.75) 80%,
+        rgba(5,5,5,1) 100%
       );
     }
 
     .hero-content {
       position: absolute; inset: 0;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 0 80px 72px;
-      max-width: 1400px; margin: 0 auto; right: 0; left: 0;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 64px 80px;
+      max-width: 1300px; margin: 0 auto; left: 0; right: 0;
     }
 
-    .hero-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 20px;
+    .hero-overline {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 24px;
     }
 
     .hero-title {
-      font-size: clamp(44px, 6vw, 82px);
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      line-height: 1.05;
-      color: var(--white);
-      max-width: 820px;
-      margin-bottom: 24px;
+      font-size: clamp(46px, 7vw, 110px);
+      font-weight: 200; letter-spacing: -0.03em;
+      line-height: 0.96; color: var(--white);
+      max-width: 860px; margin-bottom: 28px;
     }
-    .hero-title span { font-weight: 500; }
+    .hero-title em { font-style: italic; font-weight: 300; }
 
     .hero-sub {
-      font-size: 16px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.6);
-      max-width: 520px;
-      line-height: 1.7;
-      margin-bottom: 48px;
-    }
-
-    .hero-stats {
-      display: flex; gap: 56px;
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding-top: 32px;
-    }
-
-    .hero-stat-val {
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: -0.03em;
-      color: var(--white);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-
-    .hero-stat-label {
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gray);
-    }
-
-    /* ─── SECTIONS ────────────────────────────── */
-    section {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 120px 80px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gray);
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.45);
+      max-width: 460px; line-height: 1.75;
       margin-bottom: 56px;
+    }
+
+    .hero-meta-row {
+      display: flex; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 28px; flex-wrap: wrap;
+    }
+    .hero-meta {
+      padding-right: 48px; margin-right: 48px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-meta:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+    .hero-meta-val {
+      font-size: 14px; font-weight: 400;
+      color: var(--white); letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+    .hero-meta-label {
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── DIVIDER ─────────────────────────────── */
+    .divider { height: 1px; background: var(--border); }
+
+    /* ── SECTIONS ────────────────────────────── */
+    .section {
+      max-width: 1300px; margin: 0 auto;
+      padding: 120px 64px;
+    }
+
+    .eyebrow {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 52px;
       display: flex; align-items: center; gap: 16px;
     }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.1);
+    .eyebrow::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
     }
 
     .section-title {
-      font-size: clamp(28px, 3.5vw, 48px);
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      color: var(--white);
-      margin-bottom: 32px;
+      font-size: clamp(28px, 4vw, 54px);
+      font-weight: 200; letter-spacing: -0.025em;
+      line-height: 1.08; color: var(--white);
+      margin-bottom: 28px;
     }
-    .section-title span { font-weight: 500; }
+    .section-title em { font-style: italic; font-weight: 300; }
 
-    .section-body {
-      font-size: 16px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.8;
-      max-width: 640px;
+    .body-text {
+      font-size: 15px; font-weight: 300;
+      color: rgba(216,216,216,0.72);
+      line-height: 1.85; max-width: 600px;
     }
+    .body-text + .body-text { margin-top: 20px; }
 
-    .divider {
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      height: 1px;
-      background: rgba(255,255,255,0.08);
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
     }
 
-    /* ─── VIDEO EMBED ─────────────────────────── */
+    /* ── VIDEO ───────────────────────────────── */
     .video-section {
-      max-width: 1400px; margin: 0 auto;
-      padding: 0 80px 120px;
+      max-width: 1300px; margin: 0 auto;
+      padding: 0 64px 120px;
     }
-
     .video-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #0a0a0a;
-      overflow: hidden;
+      position: relative; width: 100%;
+      aspect-ratio: 16/9; background: #0a0a0a; overflow: hidden;
+      border: 1px solid var(--border);
     }
-
-    .video-wrap video,
     .video-wrap iframe {
       position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      border: none;
+      width: 100%; height: 100%; border: none;
     }
-
     .video-caption {
-      margin-top: 20px;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray);
+      margin-top: 14px;
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--dim);
     }
 
-    /* ─── TWO-COL GRID ────────────────────────── */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-    @media(max-width:900px) { .two-col { grid-template-columns: 1fr; gap: 48px; } }
-
-    /* ─── METRICS STRIP ───────────────────────── */
-    .metrics-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      border-top: 1px solid rgba(255,255,255,0.1);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    @media(max-width:700px) { .metrics-strip { grid-template-columns: repeat(2,1fr); } }
-
-    .metric-cell {
-      padding: 48px 40px;
-      border-right: 1px solid rgba(255,255,255,0.08);
-    }
-    .metric-cell:last-child { border-right: none; }
-
-    .metric-num {
-      font-size: 42px;
-      font-weight: 300;
-      letter-spacing: -0.04em;
-      color: var(--white);
-      line-height: 1;
-      margin-bottom: 10px;
-    }
-
-    .metric-desc {
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray);
-      line-height: 1.5;
-    }
-
-    /* ─── STACK FLOW ──────────────────────────── */
-    .arch-flow {
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.9;
-      color: rgba(255,255,255,0.45);
-      white-space: pre;
-      overflow-x: auto;
-      padding: 32px;
-      background: rgba(255,255,255,0.03);
+    /* ── NDA NOTICE ──────────────────────────── */
+    .nda-notice {
+      background: rgba(255,255,255,0.02);
       border: 1px solid rgba(255,255,255,0.07);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex; align-items: flex-start; gap: 14px;
     }
-
-    /* ─── DETAIL LIST ─────────────────────────── */
-    .detail-list {
-      list-style: none;
-      padding: 0;
+    .nda-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      flex-shrink: 0; margin-top: 5px;
     }
-    .detail-list li {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      font-size: 15px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.65);
-    }
-    .detail-list li::before {
-      content: '—';
-      color: var(--dark-gray);
-      flex-shrink: 0;
-      font-size: 12px;
-    }
-    .detail-list li:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
-
-    /* ─── STATUS BADGE ────────────────────────── */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 48px;
-    }
-    .status-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #f59e0b;
-      box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
-    }
-    .status-dot.active {
-      background: #22c55e;
-      box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
-    }
-
-    /* ─── FOOTER ──────────────────────────────── */
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 40px 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 100%;
-    }
-
-    .footer-copy {
-      font-size: 12px;
-      font-weight: 300;
-      color: var(--gray);
+    .nda-text {
+      font-size: 12px; font-weight: 300;
       letter-spacing: 0.04em;
+      color: rgba(216,216,216,0.45);
+      line-height: 1.6;
     }
 
+    /* ── DETAIL LIST ─────────────────────────── */
+    .detail-list { list-style: none; padding: 0; }
+    .detail-list li {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px; font-weight: 300;
+      color: rgba(216,216,216,0.65);
+    }
+    .detail-list li:first-child { border-top: 1px solid var(--border); }
+    .detail-list li::before {
+      content: ''; display: block;
+      width: 3px; height: 3px; border-radius: 50%;
+      background: var(--dim); flex-shrink: 0; margin-top: 8px;
+    }
+
+    /* ── FULL WIDTH STATEMENT ────────────────── */
+    .statement {
+      padding: 120px 64px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .statement-inner {
+      max-width: 1300px; margin: 0 auto;
+    }
+    .statement-text {
+      font-size: clamp(22px, 3vw, 40px);
+      font-weight: 200; letter-spacing: -0.02em;
+      line-height: 1.3; color: rgba(255,255,255,0.7);
+      max-width: 900px;
+    }
+    .statement-text em { font-style: italic; color: var(--white); }
+
+    /* ── SPECS GRID ──────────────────────────── */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 2px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .spec-cell {
+      background: var(--black);
+      padding: 36px 32px;
+      transition: background 0.2s;
+    }
+    .spec-cell:hover { background: #0c0c0c; }
+    .spec-label {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gray); margin-bottom: 14px;
+    }
+    .spec-val {
+      font-size: 15px; font-weight: 400;
+      color: var(--white); line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .spec-sub {
+      font-size: 12px; font-weight: 300;
+      color: rgba(216,216,216,0.45); line-height: 1.5;
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy {
+      font-size: 11px; font-weight: 300;
+      color: var(--dim); letter-spacing: 0.06em;
+    }
     .footer-tag {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.2);
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.1);
     }
 
-    /* ─── RESPONSIVE ──────────────────────────── */
+    /* ── MOBILE ──────────────────────────────── */
     @media(max-width:768px) {
-      nav { padding: 0 24px; }
-      .hero-content { padding: 0 24px 48px; }
-      .hero-stats { gap: 32px; flex-wrap: wrap; }
-      section { padding: 80px 24px; }
+      #preloader { padding: 36px 24px; }
+      nav { padding: 0 20px; height: 56px; }
+      .nav-meta { display: none; }
+      .hero-content { padding: 0 20px 52px; }
+      .hero-meta-row { flex-wrap: wrap; gap: 20px; }
+      .hero-meta { border-right: none; margin-right: 0; padding-right: 0; }
+      .section { padding: 80px 24px; }
       .video-section { padding: 0 24px 80px; }
-      .metric-cell { padding: 32px 24px; }
-      footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
+      .two-col { grid-template-columns: 1fr; gap: 48px; }
+      .specs-grid { grid-template-columns: 1fr; }
+      .statement { padding: 80px 24px; }
+      footer { padding: 28px 24px; flex-direction: column; gap: 10px; }
     }
   </style>
 </head>
-<body>
+<body class="loading">
 
-<!-- ── NAV ─────────────────────────────────────── -->
+<!-- ── PRELOADER ──────────────────────────────── -->
+<div id="preloader">
+  <div class="preloader-label">Loading</div>
+  <div class="preloader-counter" id="counter">0</div>
+  <div class="preloader-bar-wrap">
+    <div class="preloader-bar" id="bar"></div>
+  </div>
+  <div class="preloader-project">Quadruped Locomotion &nbsp; SpaceData Inc.</div>
+</div>
+
+<!-- ── NAV ───────────────────────────────────── -->
 <nav>
-  <span class="nav-logo">SPOT — USAR</span>
+  <span class="nav-logo">SpaceData Inc. &nbsp; Internship</span>
+  <span class="nav-meta">Disaster Response Robotics &nbsp; 2025</span>
   <a href="../index.html" class="nav-back">
-    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M9 2L4 7l5 5"/>
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M8 2L4 6l4 4"/>
     </svg>
-    Portfolio
+    Back
   </a>
 </nav>
 
-<!-- ── HERO ────────────────────────────────────── -->
+<!-- ── HERO ──────────────────────────────────── -->
 <div class="hero">
-  <div class="hero-iframe-wrap">
-    <iframe width="560" height="315"
-      src="https://www.youtube.com/embed/iJAQ9V45jA8?si=f29V5Qe_2eEyBSKH&loop=1&playlist=iJAQ9V45jA8"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      referrerpolicy="strict-origin-when-cross-origin"
-      allowfullscreen>
+  <div class="hero-video-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/iJAQ9V45jA8?autoplay=1&mute=1&loop=1&playlist=iJAQ9V45jA8&controls=0&modestbranding=1&rel=0"
+      allow="autoplay; encrypted-media" allowfullscreen>
     </iframe>
   </div>
+  <div class="hero-overlay"></div>
 
-  <div class="hero-gradient"></div>
-
-  <div class="hero-content">
-    <div class="hero-eyebrow">Legged Autonomy · Isaac Sim · ROS 2 &nbsp;/&nbsp; 2025</div>
+  <div class="hero-content reveal">
+    <div class="hero-overline">SpaceData Inc. &nbsp; Internship Project &nbsp; 2025</div>
     <h1 class="hero-title">
-      Autonomous<br/>
-      <span>Search & Rescue</span><br/>
-      in GPS-denied space
+      Teaching robots<br/>
+      to walk through<br/>
+      <em>the wreckage</em>
     </h1>
     <p class="hero-sub">
-      A legged robot navigating collapsed indoor environments — combining
-      reinforcement-learned locomotion with classical Nav2 planning inside
-      Isaac Sim.
+      A multi-terrain locomotion policy for quadruped robots, trained in
+      Isaac Lab and tested in GPS-denied indoor environments built to
+      simulate post-disaster scenarios.
     </p>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-val">RL</div>
-        <div class="hero-stat-label">Learned locomotion</div>
+    <div class="hero-meta-row">
+      <div class="hero-meta">
+        <div class="hero-meta-val">Isaac Lab</div>
+        <div class="hero-meta-label">RL Training</div>
       </div>
-      <div>
-        <div class="hero-stat-val">Nav2</div>
-        <div class="hero-stat-label">ROS 2 navigation</div>
+      <div class="hero-meta">
+        <div class="hero-meta-val">ROS 2 Nav2</div>
+        <div class="hero-meta-label">Navigation</div>
       </div>
-      <div>
-        <div class="hero-stat-val">GPS</div>
-        <div class="hero-stat-label">Denied environment</div>
+      <div class="hero-meta">
+        <div class="hero-meta-val">Isaac Sim</div>
+        <div class="hero-meta-label">Simulation env</div>
       </div>
-      <div>
-        <div class="hero-stat-val">4-leg</div>
-        <div class="hero-stat-label">Quadruped platform</div>
+      <div class="hero-meta">
+        <div class="hero-meta-val">Quadruped</div>
+        <div class="hero-meta-label">Platform</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── METRICS STRIP ────────────────────────────── -->
-<div class="divider"></div>
-<div class="metrics-strip">
-  <div class="metric-cell">
-    <div class="metric-num">Isaac</div>
-    <div class="metric-desc">Sim environment<br/>disaster-inspired</div>
-  </div>
-  <div class="metric-cell">
-    <div class="metric-num">Isaac<br style="line-height:0.4"/>Lab</div>
-    <div class="metric-desc">RL locomotion<br/>training</div>
-  </div>
-  <div class="metric-cell">
-    <div class="metric-num">ROS 2</div>
-    <div class="metric-desc">Nav2 stack<br/>full integration</div>
-  </div>
-  <div class="metric-cell">
-    <div class="metric-num">WIP</div>
-    <div class="metric-desc">Active research<br/>ongoing</div>
+<!-- ── FULL WIDTH STATEMENT ───────────────────── -->
+<div class="statement">
+  <div class="statement-inner reveal">
+    <p class="statement-text">
+      When a building collapses, the first 72 hours are when most survivors
+      are found. Sending humans into unstable debris is dangerous. Wheeled
+      robots get stuck. Drones can't carry sensors close to the ground.
+      <em>Legged robots can go where nothing else can.</em>
+    </p>
   </div>
 </div>
-<div class="divider"></div>
 
-<!-- ── OVERVIEW ─────────────────────────────────── -->
-<section>
-  <div class="section-label">Overview</div>
+<!-- ── WHY LEGGED ROBOTS ──────────────────────── -->
+<section class="section">
+  <div class="eyebrow reveal">The problem</div>
   <div class="two-col">
-    <div>
-      <h2 class="section-title">Autonomy where<br/><span>humans can't go</span></h2>
+    <div class="reveal">
+      <h2 class="section-title">
+        Disaster environments<br/>
+        break every<br/>
+        <em>assumption</em>
+      </h2>
     </div>
-    <div>
-      <p class="section-body">
-        After earthquakes, explosions, or structural failures, first responders
-        face environments that are unstable, GPS-denied, poorly lit, and
-        immediately dangerous. Wheeled robots struggle with debris and elevation
-        changes. Aerial systems face endurance limits indoors.
+    <div class="reveal">
+      <p class="body-text">
+        After earthquakes, explosions, or structural failures, the operating
+        conditions are unlike anything a standard robot is designed for.
+        Floors are uneven. Corridors are blocked. There is no GPS. Lighting
+        is unpredictable. And every second of delay matters.
       </p>
-      <br/>
-      <p class="section-body">
-        Legged robots offer a compelling alternative — but bridging learned
-        locomotion with reliable navigation planning in these environments
-        remains an open systems problem. This project works toward that bridge.
+      <p class="body-text">
+        Wheeled platforms lose traction on rubble and cannot climb over
+        obstacles more than a few centimetres tall. Aerial robots struggle
+        with endurance and cannot get close enough to debris piles to be
+        useful. Legged robots are different. They can step over obstacles,
+        maintain balance on uneven ground, navigate narrow passages, and
+        carry sensor payloads deep into environments no human should enter.
+      </p>
+      <p class="body-text">
+        The challenge is making them autonomous enough to do this reliably
+        without constant operator input. That is what this project worked toward.
       </p>
     </div>
   </div>
@@ -483,45 +493,95 @@
 
 <div class="divider"></div>
 
-<!-- ── VIDEO ─────────────────────────────────────── -->
-<div class="video-section">
-  <div style="padding-top:40px; padding-bottom:32px;">
-    <div class="section-label" style="margin-bottom:0">Simulation</div>
+<!-- ── SPECS ──────────────────────────────────── -->
+<section class="section" style="padding-bottom:0">
+  <div class="eyebrow reveal">Operating conditions</div>
+  <div class="specs-grid reveal">
+    <div class="spec-cell">
+      <div class="spec-label">Terrain</div>
+      <div class="spec-val">Debris and rubble</div>
+      <div class="spec-sub">Irregular surfaces, step obstacles, narrow passages, unstable ground</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Navigation</div>
+      <div class="spec-val">GPS denied</div>
+      <div class="spec-sub">All localisation onboard using SLAM and sensor fusion</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Visibility</div>
+      <div class="spec-val">Low and variable</div>
+      <div class="spec-sub">Dust, smoke, damaged lighting, constrained sensor range</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Time pressure</div>
+      <div class="spec-val">72 hour window</div>
+      <div class="spec-sub">Most survivors found in the first three days after a structural collapse</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Operator load</div>
+      <div class="spec-val">Minimal oversight</div>
+      <div class="spec-sub">Emergency crews cannot dedicate attention to full teleoperation under field conditions</div>
+    </div>
+    <div class="spec-cell">
+      <div class="spec-label">Platform</div>
+      <div class="spec-val">Quadruped robot</div>
+      <div class="spec-sub">Four-legged platform, step climbing, dynamic balancing, sensor payload capacity</div>
+    </div>
   </div>
-  <div class="video-wrap">
-    <iframe width="560" height="315"
-      src="https://www.youtube.com/embed/iJAQ9V45jA8?si=f29V5Qe_2eEyBSKH&loop=1&playlist=iJAQ9V45jA8"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      referrerpolicy="strict-origin-when-cross-origin"
+</section>
+
+<!-- ── VIDEO ──────────────────────────────────── -->
+<div class="video-section" style="padding-top:80px">
+  <div class="nda-notice reveal">
+    <div class="nda-dot"></div>
+    <div class="nda-text">
+      The multi-terrain policy trained during this internship is subject to
+      an NDA with SpaceData Inc. and cannot be shown publicly. The video
+      below demonstrates the flat terrain locomotion baseline that the
+      work extended from.
+    </div>
+  </div>
+  <div class="video-wrap reveal">
+    <iframe
+      src="https://www.youtube.com/embed/iJAQ9V45jA8?controls=1&modestbranding=1&rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
     </iframe>
   </div>
-  <div class="video-caption">Autonomous indoor navigation — Isaac Sim, disaster-inspired environment, ROS 2 Nav2</div>
+  <div class="video-caption reveal">Flat terrain locomotion baseline &nbsp; Isaac Sim &nbsp; ROS 2 Nav2</div>
 </div>
 
 <div class="divider"></div>
 
-<!-- ── PROBLEM ───────────────────────────────────── -->
-<section>
-  <div class="section-label">Problem</div>
+<!-- ── THE WORK ───────────────────────────────── -->
+<section class="section">
+  <div class="eyebrow reveal">What I built</div>
   <div class="two-col">
-    <div>
-      <h2 class="section-title">Disaster<br/><span>environments</span></h2>
-      <p class="section-body">
-        The operating conditions for urban search and rescue push every
-        component of a robotic system to its limits simultaneously.
+    <div class="reveal">
+      <h2 class="section-title">
+        Multi-terrain<br/>
+        locomotion<br/>
+        <em>from scratch</em>
+      </h2>
+      <p class="body-text" style="margin-top:24px">
+        At SpaceData Inc. I was tasked with extending a flat terrain
+        locomotion policy to handle the kinds of surfaces a robot would
+        actually encounter in a disaster zone. That meant training a
+        reinforcement learning policy in Isaac Lab that could maintain
+        stable locomotion across rubble, slopes, steps, and irregular
+        ground without pre-mapping the terrain.
       </p>
     </div>
-    <div>
+    <div class="reveal">
       <ul class="detail-list">
-        <li>Collapsed or partially damaged indoor structures</li>
-        <li>Narrow corridors, doorways, and stairwells</li>
-        <li>Debris fields and irregular, uneven surfaces</li>
-        <li>No GPS — localisation must be entirely onboard</li>
-        <li>Low and variable lighting conditions</li>
-        <li>Time pressure — every second of situational awareness matters</li>
+        <li>Trained quadruped locomotion policy using RL in Isaac Lab</li>
+        <li>Multi-terrain curriculum across flat ground, rubble, slopes, and steps</li>
+        <li>Reward shaping for stability, smooth motion, and disturbance recovery</li>
+        <li>Policy outputs velocity commands compatible with ROS 2 Nav2</li>
+        <li>Navigation stack integrated with Isaac Sim for full autonomy pipeline</li>
+        <li>Disaster-inspired indoor environments built in Isaac Sim for validation</li>
+        <li>GPS-denied localisation using onboard SLAM</li>
+        <li>Deployment architecture designed to run on physical hardware</li>
       </ul>
     </div>
   </div>
@@ -529,164 +589,84 @@
 
 <div class="divider"></div>
 
-<!-- ── STEP 1: LOCOMOTION ─────────────────────────── -->
-<section>
-  <div class="section-label">Step 01 — Locomotion</div>
+<!-- ── STATUS ────────────────────────────────── -->
+<section class="section">
+  <div class="eyebrow reveal">Status</div>
   <div class="two-col">
-    <div>
-      <h2 class="section-title">Learning to<br/><span>walk first</span></h2>
-      <p class="section-body">
-        Rather than hand-engineering gaits, a reinforcement learning policy
-        was trained in Isaac Lab to learn walking behavior directly from
-        environment interaction. This produces smooth, disturbance-tolerant
-        locomotion that can handle moderate terrain irregularities without
-        explicit gait programming.
-      </p>
-      <br/>
-      <p class="section-body">
-        The locomotion policy serves as a reliable foundation layer — abstracting
-        away low-level joint control so that higher-level navigation can issue
-        velocity commands without worrying about how the legs execute them.
-      </p>
+    <div class="reveal">
+      <h2 class="section-title">
+        Functional in sim.<br/>
+        <em>Ongoing</em><br/>
+        towards hardware.
+      </h2>
     </div>
-
-    <div>
-      <div class="arch-flow">Isaac Lab (RL training environment)
-        ↓
-Reward shaping
-— stability & smooth motion
-— forward velocity tracking
-— disturbance tolerance
-— recovery from perturbations
-        ↓
-Trained locomotion policy
-— maps velocity commands → joint torques
-— robust to moderate terrain variation
-        ↓
-Velocity command interface
-— linear x/y, angular z
-— compatible with ROS 2 Nav2 cmd_vel</div>
+    <div class="reveal">
+      <p class="body-text">
+        The multi-terrain policy reaches its navigation goals reliably
+        across the simulation environments I built. The next step is
+        validating it on physical hardware, tightening the navigation
+        integration for tighter corridors, and improving recovery
+        behaviors after unexpected falls.
+      </p>
+      <p class="body-text">
+        Most of the detailed results from this internship are under NDA.
+        What I can say is that this was the first time I had to build
+        something with an actual operational constraint — not a research
+        demo, but a system someone would actually deploy in the field.
+        That changes how you think about every design decision.
+      </p>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- ── STEP 2: NAVIGATION ─────────────────────────── -->
-<section>
-  <div class="section-label">Step 02 — Navigation</div>
-  <div class="two-col">
-    <div>
-      <h2 class="section-title">Classical planning<br/><span>on learned motion</span></h2>
-      <p class="section-body">
-        With locomotion in place, Isaac Sim was used to construct
-        disaster-inspired indoor environments and connect the robot to the
-        ROS 2 Nav2 stack. The goal: get a classical path planner to issue
-        commands that a learned locomotion policy can faithfully execute.
-      </p>
-      <br/>
-      <p class="section-body">
-        This integration surfaced real systems challenges — sensor
-        synchronization, velocity command compatibility between planners and
-        legged motion, and navigation stability in tight, cluttered spaces.
-        Each one required careful tuning of the Nav2 costmaps and controller
-        parameters.
-      </p>
-    </div>
-
-    <div>
-      <ul class="detail-list">
-        <li>Isaac Sim — disaster-inspired indoor environment construction</li>
-        <li>ROS 2 Nav2 — global and local path planning</li>
-        <li>SLAM-based localisation — no GPS dependency</li>
-        <li>Sensor synchronisation between simulation and ROS 2 bridge</li>
-        <li>Costmap tuning for narrow corridors and tight doorways</li>
-        <li>Velocity command bridging — Nav2 cmd_vel → locomotion policy</li>
-        <li>Goal-directed autonomy across multiple waypoints</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── STACK SUMMARY ─────────────────────────────── -->
-<section>
-  <div class="section-label">System</div>
-  <div class="two-col">
-    <div>
-      <h2 class="section-title">Full autonomy<br/><span>stack</span></h2>
-      <p class="section-body">
-        The pipeline deliberately separates locomotion from navigation —
-        each layer designed and validated independently before being composed
-        together. This modularity makes failures easier to isolate and each
-        component swappable.
-      </p>
-    </div>
-    <div>
-      <div class="arch-flow">ENVIRONMENT (Isaac Sim)
-— disaster-inspired indoor scenes
-— debris, narrow corridors, low light
-        ↓
-PERCEPTION
-— onboard LIDAR + depth camera
-— SLAM localisation (GPS-denied)
-— occupancy map building
-        ↓
-NAVIGATION (ROS 2 Nav2)
-— global planner: A* / Dijkstra
-— local planner: DWB controller
-— costmap: inflation + obstacle layers
-        ↓
-VELOCITY COMMANDS (cmd_vel)
-        ↓
-LOCOMOTION POLICY (Isaac Lab RL)
-— velocity tracking
-— stability & recovery
-        ↓
-JOINT COMMANDS → quadruped hardware</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── STATUS ────────────────────────────────────── -->
-<section>
-  <div class="section-label">Status</div>
-  <div class="two-col">
-    <div>
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        Active — work in progress
-      </div>
-      <h2 class="section-title">Foundation built.<br/><span>Challenges remain.</span></h2>
-      <p class="section-body">
-        Autonomous indoor navigation is functional in simulation. The system
-        reliably reaches navigation goals across moderately cluttered
-        environments. Several challenges remain before deployment-ready
-        autonomy can be claimed.
-      </p>
-    </div>
-
-    <div>
-      <ul class="detail-list">
-        <li>Robustness under severe terrain variation and step obstacles</li>
-        <li>Reliable perception in very low-visibility environments</li>
-        <li>Longer-horizon autonomy and failure recovery behaviors</li>
-        <li>Tighter integration between Nav2 replanning and locomotion limits</li>
-        <li>Sim-to-real validation on physical Spot hardware</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ── FOOTER ────────────────────────────────────── -->
+<!-- ── FOOTER ─────────────────────────────────── -->
 <div class="divider"></div>
 <footer>
-  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
-  <span class="footer-tag">Spot · Urban Search & Rescue</span>
+  <span class="footer-copy">© 2025 Siddarth Dayasagar &nbsp; SpaceData Inc. Internship</span>
+  <span class="footer-tag">Quadruped &nbsp; Disaster Response</span>
 </footer>
+
+<!-- ── SCRIPTS ────────────────────────────────── -->
+<script>
+  // ── Preloader
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('bar');
+  const preloader = document.getElementById('preloader');
+  let count = 0;
+
+  const interval = setInterval(() => {
+    // accelerate near the end
+    const step = count < 70 ? Math.random() * 3 + 1 : Math.random() * 6 + 2;
+    count = Math.min(100, count + step);
+    counter.textContent = Math.floor(count);
+    bar.style.width = count + '%';
+
+    if (count >= 100) {
+      clearInterval(interval);
+      counter.textContent = '100';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        document.body.classList.remove('loading');
+        // trigger hero reveal
+        document.querySelectorAll('.hero .reveal').forEach(el => {
+          el.classList.add('visible');
+        });
+      }, 400);
+    }
+  }, 40);
+
+  // ── Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
