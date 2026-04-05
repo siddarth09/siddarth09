@@ -621,15 +621,15 @@
   <div class="hero-gradient"></div>
 
   <div class="hero-content">
-    <div class="hero-label reveal">Robotics &nbsp; Autonomy &nbsp; Space Systems</div>
+    <div class="hero-label reveal">Robotics &nbsp; Locomotion &nbsp; Autonomy</div>
     <h1 class="hero-title reveal">
       Building machines<br/>
       that <em>think and act</em>
     </h1>
     <p class="hero-bio reveal">
       Robotics engineer at Northeastern University. I build systems that
-      perceive, decide, and move. From VLA models on 7-DoF arms to
-      autonomous legged robots in disaster environments.
+      perceive, decide, and move. From MPC-based humanoid locomotion to
+      VLA policies on real manipulators.
     </p>
     <div class="hero-cta-row reveal">
       <a href="#projects" class="btn btn-primary">View Work</a>
@@ -688,8 +688,25 @@
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="projects-grid">
 
-    <!-- PRANA — featured -->
+    <!-- BHEEMA — featured -->
     <div class="project-card reveal featured">
+      <div class="project-media">
+        <img src="assets/bheema.png" alt="BHEEMA — Bipedal Locomotion"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">Convex MPC &nbsp; Whole-Body Control &nbsp; 2026</div>
+        <div class="project-title">BHEEMA — Bipedal Locomotion on the Unitree G1</div>
+        <p class="project-desc">
+          Convex MPC locomotion controller for the Unitree G1 humanoid in MuJoCo.
+          Single rigid-body dynamics, Pinocchio whole-body control, OSQP solver
+          at 1.4 ms. 12 integration bugs fixed to reach stable walking.
+        </p>
+        <a href="projects/bheema.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
+    <!-- PRANA -->
+    <div class="project-card reveal">
       <div class="project-media">
         <iframe
           src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&autoplay=1&mute=1&loop=1&playlist=FkD8xybTaxQ&controls=0&modestbranding=1"
@@ -702,7 +719,7 @@
         <p class="project-desc">
           End-to-end multimodal policy built from scratch. Dual-camera ViT encoders,
           PaliGemma tokenizer, 4-layer Transformer, 50-step action chunking.
-          Deployed on a physical 7-DoF arm with over 90% success on screwdriver retrieval.
+          Deployed on a physical 7-DoF arm with 73% success on screwdriver retrieval.
         </p>
         <a href="projects/prana.html" class="project-link">View project →</a>
       </div>
@@ -823,14 +840,15 @@
       </h2>
       <p class="section-body" style="margin-bottom:20px">
         Robotics engineer at Northeastern University working across
-        autonomy, manipulation, and space systems. My focus is building
-        systems that work on real hardware, not just in simulation.
+        locomotion, manipulation, autonomy, and space systems. My focus is
+        building control systems that hold up under real dynamics, not just
+        in clean demos.
       </p>
       <p class="section-body reveal">
-        I've deployed imitation-learned VLA policies on 7-DoF arms, built
-        MPC controllers for autonomous racing, contributed to open-source
-        space station software, and trained legged robots for disaster
-        response. All with a bias toward real-world validation.
+        I've built MPC locomotion controllers for humanoid robots, deployed
+        VLA policies on 7-DoF arms, raced autonomous cars with MPC and MPCC,
+        contributed to open-source space station software, and trained legged
+        robots for disaster response.
       </p>
     </div>
     <div>
@@ -841,7 +859,11 @@
         </li>
         <li>
           <span class="skill-name">Model Predictive Control</span>
-          <span class="skill-tag">CasADi &nbsp; IPOPT &nbsp; MATLAB</span>
+          <span class="skill-tag">CasADi &nbsp; OSQP &nbsp; IPOPT</span>
+        </li>
+        <li>
+          <span class="skill-name">Whole-Body Control</span>
+          <span class="skill-tag">Pinocchio &nbsp; MuJoCo</span>
         </li>
         <li>
           <span class="skill-name">Reinforcement Learning</span>
@@ -895,7 +917,7 @@
 
 <!-- ── FOOTER ─────────────────────────────────── -->
 <footer>
-  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
+  <span class="footer-copy">© 2026 Siddarth Dayasagar</span>
   <div class="footer-links">
     <a href="https://github.com/siddarth09" target="_blank" class="footer-link">GitHub</a>
     <a href="https://www.linkedin.com/in/siddarth-d-roboticsengineer/" target="_blank" class="footer-link">LinkedIn</a>
