@@ -3,850 +3,489 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PRANA — Vision-Language-Action Model</title>
+  <title>PRANA — Vision-Action Policy for Robot Manipulation</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --black: #000000;
-      --white: #ffffff;
-      --off-white: #f0f0f0;
-      --text: #e8e8e8;
-      --muted: #999999;
-      --dim: #555555;
-      --border: rgba(255,255,255,0.1);
-      --border-dim: rgba(255,255,255,0.06);
+      --black: #000000; --white: #ffffff; --text: #e8e8e8;
+      --muted: #999999; --dim: #555555;
+      --border: rgba(255,255,255,0.1); --border-dim: rgba(255,255,255,0.06);
+      --accent-v1: #4a6fa5; --accent-v2: #7d3c98; --accent-v3: #e67e22;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
-      background: var(--black);
-      color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-weight: 300;
-      line-height: 1.7;
-      overflow-x: hidden;
+      background: var(--black); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-weight: 300; line-height: 1.7; overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
-
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
-    /* ── NAV ─────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 56px; height: 68px;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(20px);
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-dim);
     }
-
-    .nav-logo {
-      font-size: 13px; font-weight: 500;
-      letter-spacing: 0.06em; color: var(--white);
+    .nav-logo { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; color: var(--white); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-size: 12px; font-weight: 400; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); transition: color 0.2s;
     }
+    .nav-links a:hover { color: var(--white); }
 
-    .nav-back {
-      font-size: 13px; font-weight: 300;
-      color: var(--muted); letter-spacing: 0.02em;
-      display: flex; align-items: center; gap: 8px;
-      transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--white); }
-    .nav-back svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-    /* ── HERO ────────────────────────────────── */
     .hero {
-      position: relative; width: 100%;
-      height: 100svh; min-height: 580px;
-      overflow: hidden;
+      position: relative; width: 100%; height: 100svh; min-height: 580px; overflow: hidden;
     }
-
-    .hero-video-wrap {
-      position: absolute; inset: 0; overflow: hidden;
-    }
-    .hero-video-wrap iframe {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100vw; height: 56.25vw;
-      min-height: 100vh; min-width: 177.78vh;
-      pointer-events: none;
-      filter: brightness(0.45);
-    }
+    .hero-video-wrap { position: absolute; inset: 0; overflow: hidden; }
     .hero-video-wrap video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      filter: brightness(0.45);
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; filter: brightness(0.4);
     }
-
     .hero-gradient {
       position: absolute; inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.1) 0%,
-        transparent 30%,
-        rgba(0,0,0,0.5) 72%,
-        rgba(0,0,0,1) 100%
-      );
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 30%, rgba(0,0,0,0.5) 72%, rgba(0,0,0,1) 100%);
     }
-
     .hero-content {
       position: absolute; inset: 0;
       display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 0 80px 80px;
-      max-width: 1300px; margin: 0 auto; left: 0; right: 0;
+      padding: 0 80px 80px; max-width: 1300px; margin: 0 auto; left: 0; right: 0;
     }
-
     .hero-eyebrow {
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4); margin-bottom: 22px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 22px;
     }
-
     .hero-title {
-      font-size: clamp(44px, 6.5vw, 96px);
-      font-weight: 200; letter-spacing: -0.03em;
-      line-height: 1.0; color: var(--white);
+      font-size: clamp(44px, 6.5vw, 96px); font-weight: 200;
+      letter-spacing: -0.03em; line-height: 1.0; color: var(--white);
       max-width: 820px; margin-bottom: 26px;
     }
     .hero-title em { font-style: italic; font-weight: 300; }
-
     .hero-sub {
-      font-size: 16px; font-weight: 300;
-      color: rgba(255,255,255,0.6);
-      max-width: 500px; line-height: 1.75;
-      margin-bottom: 52px;
+      font-size: 16px; font-weight: 300; color: rgba(255,255,255,0.6);
+      max-width: 540px; line-height: 1.75; margin-bottom: 52px;
     }
-
     .hero-stats {
-      display: flex; gap: 0;
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding-top: 32px;
+      display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 32px;
     }
     .stat {
       padding-right: 52px; margin-right: 52px;
       border-right: 1px solid rgba(255,255,255,0.1);
     }
     .stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
-    .stat-val {
-      font-size: 28px; font-weight: 200;
-      letter-spacing: -0.03em; color: var(--white);
-      line-height: 1; margin-bottom: 6px;
-    }
-    .stat-label {
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted);
-    }
+    .stat-val { font-size: 28px; font-weight: 200; letter-spacing: -0.03em; color: var(--white); line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
-    /* ── DIVIDER ─────────────────────────────── */
     .divider { height: 1px; background: var(--border); }
 
-    /* ── SECTIONS ────────────────────────────── */
-    .section {
-      max-width: 1300px; margin: 0 auto;
-      padding: 110px 80px;
-    }
-
+    .section { max-width: 1300px; margin: 0 auto; padding: 110px 80px; }
     .eyebrow {
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 48px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 48px;
       display: flex; align-items: center; gap: 16px;
     }
-    .eyebrow::after {
-      content: ''; flex: 1; height: 1px;
-      background: var(--border);
-    }
-
+    .eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .section-title {
-      font-size: clamp(26px, 3.8vw, 50px);
-      font-weight: 200; letter-spacing: -0.02em;
-      line-height: 1.12; color: var(--white);
-      margin-bottom: 24px;
+      font-size: clamp(26px, 3.8vw, 50px); font-weight: 200;
+      letter-spacing: -0.02em; line-height: 1.12; color: var(--white); margin-bottom: 24px;
     }
     .section-title em { font-style: italic; font-weight: 300; }
-
-    /* body text — readable, not muted to invisibility */
     .body-text {
-      font-size: 16px; font-weight: 300;
-      color: rgba(232,232,232,0.75);
+      font-size: 16px; font-weight: 300; color: rgba(232,232,232,0.75);
       line-height: 1.8; max-width: 620px;
     }
-
     .body-text + .body-text { margin-top: 20px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
 
-    .two-col {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 80px; align-items: start;
-    }
-
-    /* ── VIDEO ───────────────────────────────── */
-    .video-section {
-      max-width: 1300px; margin: 0 auto;
-      padding: 0 80px 110px;
-    }
+    .video-section { max-width: 1300px; margin: 0 auto; padding: 0 80px 110px; }
     .video-wrap {
-      position: relative; width: 100%;
-      aspect-ratio: 16/9; background: #0a0a0a; overflow: hidden;
-      border: 1px solid var(--border);
+      position: relative; width: 100%; aspect-ratio: 16/9;
+      background: #0a0a0a; overflow: hidden; border: 1px solid var(--border);
     }
-    .video-wrap iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%; border: none;
-    }
+    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
     .video-caption {
-      margin-top: 14px;
-      font-size: 12px; font-weight: 400;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--dim);
+      margin-top: 14px; font-size: 12px; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim);
     }
 
-    /* ── BLOCK DIAGRAM ───────────────────────── */
-    .diagram-wrap {
-      margin-top: 48px;
-      overflow-x: auto;
-    }
-
-    .diagram {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      min-width: 480px;
-    }
-
-    /* input row */
-    .diag-inputs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin-bottom: 0;
-    }
-
-    .diag-input {
-      background: #0e0e0e;
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 18px 16px;
-      text-align: center;
-    }
-    .diag-input-icon {
-      font-size: 20px; margin-bottom: 8px;
-    }
-    .diag-input-label {
-      font-size: 11px; font-weight: 500;
+    .version-tag {
+      display: inline-block; font-size: 10px; font-weight: 600;
       letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--white); margin-bottom: 4px;
+      padding: 4px 12px; border-radius: 3px; margin-bottom: 16px;
     }
-    .diag-input-sub {
-      font-size: 11px; font-weight: 300;
-      color: var(--muted);
+    .tag-v1 { background: rgba(74,111,165,0.2); color: var(--accent-v1); border: 1px solid rgba(74,111,165,0.3); }
+    .tag-v2 { background: rgba(125,60,152,0.2); color: var(--accent-v2); border: 1px solid rgba(125,60,152,0.3); }
+    .tag-v3 { background: rgba(230,126,34,0.2); color: var(--accent-v3); border: 1px solid rgba(230,126,34,0.3); }
+
+    .arch-img {
+      width: 100%; border: 1px solid var(--border); margin-top: 32px;
     }
 
-    /* arrow */
-    .diag-arrow {
-      display: flex; align-items: center; justify-content: center;
-      height: 36px; color: rgba(255,255,255,0.2);
-      font-size: 18px; letter-spacing: 0.04em;
-      position: relative;
-    }
-    .diag-arrow::before, .diag-arrow::after {
-      content: ''; position: absolute;
-      top: 50%; transform: translateY(-50%);
-      height: 1px; width: calc(50% - 24px);
-      background: rgba(255,255,255,0.08);
-    }
-    .diag-arrow::before { left: 0; }
-    .diag-arrow::after  { right: 0; }
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
 
-    /* encoder row */
-    .diag-encoders {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-    }
-
-    .diag-encoder {
-      background: #0a0a0a;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 16px;
-      text-align: center;
-    }
-    .diag-encoder-name {
-      font-size: 11px; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--white); margin-bottom: 4px;
-    }
-    .diag-encoder-detail {
-      font-size: 11px; font-weight: 300;
-      color: var(--muted);
-    }
-
-    /* concat row */
-    .diag-concat {
-      background: #111;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-top: none;
-      padding: 14px 16px;
-      text-align: center;
-      display: flex; align-items: center; justify-content: center; gap: 24px;
-      flex-wrap: wrap;
-    }
-    .diag-token {
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 0.08em; color: rgba(232,232,232,0.6);
-      padding: 4px 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 2px;
-    }
-    .diag-token-sep {
-      font-size: 11px; color: var(--dim);
-    }
-
-    /* transformer block */
-    .diag-transformer {
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-top: none;
-      padding: 22px 16px;
-      text-align: center;
-    }
-    .diag-transformer-title {
-      font-size: 13px; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--white); margin-bottom: 6px;
-    }
-    .diag-transformer-detail {
-      font-size: 12px; font-weight: 300;
-      color: var(--muted);
-    }
-
-    /* output row */
-    .diag-output {
-      background: #0e0e0e;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-top: none;
-      padding: 22px 16px;
-      text-align: center;
-    }
-    .diag-output-title {
-      font-size: 13px; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--white); margin-bottom: 6px;
-    }
-    .diag-output-detail {
-      font-size: 12px; font-weight: 300;
-      color: var(--muted);
-    }
-
-    /* ── DEPLOYMENT PIPELINE ─────────────────── */
-    .pipeline {
-      display: flex; flex-direction: column; gap: 2px;
-      margin-top: 40px;
-    }
-
-    .pipe-step {
-      display: flex; align-items: center; gap: 24px;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      padding: 20px 24px;
+    .evolution-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 48px; }
+    .evo-card {
+      background: #0a0a0a; border: 1px solid var(--border); padding: 28px 24px;
       transition: background 0.2s;
     }
-    .pipe-step:hover { background: #0f0f0f; }
+    .evo-card:hover { background: #0f0f0f; }
+    .evo-version {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .evo-title { font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 8px; }
+    .evo-desc { font-size: 13px; font-weight: 300; color: rgba(232,232,232,0.55); line-height: 1.6; }
 
-    .pipe-num {
-      font-size: 32px; font-weight: 200;
-      color: rgba(255,255,255,0.1);
-      line-height: 1; flex-shrink: 0; width: 48px;
-      text-align: right;
+    .comp-grid { display: flex; flex-direction: column; gap: 2px; margin-top: 48px; }
+    .comp-row {
+      display: grid; grid-template-columns: 160px 1fr 1fr 1fr; gap: 0;
+      background: #0a0a0a; border: 1px solid var(--border); transition: background 0.2s;
+    }
+    .comp-row:hover { background: #0f0f0f; }
+    .comp-row.header { background: #111; }
+    .comp-cell {
+      padding: 14px 18px; font-size: 13px; font-weight: 300;
+      color: rgba(232,232,232,0.6); border-right: 1px solid var(--border);
+    }
+    .comp-cell:last-child { border-right: none; }
+    .comp-cell.label { font-weight: 500; color: var(--white); }
+    .comp-cell.header-cell {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
     }
 
-    .pipe-content { flex: 1; }
-
-    .pipe-title {
-      font-size: 14px; font-weight: 500;
-      letter-spacing: 0.04em; color: var(--white);
-      margin-bottom: 4px;
-    }
-
-    .pipe-desc {
-      font-size: 13px; font-weight: 300;
-      color: rgba(232,232,232,0.55); line-height: 1.6;
-    }
-
-    .pipe-tag {
-      font-size: 10px; font-weight: 400;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--dim); flex-shrink: 0;
-    }
-
-    .pipe-arrow-row {
-      display: flex; align-items: center; justify-content: flex-start;
-      padding: 0 0 0 72px;
-      height: 20px; color: rgba(255,255,255,0.15);
-      font-size: 13px;
-    }
-
-    /* ── DETAIL LIST ─────────────────────────── */
     .detail-list { list-style: none; padding: 0; }
     .detail-list li {
-      display: flex; align-items: baseline; gap: 14px;
-      padding: 15px 0;
+      display: flex; align-items: baseline; gap: 14px; padding: 15px 0;
       border-bottom: 1px solid var(--border);
-      font-size: 14px; font-weight: 300;
-      color: rgba(232,232,232,0.65);
+      font-size: 14px; font-weight: 300; color: rgba(232,232,232,0.65);
     }
     .detail-list li:first-child { border-top: 1px solid var(--border); }
     .detail-list li::before {
-      content: ''; display: block;
-      width: 4px; height: 4px; border-radius: 50%;
-      background: var(--dim); flex-shrink: 0;
-      margin-top: 7px;
+      content: ''; display: block; width: 4px; height: 4px;
+      border-radius: 50%; background: var(--dim); flex-shrink: 0; margin-top: 7px;
     }
 
-    /* ── COMPONENT GRID ──────────────────────── */
-    .comp-grid { display: flex; flex-direction: column; gap: 2px; }
+    .links-row { display: flex; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
+    .link-btn {
+      font-size: 12px; font-weight: 400; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 10px 20px; border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .link-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
 
-    .comp-row {
-      display: grid;
-      grid-template-columns: 180px 220px 1fr;
-      gap: 0;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      transition: background 0.2s;
-    }
-    .comp-row:hover { background: #0f0f0f; }
-
-    .comp-name, .comp-tech, .comp-desc {
-      padding: 18px 20px;
-    }
-    .comp-name {
-      font-size: 13px; font-weight: 500;
-      color: var(--white); letter-spacing: 0.02em;
-      border-right: 1px solid var(--border);
-    }
-    .comp-tech {
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 11px; font-weight: 400;
-      color: var(--muted); letter-spacing: 0.02em;
-      border-right: 1px solid var(--border);
-      display: flex; align-items: center;
-    }
-    .comp-desc {
-      font-size: 13px; font-weight: 300;
-      color: rgba(232,232,232,0.6); line-height: 1.6;
-    }
-
-    @media(max-width:768px) {
-      .comp-row { grid-template-columns: 1fr; }
-      .comp-name, .comp-tech { border-right: none; border-bottom: 1px solid var(--border); }
-      .comp-tech { font-size: 11px; }
-    }
-
-    /* ── FOOTER ──────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 36px 80px;
+      border-top: 1px solid var(--border); padding: 36px 80px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .footer-copy {
-      font-size: 12px; font-weight: 300;
-      color: var(--dim); letter-spacing: 0.04em;
-    }
-    .footer-tag {
-      font-size: 11px; font-weight: 400;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: rgba(255,255,255,0.1);
-    }
+    .footer-copy { font-size: 12px; font-weight: 300; color: var(--dim); }
+    .footer-tag { font-size: 11px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.1); }
 
-    /* ── MOBILE ──────────────────────────────── */
     @media(max-width:768px) {
-      nav { padding: 0 20px; height: 60px; }
+      nav { padding: 0 20px; }
       .hero-content { padding: 0 24px 52px; }
       .hero-stats { flex-wrap: wrap; gap: 24px; }
       .stat { border-right: none; margin-right: 0; padding-right: 0; }
       .section { padding: 72px 24px; }
       .video-section { padding: 0 24px 72px; }
       .two-col { grid-template-columns: 1fr; gap: 48px; }
-      .diag-inputs { grid-template-columns: 1fr; }
-      .diag-encoders { grid-template-columns: 1fr; }
-      .diag-concat { gap: 12px; }
-      .pipe-step { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .pipe-num { width: auto; text-align: left; font-size: 24px; }
-      footer { padding: 28px 24px; flex-direction: column; gap: 10px; text-align: center; }
-    }
-
-    @media(max-width:480px) {
-      .hero-title { font-size: clamp(36px, 10vw, 52px); }
-      .hero-sub { font-size: 14px; }
+      .video-grid { grid-template-columns: 1fr; }
+      .evolution-grid { grid-template-columns: 1fr; }
+      .comp-row { grid-template-columns: 1fr; }
+      footer { padding: 28px 24px; flex-direction: column; gap: 10px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── NAV ───────────────────────────────────── -->
 <nav>
   <span class="nav-logo">PRANA</span>
-  <a href="../index.html" class="nav-back">
-    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M9 2L4 7l5 5"/>
-    </svg>
-    Back
-  </a>
+  <div class="nav-links">
+    <a href="#evolution">Evolution</a>
+    <a href="#v2">v2</a>
+    <a href="#v3">v3</a>
+    <a href="#comparison">Compare</a>
+    <a href="https://github.com/siddarth09/PRANA" target="_blank">GitHub</a>
+  </div>
 </nav>
 
-<!-- ── HERO ──────────────────────────────────── -->
 <div class="hero">
   <div class="hero-video-wrap">
     <video autoplay muted loop playsinline src="../assets/pranav1.mp4"></video>
   </div>
   <div class="hero-gradient"></div>
-
   <div class="hero-content">
-    <div class="hero-eyebrow">Vision Language Action &nbsp; 2025</div>
-    <h1 class="hero-title">
-      PRANA<br/>
-      <em>Built from scratch.</em><br/>
-      Deployed on hardware.
-    </h1>
+    <div class="hero-eyebrow">Vision-Action Policy &nbsp; 2025–2026</div>
+    <h1 class="hero-title">PRANA<br/><em>Three iterations.</em><br/>One robot that grasps.</h1>
     <p class="hero-sub">
-      I built an end-to-end VLA model from the ground up and deployed it
-      on a real 7-DoF arm. No pretrained backbone shortcuts. It runs at 50 Hz
-      and hits over 90% success on a physical pick and place task.
+      From a deterministic baseline that barely reached the screwdriver,
+      to a flow-matching policy with correlated noise that picks it up
+      and places it in the box. Built on a $300 arm with one laptop GPU.
     </p>
     <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-val">&gt;90%</div>
-        <div class="stat-label">Task success</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val">50 Hz</div>
-        <div class="stat-label">Control rate</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val">500+</div>
-        <div class="stat-label">Training episodes</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val">7-DoF</div>
-        <div class="stat-label">Physical platform</div>
-      </div>
+      <div class="stat"><div class="stat-val">3</div><div class="stat-label">Architectures</div></div>
+      <div class="stat"><div class="stat-val">123</div><div class="stat-label">Episodes</div></div>
+      <div class="stat"><div class="stat-val">10 Hz</div><div class="stat-label">Control rate</div></div>
+      <div class="stat"><div class="stat-val">8 GB</div><div class="stat-label">Single GPU</div></div>
     </div>
   </div>
 </div>
 
-<!-- ── VIDEO ──────────────────────────────────── -->
-<div class="video-section" style="padding-top:0">
-  <div style="padding:48px 0 24px">
-    <div class="eyebrow" style="margin-bottom:0">Deployment footage</div>
-  </div>
-  <div class="video-wrap">
-    <iframe
-      src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&controls=1&modestbranding=1&rel=0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-  </div>
-  <div class="video-caption">Autonomous screwdriver retrieval on a physical 7-DoF platform</div>
-</div>
-
 <div class="divider"></div>
 
-<!-- ── OVERVIEW ──────────────────────────────── -->
-<section class="section">
-  <div class="eyebrow">What this is</div>
-  <div class="two-col">
-    <div>
-      <h2 class="section-title">
-        A VLA model I<br/><em>actually built</em>
-      </h2>
-    </div>
-    <div>
-      <p class="body-text">
-        PRANA stands for Perception-conditioned Robotic Network with Attention.
-        I designed and trained every component from scratch — the vision encoders,
-        the language embedding, the transformer architecture, and the action
-        chunking mechanism.
-      </p>
-      <p class="body-text">
-        The model fuses two camera streams, a language instruction, and the
-        robot's joint state into a single sequence. A transformer processes
-        that sequence and outputs 50 future actions in one forward pass.
-        That chunk gets executed at 50 Hz on the physical arm.
-      </p>
-      <p class="body-text">
-        I used LeRobot as the deployment harness and collected over 500
-        teleoperation episodes myself. The task is screwdriver retrieval in
-        an unstructured environment — small object, tight tolerances,
-        real consequences for bad predictions.
-      </p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── ARCHITECTURE ──────────────────────────── -->
-<section class="section">
-  <div class="eyebrow">Architecture</div>
-  <div class="two-col" style="margin-bottom:0">
-    <div>
-      <h2 class="section-title">
-        Three inputs.<br/><em>One sequence.</em><br/>50 actions out.
-      </h2>
-      <p class="body-text">
-        The core idea is straightforward. I encode vision, language, and
-        robot state into tokens of the same dimension, concatenate them into
-        one sequence, and let a transformer figure out what the arm should do next.
-        50 learnable action queries read from that context and output a full
-        action horizon in a single shot.
-      </p>
-      <p class="body-text" style="margin-top:20px">
-        This means no autoregressive decoding, no waiting. The whole chunk
-        comes out at once and the arm executes it. That's how I get 50 Hz on
-        real hardware without a GPU strapped to the robot.
-      </p>
-    </div>
-    <div>
-      <!-- BLOCK DIAGRAM -->
-      <div class="diagram-wrap">
-        <div class="diagram">
-
-          <!-- Inputs -->
-          <div class="diag-inputs">
-            <div class="diag-input">
-              <div class="diag-input-icon">📷</div>
-              <div class="diag-input-label">Camera 1</div>
-              <div class="diag-input-sub">Table view · 224×224</div>
-            </div>
-            <div class="diag-input">
-              <div class="diag-input-icon">📷</div>
-              <div class="diag-input-label">Camera 2</div>
-              <div class="diag-input-sub">Wrist view · 224×224</div>
-            </div>
-            <div class="diag-input">
-              <div class="diag-input-icon">🔤</div>
-              <div class="diag-input-label">Instruction</div>
-              <div class="diag-input-sub">Language tokens · 16</div>
-            </div>
-          </div>
-
-          <!-- Arrow -->
-          <div class="diag-arrow">↓</div>
-
-          <!-- Encoders -->
-          <div class="diag-encoders">
-            <div class="diag-encoder">
-              <div class="diag-encoder-name">ViT-Tiny</div>
-              <div class="diag-encoder-detail">197 patch tokens × 2</div>
-            </div>
-            <div class="diag-encoder">
-              <div class="diag-encoder-name">ViT-Tiny</div>
-              <div class="diag-encoder-detail">197 patch tokens</div>
-            </div>
-            <div class="diag-encoder">
-              <div class="diag-encoder-name">Embedding</div>
-              <div class="diag-encoder-detail">256k vocab · 16 tokens</div>
-            </div>
-          </div>
-
-          <!-- Arrow -->
-          <div class="diag-arrow">↓ &nbsp; concatenate with joint state (1 token)</div>
-
-          <!-- Concat sequence -->
-          <div class="diag-concat">
-            <span class="diag-token">394 visual</span>
-            <span class="diag-token-sep">+</span>
-            <span class="diag-token">16 language</span>
-            <span class="diag-token-sep">+</span>
-            <span class="diag-token">1 state</span>
-            <span class="diag-token-sep">+</span>
-            <span class="diag-token">50 action queries</span>
-          </div>
-
-          <!-- Arrow -->
-          <div class="diag-arrow">↓</div>
-
-          <!-- Transformer -->
-          <div class="diag-transformer">
-            <div class="diag-transformer-title">Transformer Encoder</div>
-            <div class="diag-transformer-detail">4 layers · 8 attention heads · Pre-LN · dim 256</div>
-          </div>
-
-          <!-- Arrow -->
-          <div class="diag-arrow">↓ last 50 tokens</div>
-
-          <!-- Output -->
-          <div class="diag-output">
-            <div class="diag-output-title">Action Head &nbsp; Linear → GELU → Linear</div>
-            <div class="diag-output-detail">Action chunk [50 steps × 6 DoF] &nbsp; executed at 50 Hz</div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── TRAINING ───────────────────────────────── -->
-<section class="section">
-  <div class="eyebrow">Training</div>
-  <div class="two-col">
-    <div>
-      <h2 class="section-title">
-        500 episodes.<br/><em>All mine.</em>
-      </h2>
-      <p class="body-text">
-        I collected every single training episode myself through teleoperation
-        using the LeRobot recording stack. Two synchronized camera streams,
-        proprioceptive joint state, and a fixed language instruction per episode.
-      </p>
-      <p class="body-text" style="margin-top:20px">
-        The key training design decision was action chunking. Instead of
-        predicting one action per step, the model predicts 50 steps at once.
-        This collapses compounding error and lets the robot commit to smooth
-        trajectories rather than reacting jerkily every timestep.
-      </p>
-    </div>
-    <div>
-      <ul class="detail-list">
-        <li>500+ teleoperation episodes collected personally</li>
-        <li>Dual camera streams at 224×224, streamed from parquet files</li>
-        <li>Episode boundary integrity enforced — no chunk spans two episodes</li>
-        <li>L1 loss with padding mask on terminal frames</li>
-        <li>AdamW optimizer, lr 1e-4, weight decay 1e-4</li>
-        <li>MEAN_STD normalisation across visual, state, and action modalities</li>
-        <li>PaliGemma tokenizer — max length 16 tokens per instruction</li>
-        <li>Statistics serialised with the checkpoint for deployment</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── DEPLOYMENT ────────────────────────────── -->
-<section class="section">
-  <div class="eyebrow">Deployment</div>
-  <h2 class="section-title" style="margin-bottom:16px">
-    How it runs on<br/><em>the actual arm</em>
-  </h2>
-  <p class="body-text" style="margin-bottom:0">
-    Getting a trained policy onto real hardware is a different problem from training it.
-    Here is exactly how PRANA goes from a checkpoint to motor commands on the physical arm.
+<section class="section" id="evolution">
+  <div class="eyebrow">Evolution</div>
+  <h2 class="section-title">From L1 regression<br/>to <em>flow matching</em></h2>
+  <p class="body-text">
+    Each version fixed the failures of the last. v1 taught me what doesn't work.
+    v2 introduced the right inductive biases. v3 upgraded the eyes.
   </p>
 
-  <div class="pipeline">
-
-    <div class="pipe-step">
-      <div class="pipe-num">01</div>
-      <div class="pipe-content">
-        <div class="pipe-title">Factory hook into LeRobot</div>
-        <div class="pipe-desc">PranaPolicy subclasses PreTrainedPolicy and registers under "prana_v1". A lightweight factory hook routes LeRobot's recording and evaluation loop through my policy without touching the framework internals.</div>
+  <div class="evolution-grid">
+    <div class="evo-card">
+      <div class="evo-version" style="color:var(--accent-v1)">Version 1</div>
+      <div class="evo-title">Self-attention + L1 loss</div>
+      <div class="evo-desc">
+        All tokens in one self-attention pool. Deterministic regression learned the average
+        of demos — a trajectory that matched none of them. Dead language encoder wasting 262MB.
+        Unfrozen ViT overfitting on 83 episodes.
       </div>
-      <div class="pipe-tag">LeRobot &nbsp; Zero fork</div>
     </div>
-
-    <div class="pipe-arrow-row">↓</div>
-
-    <div class="pipe-step">
-      <div class="pipe-num">02</div>
-      <div class="pipe-content">
-        <div class="pipe-title">Action chunk inference</div>
-        <div class="pipe-desc">On the first call to select_action(), the model runs one forward pass and produces 50 actions. These go into a deque. Every subsequent control tick just pops the next action — inference cost is amortised over 50 steps.</div>
+    <div class="evo-card">
+      <div class="evo-version" style="color:var(--accent-v2)">Version 2</div>
+      <div class="evo-title">Flow matching + cross-attention</div>
+      <div class="evo-desc">
+        Encoder-decoder split. Action queries cross-attend to visual context instead of
+        competing with it. Flow matching with correlated noise handles multimodal actions.
+        Frozen ViT-Tiny. Rolling inpainting for smooth chunk transitions.
       </div>
-      <div class="pipe-tag">50 Hz &nbsp; Single inference</div>
     </div>
-
-    <div class="pipe-arrow-row">↓</div>
-
-    <div class="pipe-step">
-      <div class="pipe-num">03</div>
-      <div class="pipe-content">
-        <div class="pipe-title">Un-normalisation to motor radians</div>
-        <div class="pipe-desc">The network outputs normalised actions. The training dataset statistics (mean and std) are saved alongside the checkpoint and loaded at inference time. Every action gets multiplied by std and added to mean before going to the arm.</div>
+    <div class="evo-card">
+      <div class="evo-version" style="color:var(--accent-v3)">Version 3</div>
+      <div class="evo-title">DINOv2 self-supervised vision</div>
+      <div class="evo-desc">
+        Same flow matching decoder as v2, but DINOv2 ViT-S/14 replaces ViT-Tiny.
+        Self-supervised spatial features encode where objects are, not just what they are.
+        384d embeddings, 256 tokens per camera. Smoother, more generalizable.
       </div>
-      <div class="pipe-tag">Checkpoint-bound stats</div>
     </div>
-
-    <div class="pipe-arrow-row">↓</div>
-
-    <div class="pipe-step">
-      <div class="pipe-num">04</div>
-      <div class="pipe-content">
-        <div class="pipe-title">Motor commands to the 7-DoF arm</div>
-        <div class="pipe-desc">Physical motor radians sent directly to the joint controllers. The arm executes the chunk, the queue refills at the next inference cycle, and the loop continues until task completion.</div>
-      </div>
-      <div class="pipe-tag">Real hardware &nbsp; 7-DoF</div>
-    </div>
-
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- ── COMPONENT TABLE ───────────────────────── -->
-<section class="section">
-  <div class="eyebrow">System</div>
-  <h2 class="section-title" style="margin-bottom:48px">
-    Every component<br/><em>accounted for</em>
-  </h2>
+<section class="section" id="v1">
+  <div class="eyebrow">Version 1 — Baseline</div>
+  <div class="two-col">
+    <div>
+      <span class="version-tag tag-v1">PRANA v1</span>
+      <h2 class="section-title">The one that<br/><em>almost worked</em></h2>
+      <p class="body-text">
+        83 teleoperation episodes. ViT-Tiny vision encoder, PaliGemma tokenizer
+        (receiving zeros), 4-layer self-attention transformer, 50-step action chunking
+        with L1 loss. It reached for the screwdriver but couldn't grasp consistently.
+      </p>
+      <p class="body-text">
+        The failures were instructive: self-attention let action queries contaminate
+        each other before seeing the scene. Deterministic regression averaged out
+        the multimodal demonstrations. The unfrozen backbone overfitted in 2000 steps.
+      </p>
+    </div>
+    <div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/FkD8xybTaxQ?si=WphjPIdnCiE92yqi&controls=1&modestbranding=1&rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="video-caption">v1 — reaches but struggles to grasp</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="v2">
+  <div class="eyebrow">Version 2 — Flow Matching</div>
+  <span class="version-tag tag-v2">PRANA v2</span>
+  <h2 class="section-title">Iterative denoising with<br/><em>correlated noise</em></h2>
+  <p class="body-text" style="margin-bottom:48px">
+    Instead of predicting one average trajectory, the model starts from noise shaped
+    like real robot motions and iteratively refines it into precise actions. Cross-attention
+    so the decoder actually looks at the scene before deciding what to do.
+  </p>
+
+  <img src="../assets/prana_v2_architecture.png" alt="PRANA v2 Architecture" class="arch-img"/>
+  <div class="video-caption" style="margin-bottom:48px">v2 architecture — context encoder + cross-attention action decoder with flow matching</div>
+
+  <div class="two-col">
+    <div>
+      <ul class="detail-list">
+        <li>Frozen ViT-Tiny with camera-ID embeddings</li>
+        <li>4-layer context encoder (self-attention over vision + state)</li>
+        <li>7-layer action decoder (cross-attention to context)</li>
+        <li>Flow matching: 10 Euler denoising steps at inference</li>
+        <li>Correlated noise from Cholesky decomposition of action covariance</li>
+        <li>Rolling inpainting: execute 40, save 10 for smooth transitions</li>
+        <li>~11M trainable params, 100K training steps</li>
+        <li>22ms per chunk inference on RTX 5060</li>
+      </ul>
+    </div>
+    <div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/9PSl8BWMlBE?si=SFDzqU_8kT-u70wl&controls=1&modestbranding=1&rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="video-caption">v2 — picks up screwdriver and places in box</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="v3">
+  <div class="eyebrow">Version 3 — DINOv2 Vision</div>
+  <span class="version-tag tag-v3">PRANA v3</span>
+  <h2 class="section-title">Same decoder.<br/><em>Better eyes.</em></h2>
+  <p class="body-text" style="margin-bottom:48px">
+    DINOv2 ViT-S/14 replaces ViT-Tiny. Self-supervised pretraining on 142M images
+    means the backbone encodes where objects are spatially, not just what class they are.
+    384-dimensional embeddings, 256 tokens per camera — 2.6x more visual information.
+  </p>
+
+  <img src="../assets/prana_v3_architecture.png" alt="PRANA v3 Architecture" class="arch-img"/>
+  <div class="video-caption" style="margin-bottom:48px">v3 architecture — DINOv2 backbone with 512 visual tokens feeding the same flow matching decoder</div>
+
+  <div class="two-col">
+    <div>
+      <ul class="detail-list">
+        <li>DINOv2 ViT-S/14 frozen backbone (22M params)</li>
+        <li>384d embeddings → 256 tokens per camera (vs 192d / 197 tokens)</li>
+        <li>512 total visual tokens (vs 394 in v2)</li>
+        <li>Same flow matching decoder, same correlated noise</li>
+        <li>Smoother trajectories, better generalization to object placement</li>
+        <li>~30M trainable params</li>
+        <li>Less jittery than v2, reduced position error at grasp point</li>
+      </ul>
+    </div>
+    <div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/TbDWMKYctv8?si=npIYNQSYaw3I2ptn&controls=1&modestbranding=1&rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="video-caption">v3 — smoother grasp, better generalization with DINOv2</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="comparison">
+  <div class="eyebrow">Comparison</div>
+  <h2 class="section-title">Side by side</h2>
 
   <div class="comp-grid">
-    <div class="comp-row">
-      <div class="comp-name">Vision Encoder</div>
-      <div class="comp-tech">vit_tiny_patch16_224</div>
-      <div class="comp-desc">Extracts 197 patch tokens from each camera stream. Two cameras run in parallel — 394 visual tokens total.</div>
+    <div class="comp-row header">
+      <div class="comp-cell header-cell">Component</div>
+      <div class="comp-cell header-cell" style="color:var(--accent-v1)">v1</div>
+      <div class="comp-cell header-cell" style="color:var(--accent-v2)">v2</div>
+      <div class="comp-cell header-cell" style="color:var(--accent-v3)">v3</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Language Encoder</div>
-      <div class="comp-tech">nn.Embedding (256k vocab)</div>
-      <div class="comp-desc">Maps the tokenised instruction into the same hidden space as the visual tokens. Trained end-to-end.</div>
+      <div class="comp-cell label">Vision</div>
+      <div class="comp-cell">ViT-Tiny (unfrozen)</div>
+      <div class="comp-cell">ViT-Tiny (frozen)</div>
+      <div class="comp-cell">DINOv2 ViT-S/14 (frozen)</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">State Encoder</div>
-      <div class="comp-tech">nn.Linear</div>
-      <div class="comp-desc">Compresses 6-DoF joint angles into a single proprioceptive token and injects it into the sequence.</div>
+      <div class="comp-cell label">Attention</div>
+      <div class="comp-cell">Self-attention only</div>
+      <div class="comp-cell">Cross-attention decoder</div>
+      <div class="comp-cell">Cross-attention decoder</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Action Queries</div>
-      <div class="comp-tech">nn.Parameter</div>
-      <div class="comp-desc">50 learnable vectors that attend over the full context and get updated by the transformer into action predictions.</div>
+      <div class="comp-cell label">Action head</div>
+      <div class="comp-cell">L1 regression</div>
+      <div class="comp-cell">Flow matching (10 steps)</div>
+      <div class="comp-cell">Flow matching (10 steps)</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Transformer</div>
-      <div class="comp-tech">TransformerEncoder · 4L · 8H</div>
-      <div class="comp-desc">Pre-LN transformer encoder. Processes the full sequence and updates the action queries with contextual information.</div>
+      <div class="comp-cell label">Noise</div>
+      <div class="comp-cell">N/A</div>
+      <div class="comp-cell">Correlated (β=0.5)</div>
+      <div class="comp-cell">Correlated (β=0.5)</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Action Head</div>
-      <div class="comp-tech">Linear → GELU → Linear</div>
-      <div class="comp-desc">Projects the 50 updated query tokens into 50 steps of 6-DoF joint commands. One forward pass, full horizon out.</div>
+      <div class="comp-cell label">Visual tokens</div>
+      <div class="comp-cell">394</div>
+      <div class="comp-cell">394</div>
+      <div class="comp-cell">512</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Tokenizer</div>
-      <div class="comp-tech">PaliGemma 3B tokenizer</div>
-      <div class="comp-desc">Converts the instruction string into up to 16 integer token IDs. Padded to fixed length at training and inference.</div>
+      <div class="comp-cell label">Inference</div>
+      <div class="comp-cell">~5ms</div>
+      <div class="comp-cell">~22ms</div>
+      <div class="comp-cell">~30ms</div>
     </div>
     <div class="comp-row">
-      <div class="comp-name">Framework</div>
-      <div class="comp-tech">LeRobot (Hugging Face)</div>
-      <div class="comp-desc">Handles data collection, training loop, checkpoint saving, and the hardware deployment harness.</div>
+      <div class="comp-cell label">Grasps</div>
+      <div class="comp-cell">With assistance</div>
+      <div class="comp-cell">Yes</div>
+      <div class="comp-cell">Yes, smoother</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-cell label">Places in box</div>
+      <div class="comp-cell">No</div>
+      <div class="comp-cell">With assistance</div>
+      <div class="comp-cell">With assistance</div>
+    </div>
+  </div>
+
+  <div class="video-grid" style="margin-top:64px">
+    <div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/9PSl8BWMlBE?si=SFDzqU_8kT-u70wl&controls=1&modestbranding=1&rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="video-caption">v2 — ViT-Tiny + flow matching</div>
+    </div>
+    <div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/TbDWMKYctv8?si=npIYNQSYaw3I2ptn&controls=1&modestbranding=1&rel=0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="video-caption">v3 — DINOv2 + flow matching</div>
     </div>
   </div>
 </section>
 
-<!-- ── FOOTER ─────────────────────────────────── -->
+<div class="divider"></div>
+
+<section class="section">
+  <div class="eyebrow">Links</div>
+  <h2 class="section-title">Open source.<br/><em>Everything.</em></h2>
+  <p class="body-text">
+    Architecture, training scripts, deployment code, model weights, dataset, and the mistakes along the way.
+  </p>
+  <div class="links-row">
+    <a href="https://github.com/siddarth09/PRANA" target="_blank" class="link-btn">GitHub →</a>
+    <a href="https://huggingface.co/Siddarth09/PRANA_v2" target="_blank" class="link-btn">v2 Weights →</a>
+    <a href="https://huggingface.co/datasets/Siddarth09/PRANA" target="_blank" class="link-btn">Dataset →</a>
+  </div>
+</section>
+
 <div class="divider"></div>
 <footer>
-  <span class="footer-copy">© 2025 Siddarth Dayasagar</span>
-  <span class="footer-tag">PRANA &nbsp; Vision Language Action</span>
+  <span class="footer-copy">© 2026 Siddarth Dayasagar · Northeastern University</span>
+  <span class="footer-tag">PRANA &nbsp; Vision-Action Policy</span>
 </footer>
 
 </body>
