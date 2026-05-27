@@ -546,16 +546,16 @@
   <div class="hero-gradient"></div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">Convex MPC &nbsp; Whole-Body Control &nbsp; 2026</div>
+    <div class="hero-eyebrow">Convex MPC &nbsp; Whole-Body Control &nbsp; RL Policy &nbsp; 2026</div>
     <h1 class="hero-title">
       BHEEMA<br/>
       <em>Making a humanoid</em><br/>
       walk from scratch
     </h1>
     <p class="hero-sub">
-      A convex MPC locomotion controller for the Unitree G1 humanoid,
-      built entirely from scratch in MuJoCo. Single rigid-body dynamics,
-      Pinocchio whole-body control, and OSQP solving the QP in under 2 ms.
+      A convex MPC locomotion controller and an RL policy for the Unitree G1
+      humanoid, built entirely from scratch in MuJoCo. Classical control meets
+      learned locomotion on the same platform.
     </p>
     <div class="hero-stats">
       <div class="stat">
@@ -569,6 +569,10 @@
       <div class="stat">
         <div class="stat-val">200 Hz</div>
         <div class="stat-label">WBC rate</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">50 Hz</div>
+        <div class="stat-label">RL policy</div>
       </div>
       <div class="stat">
         <div class="stat-val">20s+</div>
@@ -852,12 +856,259 @@
     </a>
   </div>
 </section>
+<div class="divider"></div>
+
+<!-- ── RL VIDEO ──────────────────────────────── -->
+<div class="video-section" style="padding-top:0">
+  <div style="padding:48px 0 24px">
+    <div class="eyebrow" style="margin-bottom:0">RL Policy Demo</div>
+  </div>
+  <div class="video-wrap" style="aspect-ratio:9/16; max-width:400px;">
+    <iframe
+      src="https://www.youtube.com/embed/XFwTWJ1Y6LU?controls=1&modestbranding=1&rel=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-caption">Unitree G1 bipedal walking &nbsp; MuJoCo &nbsp; RL Policy + Keyboard Teleop</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── RL LOCOMOTION ─────────────────────────── -->
+<section class="section">
+  <div class="eyebrow">Reinforcement Learning</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">
+        Learning to walk<br/>
+        <em>from rewards</em>
+      </h2>
+      <p class="body-text">
+        Alongside the classical MPC stack, I trained an RL locomotion policy
+        using MjLab as a parallel approach to bipedal walking. The policy learns
+        directly from reward signals — velocity tracking, energy efficiency,
+        gait quality, and posture stability — rather than from an explicit
+        dynamics model.
+      </p>
+      <p class="body-text">
+        The environment forks MjLab's battle-tested G1 velocity task and
+        customizes the reward weights to shape the walking behavior I wanted.
+        The observations, actions, terminations, and domain randomization are
+        inherited from the base config. What makes the policy unique is the
+        reward function.
+      </p>
+      <p class="body-text">
+        The trained checkpoint is deployed through a pure-NumPy inference
+        bridge that handles the joint mapping between the 29-joint training
+        model and the 43-joint MJCF (which includes BrainCo hands). Legs run
+        PD torque control, upper body runs position targets — matching the
+        actuator types in the physical hardware.
+      </p>
+    </div>
+    <div>
+      <div class="diagram-wrap">
+        <div class="diagram">
+          <div class="diag-tier">
+            <div class="diag-rate" style="font-size:15px">2048<span>Envs</span></div>
+            <div class="diag-info">
+              <div class="diag-name">Parallel Training</div>
+              <div class="diag-desc">PPO policy trained in MjLab across 2048 parallel environments on flat terrain</div>
+            </div>
+            <div class="diag-tag">MjLab</div>
+          </div>
+
+          <div class="diag-arrow">&#8595; &nbsp; reward shaping</div>
+
+          <div class="diag-tier">
+            <div class="diag-rate" style="font-size:15px">99<span>Obs dim</span></div>
+            <div class="diag-info">
+              <div class="diag-name">Observation Space</div>
+              <div class="diag-desc">Base velocities, projected gravity, joint pos/vel relative to default, previous action, velocity command</div>
+            </div>
+            <div class="diag-tag">29 Joints</div>
+          </div>
+
+          <div class="diag-arrow">&#8595; &nbsp; 512 → 256 → 128</div>
+
+          <div class="diag-tier">
+            <div class="diag-rate" style="font-size:15px">50<span>Hz</span></div>
+            <div class="diag-info">
+              <div class="diag-name">Policy Inference</div>
+              <div class="diag-desc">4-layer MLP with ELU activations, running normalized observation through pure NumPy forward pass</div>
+            </div>
+            <div class="diag-tag">NumPy</div>
+          </div>
+
+          <div class="diag-arrow">&#8595; &nbsp; joint targets</div>
+
+          <div class="diag-tier">
+            <div class="diag-rate" style="font-size:15px">1000<span>Hz</span></div>
+            <div class="diag-info">
+              <div class="diag-name">PD Torque Control</div>
+              <div class="diag-desc">Per-joint Kp/Kd from MjLab config. Legs: explicit PD torque. Upper body: position actuator targets</div>
+            </div>
+            <div class="diag-tag">MuJoCo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── REWARD ARCHITECTURE ───────────────────── -->
+<section class="section">
+  <div class="eyebrow">Reward Design</div>
+  <h2 class="section-title" style="margin-bottom:16px">
+    Shaping the gait<br/>
+    through <em>reward weights</em>
+  </h2>
+  <p class="body-text" style="margin-bottom:0">
+    The reward function is where the locomotion knowledge lives. Each term
+    already exists in MjLab's base config — I tuned the weights to prioritize
+    stable, efficient bipedal walking over general-purpose locomotion.
+  </p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Velocity Tracking</div>
+        <div class="pipe-desc">Linear XY tracking at 1.5× (aggressive), angular Z at 0.8×. The primary task signal — follow the commanded velocity.</div>
+      </div>
+      <div class="pipe-tag">w = 1.5 / 0.8</div>
+    </div>
+
+    <div class="pipe-arrow-row">+</div>
+
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Energy &amp; Smoothness</div>
+        <div class="pipe-desc">Joint torque penalty (−1e-4), action rate (−0.01), action acceleration (−0.005). Prevents jerky, motor-burning gaits.</div>
+      </div>
+      <div class="pipe-tag">Negative</div>
+    </div>
+
+    <div class="pipe-arrow-row">+</div>
+
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Gait Quality</div>
+        <div class="pipe-desc">Foot clearance (0.5) to prevent shuffling, air time (0.5) for proper swing duration, foot slip penalty (−0.1) during stance.</div>
+      </div>
+      <div class="pipe-tag">w = 0.5 / −0.1</div>
+    </div>
+
+    <div class="pipe-arrow-row">+</div>
+
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Body Stability</div>
+        <div class="pipe-desc">Upright penalty (−1.0), angular momentum (−0.02), body angular velocity (−0.05). Keeps the torso stable and the linearization valid.</div>
+      </div>
+      <div class="pipe-tag">Negative</div>
+    </div>
+
+    <div class="pipe-arrow-row">+</div>
+
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Safety Constraints</div>
+        <div class="pipe-desc">Default pose tracking (−0.5), self-collision penalty (−1.0), joint limit penalty (−1.0). Prevents weird stances and hardware damage.</div>
+      </div>
+      <div class="pipe-tag">Negative</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── RL BRIDGE ─────────────────────────────── -->
+<section class="section">
+  <div class="eyebrow">Deployment Bridge</div>
+  <div class="two-col">
+    <div>
+      <h2 class="section-title">
+        29 joints in training.<br/>
+        <em>43 joints</em> on the robot.
+      </h2>
+      <p class="body-text">
+        The policy was trained on 29 joints (no hands). The deployment MJCF has
+        43 joints — 29 body joints plus 14 BrainCo hand joints interleaved
+        throughout the kinematic tree.
+      </p>
+      <p class="body-text">
+        The RL bridge solves this by building explicit qpos/qvel index maps at
+        startup. For each of the 29 policy joints, it looks up the actual
+        address in the full MJCF rather than assuming naive sequential slicing.
+        This means the same bridge works regardless of how many extra joints
+        your MJCF has.
+      </p>
+      <p class="body-text">
+        Control is split by actuator type. The first 12 joints (legs) use motor
+        actuators — the bridge computes PD torques explicitly at 1000 Hz. The
+        remaining 17 joints (waist, arms, wrists) use MuJoCo's built-in position
+        actuators and receive joint angle targets directly.
+      </p>
+    </div>
+    <div>
+      <div class="comp-grid">
+        <div class="comp-row">
+          <div class="comp-name">Observation</div>
+          <div class="comp-tech">99 dim</div>
+          <div class="comp-desc">Body velocity (3), angular velocity (3), projected gravity (3), joint pos (29), joint vel (29), prev action (29), command (3)</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Action Space</div>
+          <div class="comp-tech">29 dim</div>
+          <div class="comp-desc">Per-joint position offsets from default pose, scaled by joint-specific action scale factors from MjLab config</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Network</div>
+          <div class="comp-tech">MLP 4-layer</div>
+          <div class="comp-desc">99 → 512 → 256 → 128 → 29 with ELU activations. Pure NumPy inference, no PyTorch dependency at deploy time</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Normalization</div>
+          <div class="comp-tech">Running stats</div>
+          <div class="comp-desc">Observation mean and std from training checkpoint. Applied before every forward pass for distribution matching</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Leg Control</div>
+          <div class="comp-tech">PD Torque</div>
+          <div class="comp-desc">Explicit Kp/Kd per joint from MjLab actuator config. Computed at sim rate (1000 Hz) for tight tracking</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Upper Body</div>
+          <div class="comp-tech">Position Target</div>
+          <div class="comp-desc">Joint angle targets written directly to MuJoCo position actuators. Built-in PD handles the tracking</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Teleop</div>
+          <div class="comp-tech">Arrow Keys</div>
+          <div class="comp-desc">Non-blocking keyboard listener with velocity ramping. Forward/strafe/turn commands with emergency stop</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-name">Checkpoint</div>
+          <div class="comp-tech">HuggingFace</div>
+          <div class="comp-desc">Model hosted at Siddarth09/bheema_locomotion. Auto-downloaded and cached via huggingface_hub at startup</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ── FOOTER ─────────────────────────────────── -->
 <div class="divider"></div>
 <footer>
   <span class="footer-copy">&copy; 2026 Siddarth Dayasagar</span>
-  <span class="footer-tag">BHEEMA &nbsp; Convex MPC &nbsp; Bipedal Locomotion</span>
+  <span class="footer-tag">BHEEMA &nbsp; Convex MPC &nbsp; RL Locomotion &nbsp; Bipedal Walking</span>
 </footer>
 
 </body>
