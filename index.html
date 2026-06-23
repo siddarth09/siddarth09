@@ -688,6 +688,24 @@
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="projects-grid">
 
+    <!-- HANUMAN — flagship -->
+    <div class="project-card reveal">
+      <div class="project-media">
+        <img src="assets/hanuman.webp" alt="HANUMAN — Unitree G1 on Mars Jezero terrain"/>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">RL Locomotion &nbsp; GPS-Denied SLAM &nbsp; A* + MPPI &nbsp; 2026</div>
+        <div class="project-title">HANUMAN — Humanoid Autonomy on Mars Terrain</div>
+        <p class="project-desc">
+          A three-layer autonomy stack for a bipedal Unitree G1 on unstructured
+          Martian terrain: PPO locomotion under Mars gravity, an error-state EKF + GTSAM
+          "Mars-GPS" for GPS-denied localization, and A*/MPPI navigation. All on real NASA
+          Jezero Crater HiRISE terrain.
+        </p>
+        <a href="projects/hanuman.html" class="project-link">View project →</a>
+      </div>
+    </div>
+
     <!-- BHEEMA — featured -->
     <div class="project-card reveal featured">
       <div class="project-media">
@@ -700,6 +718,7 @@
           Convex MPC locomotion controller for the Unitree G1 humanoid in MuJoCo.
           Single rigid-body dynamics, Pinocchio whole-body control, OSQP solver
           at 1.4 ms. 12 integration bugs fixed to reach stable walking.
+          Extended into HANUMAN for rough Mars terrain.
         </p>
         <a href="projects/bheema.html" class="project-link">View project →</a>
       </div>
