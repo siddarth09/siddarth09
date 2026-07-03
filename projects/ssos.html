@@ -494,14 +494,14 @@
   <div class="hero-content reveal">
     <div class="hero-overline">Open Source &nbsp; ROS 2 &nbsp; Space Infrastructure</div>
     <h1 class="hero-title">
-      Open-source software<br/>
+      Open source software<br/>
       for the <em>next</em><br/>
       space station
     </h1>
     <p class="hero-sub">
       A modular ROS 2 platform that simulates and controls the critical
       systems of a space station. Life support, thermal regulation, and
-      electrical power — all running as independent, hardware-ready nodes.
+      electrical power all run as independent, hardware ready nodes.
     </p>
     <div class="hero-stats">
       <div class="hstat">
@@ -529,7 +529,7 @@
   <span class="press-label">Press</span>
   <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
      target="_blank" class="press-link">
-    Northeastern University — Open-source software for next-generation space stations
+    Northeastern University: Open source software for next generation space stations
   </a>
   <span class="press-date">February 2026</span>
 </div>
@@ -557,24 +557,24 @@
   <div class="two-col">
     <div class="reveal">
       <h2 class="section-title">
-        A software-defined<br/>
+        A software defined<br/>
         <em>space station</em>
       </h2>
     </div>
     <div class="reveal">
       <p class="body-text">
-        Space Station OS started as a question: what would it look like
-        if you designed the software stack for a space station the way
-        you design modern robotics infrastructure? Each subsystem as an
-        independent ROS 2 node. Standardised interfaces. Hardware-ready
-        from day one.
+        I started Space Station OS from a simple question. What would the
+        software stack for a space station look like if you built it the way
+        we build modern robotics infrastructure? So I made each subsystem an
+        independent ROS 2 node with standardised interfaces, and I kept it
+        ready for real hardware from day one.
       </p>
       <p class="body-text">
         The architecture is modelled on the ISS. I worked on ECLSS, the
-        thermal control system, and the electrical power system — not as
-        toy simulations, but as systems that mirror the actual closed-loop
-        logic the ISS uses. The goal was a platform another engineer could
-        pick up, extend, and eventually run on real hardware.
+        thermal control system, and the electrical power system. These are
+        not toy simulations. They follow the actual closed loop logic that
+        the ISS uses. My goal was a platform that another engineer can pick
+        up, extend, and eventually run on real hardware.
       </p>
       <p class="body-text">
         The project was featured by Northeastern University in February 2026.
@@ -597,8 +597,8 @@
       <div class="sub-card-tag">ECLSS</div>
       <div class="sub-card-title">Life Support</div>
       <div class="sub-card-body">
-        Closed-loop air revitalisation, oxygen generation via electrolysis,
-        and water recovery from waste streams. Mirrors the ISS CDRA, OGS,
+        Closed loop air revitalisation, oxygen generation via electrolysis,
+        and water recovery from waste streams. It mirrors the ISS CDRA, OGS,
         and WPA architecture with full ROS 2 service and action server interfaces.
       </div>
       <div class="sub-card-status col-green">
@@ -609,9 +609,9 @@
       <div class="sub-card-tag">TCS</div>
       <div class="sub-card-title">Thermal Control</div>
       <div class="sub-card-body">
-        RK4-based thermal node simulation across avionics, tanks, and equipment.
-        Cooling loops activate dynamically when thresholds are exceeded.
-        FDIR events published to diagnostics in real time.
+        RK4 based thermal node simulation across avionics, tanks, and equipment.
+        Cooling loops activate when thresholds are exceeded. FDIR events are
+        published to diagnostics in real time.
       </div>
       <div class="sub-card-status col-green">
         <span class="status-dot dot-green"></span>Operational
@@ -644,12 +644,12 @@
         The ECLSS models the three core processes: scrubbing CO2 from cabin air,
         generating fresh oxygen through electrolysis, and recovering clean water
         from wastewater. Each one is a separate ROS 2 node. They talk to each other
-        over topics and services exactly the way the real ISS systems do.
+        over topics and services in the same way the real ISS systems do.
       </p>
       <p class="body-text">
-        The Sabatier reaction is modelled too — CO2 and hydrogen combine to produce
-        water, which feeds back into the oxygen generation cycle. It is a genuinely
-        closed loop, not a toy approximation.
+        I also modelled the Sabatier reaction, where CO2 and hydrogen combine to
+        produce water. That water feeds back into the oxygen generation cycle, so
+        the loop is really closed and not a toy approximation.
       </p>
     </div>
     <div class="reveal">
@@ -677,7 +677,7 @@
       <ul class="detail-list" style="margin-top:8px">
         <li>ARS publishes CO2 storage telemetry and handles scrubbing failure modes</li>
         <li>OGS models electrolysis and Sabatier, integrated with ARS and WRS</li>
-        <li>WRS implements multi-stage purification and grey water handling</li>
+        <li>WRS implements multi stage purification and grey water handling</li>
         <li>All subsystems expose ROS 2 action servers and services</li>
       </ul>
     </div>
@@ -699,20 +699,20 @@
         In low Earth orbit the station cycles between +120°C in sunlight
         and -160°C in shadow every 90 minutes. The TCS simulation uses RK4
         integration over a graph of configurable thermal nodes and links
-        to model that dynamic accurately. Cooling loops trigger when
-        node temperatures exceed configured thresholds.
+        to model this behaviour accurately. Cooling loops trigger when
+        node temperatures exceed the configured thresholds.
       </p>
     </div>
     <div class="reveal">
       <p class="body-text">
         Nodes represent equipment with temperature, heat capacity, and
         internal power dissipation. Links define conduction between adjacent
-        nodes. The whole system is configured from YAML — you can model any
-        thermal topology without changing code.
+        nodes. The whole system is configured from YAML, so you can model any
+        thermal topology without changing the code.
       </p>
       <p class="body-text" style="margin-top:16px">
         FDIR events publish to /diagnostics when overheating or loop
-        failures are detected, which lets a ground control GUI or a
+        failures are detected. This lets a ground control GUI or a
         monitoring node respond in real time.
       </p>
     </div>
@@ -763,12 +763,12 @@
     </div>
     <div class="reveal">
       <p class="body-text">
-        The EPS models the full ISS power chain from solar tracking through
+        The EPS models the full ISS power chain, from solar tracking through
         battery storage, bus switching, and regulated DC conversion. Each
         component is a ROS 2 node. The BCDU coordinates parallel battery
-        charging and discharging via an action server, monitors voltage bounds,
-        and enters safe mode on fault. MBSU routes power from healthy channels.
-        DDCU is in progress.
+        charging and discharging through an action server, monitors voltage
+        bounds, and enters safe mode on fault. MBSU routes power from healthy
+        channels. DDCU is in progress.
       </p>
     </div>
   </div>
@@ -820,15 +820,15 @@
   <div class="two-col">
     <div class="reveal">
       <h2 class="section-title">
-        Hardware-ready<br/>
+        Hardware ready<br/>
         <em>from day one</em>
       </h2>
       <p class="body-text" style="margin-top:20px">
         Every subsystem follows the same ROS 2 interface pattern: a telemetry
         topic for continuous state publishing, a service for synchronous requests,
-        an action server for long-running operations, and a diagnostics topic for
-        FDIR events. Swapping a simulation node for a real hardware driver
-        requires changing the implementation, not the interface.
+        an action server for long running operations, and a diagnostics topic for
+        FDIR events. To swap a simulation node for a real hardware driver, you
+        change the implementation and keep the interface.
       </p>
     </div>
     <div class="reveal">
@@ -844,7 +844,7 @@
       <ul class="detail-list" style="margin-top:8px">
         <li>C++ and Python nodes coexist in the same ROS 2 workspace</li>
         <li>PyQt5 GUI panels for crew and mission control views</li>
-        <li>Docker-based setup for reproducibility across contributors</li>
+        <li>Docker based setup for reproducibility across contributors</li>
         <li>GitHub maintained with documentation and issue tracking</li>
       </ul>
     </div>

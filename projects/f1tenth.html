@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RoboRacer F1TENTH — Autonomous Racing</title>
+  <title>RoboRacer F1TENTH: Autonomous Racing</title>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Barlow:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +51,7 @@
     }
     body > * { position: relative; z-index: 1; }
 
-    /* ── NAV ─────────────────────────────────── */
+    /* == NAV ==================================== */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       display: flex; align-items: center; justify-content: space-between;
@@ -83,7 +83,7 @@
     }
     .nav-back:hover { color: var(--white); }
 
-    /* ── HERO ────────────────────────────────── */
+    /* == HERO ================================== */
     .hero {
       position: relative; width: 100%;
       height: 100svh; min-height: 640px;
@@ -172,7 +172,7 @@
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
     }
 
-    /* ── SECTOR BANNER ─────────────────────── */
+    /* == SECTOR BANNER ======================= */
     .sector-banner {
       background: var(--red);
       padding: 14px 64px;
@@ -189,13 +189,13 @@
       color: rgba(255,255,255,0.65);
     }
 
-    /* ── DIVIDER ─────────────────────────────── */
+    /* == DIVIDER =============================== */
     .divider {
       height: 1px;
       background: linear-gradient(90deg, var(--red), rgba(232,0,13,0.2), transparent);
     }
 
-    /* ── SECTIONS ────────────────────────────── */
+    /* == SECTIONS ============================== */
     section {
       max-width: 1400px; margin: 0 auto;
       padding: 100px 64px;
@@ -234,7 +234,7 @@
       gap: 72px; align-items: start;
     }
 
-    /* ── VIDEO ───────────────────────────────── */
+    /* == VIDEO ================================= */
     .video-section {
       max-width: 1400px; margin: 0 auto;
       padding: 0 64px 100px;
@@ -256,7 +256,7 @@
     }
     .video-caption::before { content: '●'; color: var(--red); font-size: 8px; }
 
-    /* ── METRICS STRIP ─────────────────────── */
+    /* == METRICS STRIP ======================= */
     .metrics-strip {
       display: grid; grid-template-columns: repeat(4,1fr);
       border-top: 2px solid var(--red);
@@ -281,7 +281,7 @@
       color: #aaaaaa; line-height: 1.5;
     }
 
-    /* ── RACE CARDS ─────────────────────────── */
+    /* == RACE CARDS =========================== */
     .race-cards {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
       gap: 2px; background: rgba(232,0,13,0.08);
@@ -322,7 +322,7 @@
       letter-spacing: 0.14em; text-transform: uppercase; color: var(--red2);
     }
 
-    /* ── DETAIL LIST ─────────────────────────── */
+    /* == DETAIL LIST =========================== */
     .detail-list { list-style: none; padding: 0; }
     .detail-list li {
       display: flex; align-items: baseline; gap: 14px;
@@ -338,7 +338,7 @@
       background: var(--red); flex-shrink: 0; margin-top: 6px;
     }
 
-    /* ── CODE BLOCK ──────────────────────────── */
+    /* == CODE BLOCK ============================ */
     .code-block {
       font-family: var(--mono); font-size: 12px;
       line-height: 1.9; color: rgba(245,245,245,0.55);
@@ -362,7 +362,7 @@
     .hl3 { color: #69db7c; }
     .cm  { color: rgba(245,245,245,0.25); font-style: italic; }
 
-    /* ── FOOTER ──────────────────────────────── */
+    /* == FOOTER ================================ */
     .footer-bar {
       height: 2px;
       background: linear-gradient(90deg, var(--red), rgba(232,0,13,0.2), transparent);
@@ -382,7 +382,7 @@
       color: rgba(255,255,255,0.1);
     }
 
-    /* ── MOBILE ──────────────────────────────── */
+    /* == MOBILE ================================ */
     @media(max-width:768px) {
       nav { padding: 0 20px; }
       .hero-content { padding: 0 20px 52px; }
@@ -406,7 +406,7 @@
 </head>
 <body>
 
-<!-- ── NAV ───────────────────────────────────── -->
+<!-- == NAV ===================================== -->
 <nav>
   <div class="nav-left">
     <span class="nav-logo">RoboRacer</span>
@@ -421,7 +421,7 @@
   </a>
 </nav>
 
-<!-- ── HERO ──────────────────────────────────── -->
+<!-- == HERO ==================================== -->
 <div class="hero">
   <div class="hero-video-wrap">
     <iframe
@@ -442,7 +442,8 @@
     <p class="hero-sub">
       MPC trajectory tracking, MPCC racing line control, and dynamic
       rollout planning running live on a real Ackermann platform.
-      Not a simulation. Not a bag file replay. The real thing.
+      This runs on the actual car, not in simulation and not from a
+      bag file replay.
     </p>
     <div class="hero-telem">
       <div class="telem-cell">
@@ -465,13 +466,13 @@
   </div>
 </div>
 
-<!-- ── SECTOR BANNER ─────────────────────────── -->
+<!-- == SECTOR BANNER =========================== -->
 <div class="sector-banner">
   <span class="sector-banner-text">RoboRacer F1TENTH &nbsp; Ackermann Steering &nbsp; ROS 2 &nbsp; CasADi</span>
   <span class="sector-banner-mono">Sector 1: Planner &nbsp; | &nbsp; Sector 2: MPC &nbsp; | &nbsp; Sector 3: MPCC</span>
 </div>
 
-<!-- ── METRICS ────────────────────────────────── -->
+<!-- == METRICS ================================= -->
 <div class="metrics-strip">
   <div class="metric-cell">
     <div class="metric-num">MPC</div>
@@ -491,7 +492,7 @@
   </div>
 </div>
 
-<!-- ── VIDEO ──────────────────────────────────── -->
+<!-- == VIDEO =================================== -->
 <div class="video-section" style="padding-top:0">
   <div style="max-width:1400px; margin:0 auto; padding:48px 0 28px">
     <div class="section-eyebrow">Race footage</div>
@@ -508,7 +509,7 @@
 
 <div class="divider"></div>
 
-<!-- ── OVERVIEW ──────────────────────────────── -->
+<!-- == OVERVIEW ================================ -->
 <section>
   <div class="section-eyebrow">What I built</div>
   <div class="two-col">
@@ -520,14 +521,14 @@
     <div>
       <p class="section-body">
         I built a full autonomy stack for the RoboRacer F1TENTH platform and
-        ran it on the actual car. The pipeline separates planning from control
-        deliberately — a fast rollout planner scores trajectory candidates
-        using obstacle distance transforms, then hands the best one off to
-        MPC or MPCC to execute cleanly.
+        ran it on the actual car. I kept planning and control separate on
+        purpose. A fast rollout planner scores trajectory candidates using
+        obstacle distance transforms, then it hands the best one to MPC or
+        MPCC to execute.
       </p>
       <p class="section-body">
-        This separation matters because it keeps each layer debuggable.
-        When something breaks on track, you know exactly where to look.
+        I did this because it keeps each layer easy to debug. When something
+        breaks on track, I know where to look.
       </p>
     </div>
   </div>
@@ -535,7 +536,7 @@
 
 <div class="divider"></div>
 
-<!-- ── THREE SECTORS ─────────────────────────── -->
+<!-- == THREE SECTORS =========================== -->
 <section>
   <div class="section-eyebrow">The three layers</div>
   <h2 class="section-title" style="margin-bottom:40px">
@@ -547,11 +548,11 @@
       <div class="race-card-num">01</div>
       <div class="race-card-title">Dynamic Rollout Planner</div>
       <div class="race-card-body">
-        I sample a range of steering commands and forward-simulate each one
-        using RK4 integration over a fixed horizon. Any candidate that gets
-        too close to an obstacle gets thrown out immediately. The survivors
-        are scored on clearance, smoothness, and how close they get to the
-        goal. The winner becomes the reference trajectory.
+        I sample a range of steering commands and forward simulate each one
+        with RK4 integration over a fixed horizon. If a candidate gets too
+        close to an obstacle, I drop it. I score the rest on clearance,
+        smoothness, and how close they get to the goal. The best one becomes
+        the reference trajectory.
       </div>
       <div class="race-card-tag">RK4 &nbsp; Distance Transform &nbsp; Online Scoring</div>
     </div>
@@ -561,9 +562,9 @@
       <div class="race-card-body">
         At each control cycle I solve a constrained nonlinear optimisation
         problem over a horizon of N=10 steps. The bicycle model includes a
-        slip angle approximation so the controller handles corners more
+        slip angle approximation, so the controller handles corners more
         accurately at higher speeds. CasADi builds the symbolic problem,
-        IPOPT solves it, and I apply just the first action.
+        IPOPT solves it, and I apply only the first action.
       </div>
       <div class="race-card-tag">CasADi &nbsp; IPOPT &nbsp; Ackermann Model</div>
     </div>
@@ -571,11 +572,11 @@
       <div class="race-card-num">03</div>
       <div class="race-card-title">MPCC Racing Controller</div>
       <div class="race-card-body">
-        MPCC adds a progress state to the optimisation — an arc length
-        variable along the centerline that the controller is rewarded for
-        advancing. It also penalises contouring and lag errors separately.
-        The result is a controller that actually wants to go fast instead
-        of just minimising reference tracking error.
+        MPCC adds a progress state to the optimisation. This is an arc
+        length variable along the centerline, and the controller gets a
+        reward for advancing it. It also penalises contouring and lag errors
+        separately. So the controller tries to go fast, and it does more than
+        minimise reference tracking error.
       </div>
       <div class="race-card-tag">Contouring Error &nbsp; Lag Error &nbsp; Progress</div>
     </div>
@@ -584,7 +585,7 @@
 
 <div class="divider"></div>
 
-<!-- ── PLANNER DETAIL ────────────────────────── -->
+<!-- == PLANNER DETAIL ========================== -->
 <section>
   <div class="section-eyebrow">Sector 01 in detail</div>
   <div class="two-col">
@@ -595,14 +596,15 @@
       <p class="section-body">
         The planner runs every control tick and produces a scored set of
         candidate trajectories. It is fast enough to run online because each
-        rollout is just a forward simulation of the bicycle model under a
+        rollout is only a forward simulation of the bicycle model under a
         fixed steering command. RK4 keeps the integration accurate even
         at higher speeds where Euler diverges.
       </p>
       <p class="section-body" style="margin-top:16px">
-        The obstacle avoidance is done with a Euclidean distance transform
-        on the occupancy map. I precompute it once per map update and then
-        scoring each rollout is just a lookup — not a collision check loop.
+        I do the obstacle avoidance with a Euclidean distance transform on
+        the occupancy map. I precompute it once per map update. After that,
+        scoring each rollout is a simple lookup instead of a collision check
+        loop.
       </p>
     </div>
     <div>
@@ -628,7 +630,7 @@ publish → /dynamic_trajectory
         <li>RK4 integration keeps rollouts accurate at speed</li>
         <li>Distance transform precomputed from occupancy grid</li>
         <li>Best path published as Nav reference for MPC</li>
-        <li>Clean interface — planner and controller are fully decoupled</li>
+        <li>Clean interface, planner and controller are fully decoupled</li>
       </ul>
     </div>
   </div>
@@ -636,7 +638,7 @@ publish → /dynamic_trajectory
 
 <div class="divider"></div>
 
-<!-- ── MPC DETAIL ────────────────────────────── -->
+<!-- == MPC DETAIL ============================== -->
 <section>
   <div class="section-eyebrow">Sector 02 in detail</div>
   <div class="two-col">
@@ -645,16 +647,16 @@ publish → /dynamic_trajectory
         Nonlinear<br/><span class="italic red">Tracking</span>
       </h2>
       <p class="section-body">
-        Standard MPC tracking but with a bicycle model that includes
-        a slip angle. This matters when you push the car faster — a pure
-        kinematic model starts lying to you. The slip angle gives the
-        controller a better sense of where the car is actually heading
-        versus where the wheels are pointing.
+        This is standard MPC tracking, but with a bicycle model that includes
+        a slip angle. It matters when I push the car faster. A pure kinematic
+        model starts to give wrong predictions. The slip angle gives the
+        controller a better sense of where the car is actually heading versus
+        where the wheels are pointing.
       </p>
       <p class="section-body" style="margin-top:16px">
-        I solve it with CasADi and IPOPT, use warm starting from the
-        previous solution, and publish the first action each tick.
-        The robot pose comes straight from TF — no separate localisation node.
+        I solve it with CasADi and IPOPT, warm start from the previous
+        solution, and publish the first action each tick. The robot pose
+        comes straight from TF, so there is no separate localisation node.
       </p>
     </div>
     <div>
@@ -686,7 +688,7 @@ publish u_0 → /drive
 
 <div class="divider"></div>
 
-<!-- ── MPCC DETAIL ────────────────────────────── -->
+<!-- == MPCC DETAIL ============================= -->
 <section>
   <div class="section-eyebrow">Sector 03 in detail</div>
   <div class="two-col">
@@ -695,18 +697,18 @@ publish u_0 → /drive
         Racing<br/><span class="italic red">Line Control</span>
       </h2>
       <p class="section-body">
-        The difference between MPCC and standard MPC comes down to what
-        you are optimising. Standard MPC wants to be at the next waypoint.
-        MPCC wants to move forward along the track as fast as possible
-        while staying near the line. It sounds subtle but in practice
-        it changes how the car corners completely.
+        The difference between MPCC and standard MPC is what you optimise.
+        Standard MPC wants to be at the next waypoint. MPCC wants to move
+        forward along the track as fast as possible while staying near the
+        line. It sounds like a small change, but in practice it changes
+        how the car corners.
       </p>
       <p class="section-body" style="margin-top:16px">
-        I augment the state with an arc length progress variable and add
-        a reward term for advancing it. The contouring error keeps the car
-        on line. The lag error stops it from falling behind the reference.
-        The result is a controller that cuts corners when it helps and
-        stays smooth when it does not.
+        I augment the state with an arc length progress variable and add a
+        reward term for advancing it. The contouring error keeps the car on
+        line. The lag error stops it from falling behind the reference. The
+        controller then cuts corners when it helps and stays smooth when it
+        does not.
       </p>
     </div>
     <div>
@@ -741,7 +743,7 @@ dy = y - y_cl
   </div>
 </section>
 
-<!-- ── FOOTER ─────────────────────────────────── -->
+<!-- == FOOTER ================================== -->
 <div class="footer-bar"></div>
 <footer>
   <span class="footer-copy">© 2025 Siddarth Dayasagar</span>

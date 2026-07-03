@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HANUMAN — Humanoid Autonomy on Mars Terrain</title>
+  <title>HANUMAN: Humanoid Autonomy on Mars Terrain</title>
   <meta name="description" content="A three layer autonomy stack for a bipedal Unitree G1 on real NASA Jezero Crater terrain: PPO locomotion under Mars gravity, GPS denied localization, and A* plus MPPI navigation."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -45,7 +45,7 @@
     /* Blocks start lowered + transparent, then slide up into place when they
        scroll into view (IntersectionObserver adds .visible). Hidden state is
        gated behind .js-reveal on <html>, which an inline head script only adds
-       when motion is allowed — so reduced-motion / no-JS users see everything. */
+       when motion is allowed, so reduced-motion / no-JS users see everything. */
     .js-reveal .hero-content,
     .js-reveal .mission-bar,
     .js-reveal .video-section,
@@ -538,7 +538,7 @@
 <div class="video-section" style="padding-top:48px">
   <div class="video-wrap">
     <iframe src="https://www.youtube.com/embed/WN93XdcBVio?autoplay=1&mute=1&loop=1&playlist=WN93XdcBVio&controls=0&modestbranding=1&rel=0&playsinline=1"
-      title="HANUMAN — G1 traversing the Jezero HiRISE tile"
+      title="HANUMAN: G1 traversing the Jezero HiRISE tile"
       allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
   </div>
   <div class="video-cap">G1 traversing the Jezero HiRISE tile in MuJoCo</div>
@@ -564,8 +564,8 @@
         infrastructure, and make every time critical decision on its own.
       </p>
       <p class="body">
-        HANUMAN answers this as <b>three cooperating layers</b> running the same ROS 2
-        nodes that hardware would, on terrain pulled straight from orbit.
+        HANUMAN handles this with <b>three layers that work together</b>, running the
+        same ROS 2 nodes that a real robot would, on terrain taken straight from orbit.
       </p>
     </div>
   </div>
@@ -573,7 +573,7 @@
   <div class="prob-grid">
     <div class="prob-cell">
       <div class="prob-k">24 min</div>
-      <div class="prob-d">Worst case round trip to Earth. Teleoperation is not an option, so autonomy is the only option.</div>
+      <div class="prob-d">Worst case round trip to Earth, so you cannot drive the robot by hand. It has to work on its own.</div>
     </div>
     <div class="prob-cell">
       <div class="prob-k">0 sat fix</div>
@@ -656,7 +656,7 @@
   <div class="video-cap" style="margin-top:0;margin-bottom:18px">Operator console // commanding the robot across Jezero</div>
   <div class="video-wrap">
     <iframe src="https://www.youtube.com/embed/yJcr4czC10I?autoplay=1&mute=1&loop=1&playlist=yJcr4czC10I&controls=1&modestbranding=1&rel=0&playsinline=1"
-      title="HANUMAN — operator console commanding the robot across Jezero"
+      title="HANUMAN: operator console commanding the robot across Jezero"
       allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
   </div>
 </div>

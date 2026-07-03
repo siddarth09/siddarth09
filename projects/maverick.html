@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GuidanceCore — MAVERICK</title>
+  <title>GuidanceCore: MAVERICK</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -595,7 +595,7 @@
 <nav>
   <div class="nav-left">
     <span class="nav-badge">CLASSIFIED</span>
-    <span class="nav-title">GuidanceCore — MAVERICK</span>
+    <span class="nav-title">GuidanceCore: MAVERICK</span>
   </div>
   <div style="display:flex; align-items:center; gap:32px">
     <div class="nav-lock"><span class="lock-dot"></span>LOCK ACQUIRED</div>
@@ -612,7 +612,7 @@
 <div class="hero">
   <div class="hero-video-wrap">
     <iframe
-      title="GuidanceCore — MAVERICK"
+      title="GuidanceCore: MAVERICK"
       src="https://www.youtube.com/embed/nJwKAhgWHOc?autoplay=1&mute=1&loop=1&controls=0&rel=0&modestbranding=1&playlist=nJwKAhgWHOc"
       frameborder="0"
       allow="autoplay; encrypted-media; picture-in-picture"
@@ -655,14 +655,14 @@
       Maverick
     </h1>
     <p class="hero-sub">
-      Comparative autopilot study: SFI, LQR, and MPC guidance laws
-      evaluated against missile longitudinal dynamics. Fastest time-to-target
-      confirmed at 8 seconds. Built in MATLAB with CasADi/IPOPT.
+      I compared three autopilot guidance laws, SFI, LQR, and MPC, on
+      missile longitudinal dynamics. MPC gave the fastest time to target
+      at 8 seconds. I built it in MATLAB with CasADi/IPOPT.
     </p>
     <div class="hero-telem">
       <div class="telem-cell">
         <div class="telem-val">8.00s</div>
-        <div class="telem-label">MPC Time-to-Target</div>
+        <div class="telem-label">MPC Time to Target</div>
       </div>
       <div class="telem-cell">
         <div class="telem-val">IPOPT</div>
@@ -694,15 +694,15 @@
 <div class="metrics-strip">
   <div class="metric-cell">
     <div class="metric-num">13.8s</div>
-    <div class="metric-desc">SFI time-to-target<br/>baseline</div>
+    <div class="metric-desc">SFI time to target<br/>baseline</div>
   </div>
   <div class="metric-cell">
     <div class="metric-num">10.0s</div>
-    <div class="metric-desc">LQR time-to-target<br/>optimal regulator</div>
+    <div class="metric-desc">LQR time to target<br/>optimal regulator</div>
   </div>
   <div class="metric-cell">
     <div class="metric-num">8.0s</div>
-    <div class="metric-desc">MPC time-to-target<br/>fastest · confirmed</div>
+    <div class="metric-desc">MPC time to target<br/>fastest · confirmed</div>
   </div>
   <div class="metric-cell">
     <div class="metric-num">6.06</div>
@@ -727,7 +727,7 @@
     </iframe>
     
   </div>
-  <div class="video-caption">MATLAB simulation — SFI vs LQR vs MPC · Missile longitudinal dynamics · CasADi / IPOPT</div>
+  <div class="video-caption">MATLAB simulation: SFI vs LQR vs MPC · Missile longitudinal dynamics · CasADi / IPOPT</div>
 </div>
 
 <div class="divider"></div>
@@ -741,18 +741,18 @@
     </div>
     <div>
       <p class="section-body">
-        Objective: evaluate three autonomous guidance laws against a linear
-        short-period missile model. Each controller is assessed on trajectory
-        accuracy, control effort, and time-to-target. Simulations executed
-        in MATLAB; MPC solved online with CasADi and IPOPT for every
-        timestep across a 50-step engagement.
+        My goal was to compare three autonomous guidance laws on a linear
+        short period missile model. I measured each controller on trajectory
+        accuracy, control effort, and time to target. I ran the simulations
+        in MATLAB. MPC was solved online with CasADi and IPOPT at every
+        timestep, over a 50 step engagement.
       </p>
       <br/>
       <p class="section-body">
-        The missile dynamics model is based on Mracek & Ridgely's short-period
-        approximation — a two-state system (angle of attack α, pitch rate q)
-        driven by fin deflection δp. Both controllability and observability
-        confirmed analytically before controller synthesis.
+        The missile dynamics model uses Mracek & Ridgely's short period
+        approximation. It is a two state system (angle of attack α, pitch rate q)
+        driven by fin deflection δp. I confirmed controllability and observability
+        analytically before I designed the controllers.
       </p>
       <br/>
       <a href="https://github.com/siddarth09/Guidance_Core_Maverick" target="_blank" class="amber-link">
@@ -778,10 +778,10 @@
       <div class="dossier-callsign">Module SFI &nbsp;·&nbsp; Callsign: EAGLE</div>
       <div class="dossier-title">State-Feedback Integral</div>
       <div class="dossier-body">
-        Augmented state-feedback with integral action. Gains placed via
-        pole-placement on the augmented short-period model. Low average
-        actuator effort — the educational baseline that everything else
-        is measured against.
+        Augmented state feedback with integral action. I placed the gains by
+        pole placement on the augmented short period model. It has low average
+        actuator effort. I used it as the baseline that I measured everything
+        else against.
       </div>
       <div class="rating-row">
         <div class="rating-item">
@@ -807,9 +807,9 @@
       <div class="dossier-callsign">Module LQR &nbsp;·&nbsp; Callsign: TALON</div>
       <div class="dossier-title">LQR with Integral</div>
       <div class="dossier-body">
-        Optimal infinite-horizon regulator. DARE solved to obtain
-        K_aug = [K, K_i]. Zero steady-state Az error, reliable
-        transient response, computationally lightweight — suitable
+        Optimal infinite horizon regulator. I solved the DARE to obtain
+        K_aug = [K, K_i]. It gives zero steady state Az error, reliable
+        transient response, and low compute cost. This makes it suitable
         for embedded autopilots.
       </div>
       <div class="rating-row">
@@ -836,9 +836,10 @@
       <div class="dossier-callsign">Module MPC &nbsp;·&nbsp; Callsign: VIPER</div>
       <div class="dossier-title">Model Predictive Control</div>
       <div class="dossier-body">
-        Finite-horizon NLP solved online via CasADi + IPOPT. Enforces
-        actuator bounds (u ∈ [−0.3, 0.2]) directly. Fastest engagement,
-        lowest total Σ|u|. Requires solver warm-starting for real-time ops.
+        Finite horizon NLP solved online with CasADi + IPOPT. It enforces
+        the actuator bounds (u ∈ [−0.3, 0.2]) directly. It had the fastest
+        engagement and the lowest total Σ|u|. It needs solver warm starting
+        for real time ops.
       </div>
       <div class="rating-row">
         <div class="rating-item">
@@ -866,28 +867,28 @@
 
 <!-- ── MPC FORMULATION ────────────────────────── -->
 <section>
-  <div class="section-tag">Viper — MPC Formulation</div>
+  <div class="section-tag">Viper: MPC Formulation</div>
   <div class="two-col">
     <div>
       <h2 class="section-title">Predictive<br/><span class="italic amber">Intercept</span></h2>
       <p class="section-body">
-        The MPC problem is solved fresh at every timestep over a horizon of
+        I solve the MPC problem again at every timestep over a horizon of
         N=10 steps. The CasADi symbolic model uses discretised longitudinal
-        dynamics, minimising tracking cost plus control effort while enforcing
-        actuator bounds throughout the horizon.
+        dynamics. It minimises tracking cost plus control effort while it keeps
+        the actuator bounds across the whole horizon.
       </p>
       <br/>
       <p class="section-body">
-        A soft terminal constraint steers the predicted 3D position toward
-        the impact point [10500m, 300m] — giving the controller spatial
-        awareness beyond the immediate tracking objective.
+        A soft terminal constraint pushes the predicted 3D position toward
+        the impact point [10500m, 300m]. This gives the controller spatial
+        awareness beyond the immediate tracking goal.
       </p>
 
       <ul class="detail-list" style="margin-top:24px">
         <li>State: α (angle of attack), q (pitch rate)</li>
-        <li>Control: δp (fin deflection) — bounded [−0.3, 0.2] rad</li>
+        <li>Control: δp (fin deflection), bounded [−0.3, 0.2] rad</li>
         <li>Horizon: N=10, timestep Ts=0.1s, 50 simulation steps</li>
-        <li>Qy = diag([2, 0.5]), R = 1 — tracking vs effort tradeoff</li>
+        <li>Qy = diag([2, 0.5]), R = 1 for the tracking vs effort tradeoff</li>
         <li>Terminal cost: Qterm = 0.01·I on 3D position error</li>
         <li>3D trajectory integrated symbolically inside the NLP</li>
       </ul>
@@ -895,7 +896,7 @@
 
     <div>
       <div class="code-block">
-        <div class="code-title">CasADi / IPOPT — MPC Loop</div>
+        <div class="code-title">CasADi / IPOPT: MPC Loop</div>
 <span class="cm"># Symbolic short-period dynamics</span>
 <span class="hl">x_next</span> = Ad·x + Bd·u
 
@@ -931,9 +932,9 @@ u0  = sol.x[nx*(N+1):][:,0]   <span class="cm"># receding horizon</span>
     <thead>
       <tr>
         <th>Metric</th>
-        <th>SFI — Eagle</th>
-        <th>LQR — Talon</th>
-        <th>MPC — Viper</th>
+        <th>SFI: Eagle</th>
+        <th>LQR: Talon</th>
+        <th>MPC: Viper</th>
       </tr>
     </thead>
     <tbody>
@@ -965,7 +966,7 @@ u0  = sol.x[nx*(N+1):][:,0]   <span class="cm"># receding horizon</span>
   </table>
 
   <p style="margin-top:16px; font-family:var(--mono); font-size:9px; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase">
-    ✓ = best in category &nbsp;·&nbsp; MPC: fastest engagement and lowest total effort &nbsp;·&nbsp; LQR: perfect steady-state accuracy
+    ✓ = best in category &nbsp;·&nbsp; MPC: fastest engagement and lowest total effort &nbsp;·&nbsp; LQR: perfect steady state accuracy
   </p>
 </section>
 

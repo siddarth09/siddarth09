@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Siddarth Dayasagar — Robotics Engineer</title>
+  <title>Siddarth Dayasagar, Robotics Engineer</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -627,9 +627,9 @@
       that <em>think and act</em>
     </h1>
     <p class="hero-bio reveal">
-      Robotics engineer at Northeastern University. I build systems that
-      perceive, decide, and move. From MPC-based humanoid locomotion to
-      VLA policies on real manipulators.
+      I am a robotics engineer at Northeastern University. I build systems
+      that can sense, decide, and move, from MPC humanoid locomotion to
+      VLA policies running on real robot arms.
     </p>
     <div class="hero-cta-row reveal">
       <a href="#projects" class="btn btn-primary">View Work</a>
@@ -649,17 +649,18 @@
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="press-card reveal">
     <div class="press-image">
-      <img src="assets/neu.png" alt="Northeastern University — Space Station OS"/>
+      <img src="assets/neu.png" alt="Northeastern University, Space Station OS"/>
     </div>
     <div class="press-content">
       <div class="press-tag">Featured Interview</div>
       <h2 class="press-title">
-        Recognized for open-source work on Space Station OS
+        Featured for my open source work on Space Station OS
       </h2>
       <p class="press-body">
-        Interviewed by Northeastern University News for contributions to
-        Space Station OS, an open-source ROS 2 platform simulating ISS-inspired
-        life support, thermal control, and electrical power subsystems.
+        Northeastern University News interviewed me about my work on
+        Space Station OS, an open source ROS 2 platform that simulates
+        life support, thermal control, and electrical power for a station
+        like the ISS.
       </p>
       <a href="https://news.northeastern.edu/2026/02/03/open-source-space-station-operating-systems/"
          target="_blank" class="press-link">
@@ -678,9 +679,9 @@
       Work that runs<br/><em>in the real world</em>
     </h2>
     <p class="section-body reveal">
-      From imitation-learned VLA policies to MPC-based autonomous racing
-      and open-source space systems. Every project here was deployed,
-      not just simulated.
+      These range from imitation learned VLA policies to MPC based
+      autonomous racing and open source space systems. My goal with each of
+      them was to make it work in practice, on real dynamics or real hardware.
     </p>
   </div>
 </div>
@@ -688,36 +689,41 @@
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="projects-grid">
 
-    <!-- HANUMAN — flagship -->
+    <!-- HANUMAN, flagship -->
     <div class="project-card reveal">
       <div class="project-media">
-        <img src="assets/hanuman.webp" alt="HANUMAN — Unitree G1 on Mars Jezero terrain"/>
+        <iframe
+          src="https://www.youtube.com/embed/WN93XdcBVio?autoplay=1&mute=1&loop=1&playlist=WN93XdcBVio&controls=0&modestbranding=1&rel=0&playsinline=1"
+          allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
       </div>
       <div class="project-body">
-        <div class="project-title">HANUMAN — Humanoid Autonomy on Mars Terrain</div>
+        <div class="project-title">HANUMAN: Humanoid Autonomy on Mars Terrain</div>
         <p class="project-desc">
-          A three-layer autonomy stack for a bipedal Unitree G1 on unstructured
-          Martian terrain: PPO locomotion under Mars gravity, an error-state EKF + GTSAM
-          "Mars-GPS" for GPS-denied localization, and A*/MPPI navigation. All on real NASA
-          Jezero Crater HiRISE terrain.
+          A three layer autonomy stack for a bipedal Unitree G1 on rough
+          Martian terrain. It uses PPO locomotion under Mars gravity, an
+          error state EKF with GTSAM as a "Mars GPS" for localization
+          without satellites, and A* with MPPI for navigation. Everything
+          runs on real NASA Jezero Crater terrain.
         </p>
         <a href="projects/hanuman.html" class="project-link">View project →</a>
       </div>
     </div>
 
-    <!-- BHEEMA — featured -->
+    <!-- BHEEMA, featured -->
     <div class="project-card reveal featured">
       <div class="project-media">
         <video autoplay muted loop playsinline src="assets/bheema.mp4"></video>
       </div>
       <div class="project-body">
         <div class="project-tag">Convex MPC &nbsp; Whole-Body Control &nbsp; 2026</div>
-        <div class="project-title">BHEEMA — Bipedal Locomotion on the Unitree G1</div>
+        <div class="project-title">BHEEMA: Bipedal Locomotion on the Unitree G1</div>
         <p class="project-desc">
-          Convex MPC locomotion controller for the Unitree G1 humanoid in MuJoCo.
-          Single rigid-body dynamics, Pinocchio whole-body control, OSQP solver
-          at 1.4 ms. 12 integration bugs fixed to reach stable walking.
-          Extended into HANUMAN for rough Mars terrain.
+          A convex MPC locomotion controller for the Unitree G1 humanoid in
+          MuJoCo. It uses single rigid body dynamics, Pinocchio for whole
+          body control, and the OSQP solver at 1.4 ms. I fixed 12 integration
+          bugs before it walked steadily, then grew it into HANUMAN for rough
+          Mars terrain.
         </p>
         <a href="projects/bheema.html" class="project-link">View project →</a>
       </div>
@@ -733,11 +739,12 @@
       </div>
       <div class="project-body">
         <div class="project-tag">VLA Model &nbsp; Imitation Learning &nbsp; 2025</div>
-        <div class="project-title">PRANA — Vision-Language-Action Model</div>
+        <div class="project-title">PRANA: Vision-Language-Action Model</div>
         <p class="project-desc">
-          End-to-end multimodal policy built from scratch. Dual-camera ViT encoders,
-          PaliGemma tokenizer, 4-layer Transformer, 50-step action chunking.
-          Deployed on a physical 7-DoF arm with 73% success on screwdriver retrieval.
+          An end to end multimodal policy I built from scratch. It has two
+          camera ViT encoders, a PaliGemma tokenizer, a 4 layer Transformer,
+          and 50 step action chunking. On a real 7 DoF arm it picked up a
+          screwdriver with a 73% success rate.
         </p>
         <a href="projects/prana.html" class="project-link">View project →</a>
       </div>
@@ -755,8 +762,9 @@
         <div class="project-tag">MPC &nbsp; MPCC &nbsp; Real Hardware</div>
         <div class="project-title">F1TENTH Autonomous Racing</div>
         <p class="project-desc">
-          MPC trajectory tracking and MPCC racing-line control with CasADi and IPOPT.
-          Dynamic rollout planning with RK4. Deployed on a real Ackermann platform.
+          MPC trajectory tracking and MPCC racing line control with CasADi and
+          IPOPT, with dynamic rollout planning using RK4. I ran it on a real
+          Ackermann car.
         </p>
         <a href="projects/f1tenth.html" class="project-link">View project →</a>
       </div>
@@ -771,8 +779,8 @@
         <div class="project-tag">Legged Autonomy &nbsp; ROS 2 &nbsp; Isaac Sim</div>
         <div class="project-title">Spot Urban Search and Rescue</div>
         <p class="project-desc">
-          RL-trained locomotion in Isaac Lab composed with ROS 2 Nav2 for
-          GPS-denied indoor navigation in disaster-inspired environments.
+          RL trained locomotion in Isaac Lab combined with ROS 2 Nav2 for
+          indoor navigation without GPS, set in disaster style environments.
         </p>
         <a href="projects/spot_isaac.html" class="project-link">View project →</a>
       </div>
@@ -787,8 +795,9 @@
         <div class="project-tag">Open Source &nbsp; ROS 2 &nbsp; Space Systems</div>
         <div class="project-title">Space Station OS</div>
         <p class="project-desc">
-          Modular ROS 2 platform simulating ISS-inspired life support, thermal
-          control, and electrical power. Featured by Northeastern University.
+          A modular ROS 2 platform that simulates life support, thermal
+          control, and electrical power for a station like the ISS. Featured
+          by Northeastern University.
         </p>
         <a href="projects/ssos.html" class="project-link">View project →</a>
       </div>
@@ -803,9 +812,9 @@
         <div class="project-tag">MPC &nbsp; LQR &nbsp; MATLAB</div>
         <div class="project-title">GuidanceCore MAVERICK</div>
         <p class="project-desc">
-          Comparative missile autopilot study across SFI, LQR, and MPC on short-period
-          longitudinal dynamics. MPC achieved fastest time-to-target at 8s with
-          lowest total control effort.
+          A study that compares missile autopilots across SFI, LQR, and MPC on
+          short period longitudinal dynamics. MPC reached the target fastest at
+          8 s and used the least control effort.
         </p>
         <a href="projects/maverick.html" class="project-link">View project →</a>
       </div>
@@ -820,8 +829,9 @@
         <div class="project-tag">IK &nbsp; Motion Planning &nbsp; PPO</div>
         <div class="project-title">Franka Panda Manipulation</div>
         <p class="project-desc">
-          Classical pipeline with HSV perception, Pinocchio IK, and OMPL RRTConnect.
-          Evolved to a PPO-based policy trained in MuJoCo for adaptive pick and place.
+          A classical pipeline with HSV perception, Pinocchio IK, and OMPL
+          RRTConnect. Later I moved to a PPO policy trained in MuJoCo for more
+          adaptive pick and place.
         </p>
         <a href="projects/panda.html" class="project-link">View project →</a>
       </div>
@@ -836,8 +846,9 @@
         <div class="project-tag">Delivery Robot &nbsp; Last Mile &nbsp; Autonomy</div>
         <div class="project-title">DITTO</div>
         <p class="project-desc">
-          Outdoor delivery robot for last-mile logistics in communities.
-          Autonomous navigation, obstacle avoidance, and delivery coordination.
+          An outdoor delivery robot for last mile logistics in neighborhoods,
+          with autonomous navigation, obstacle avoidance, and delivery
+          coordination.
         </p>
         <a href="projects/ditto.html" class="project-link">View project →</a>
       </div>
@@ -857,15 +868,15 @@
         Engineer.<br/><em>Builder.</em><br/>Researcher.
       </h2>
       <p class="section-body" style="margin-bottom:20px">
-        Robotics engineer at Northeastern University working across
-        locomotion, manipulation, autonomy, and space systems. My focus is
-        building control systems that hold up under real dynamics, not just
-        in clean demos.
+        I am a robotics engineer at Northeastern University and I work across
+        locomotion, manipulation, autonomy, and space systems. What I care
+        about most is building control systems that hold up under real
+        dynamics, not only in a clean demo.
       </p>
       <p class="section-body reveal">
-        I've built MPC locomotion controllers for humanoid robots, deployed
-        VLA policies on 7-DoF arms, raced autonomous cars with MPC and MPCC,
-        contributed to open-source space station software, and trained legged
+        So far I have built MPC locomotion controllers for humanoid robots, run
+        VLA policies on 7 DoF arms, raced autonomous cars with MPC and MPCC,
+        contributed to open source space station software, and trained legged
         robots for disaster response.
       </p>
     </div>
@@ -916,9 +927,9 @@
     </h2>
     <div class="contact-right reveal">
       <p class="contact-body">
-        Open to research collaborations, engineering roles, and conversations
-        about autonomy, manipulation, or space systems. Grab a coffee chat
-        or send a message.
+        I am open to research collaborations, engineering roles, and any chat
+        about autonomy, manipulation, or space systems. Feel free to book a
+        coffee chat or just send me a message.
       </p>
       <a href="siddarth.dayasagar@gmail.com" class="contact-email">
         <span class="__cf_email__" data-cfemail="3043595454514244581e54514951435157514270575d51595c1e535f5d">[email&#160;protected]</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PRANA — Vision-Action Policy for Robot Manipulation</title>
+  <title>PRANA: Vision-Action Policy for Robot Manipulation</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -220,12 +220,12 @@
   </div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Vision-Action Policy &nbsp; 2025–2026</div>
+    <div class="hero-eyebrow">Vision-Action Policy &nbsp; 2025-2026</div>
     <h1 class="hero-title">PRANA<br/><em>Three iterations.</em><br/>One robot that grasps.</h1>
     <p class="hero-sub">
-      From a deterministic baseline that barely reached the screwdriver,
-      to a flow-matching policy with correlated noise that picks it up
-      and places it in the box. Built on a $300 arm with one laptop GPU.
+      I started with a deterministic baseline that barely reached the screwdriver.
+      I ended with a flow matching policy that uses correlated noise to pick it up
+      and place it in the box. I built all of it on a $300 arm with one laptop GPU.
     </p>
     <div class="hero-stats">
       <div class="stat"><div class="stat-val">3</div><div class="stat-label">Architectures</div></div>
@@ -242,8 +242,8 @@
   <div class="eyebrow">Evolution</div>
   <h2 class="section-title">From L1 regression<br/>to <em>flow matching</em></h2>
   <p class="body-text">
-    Each version fixed the failures of the last. v1 taught me what doesn't work.
-    v2 introduced the right inductive biases. v3 upgraded the eyes.
+    Each version fixed the failures of the last one. v1 taught me what does not work.
+    v2 added the right inductive biases. v3 upgraded the eyes.
   </p>
 
   <div class="evolution-grid">
@@ -251,27 +251,27 @@
       <div class="evo-version" style="color:var(--accent-v1)">Version 1</div>
       <div class="evo-title">Self-attention + L1 loss</div>
       <div class="evo-desc">
-        All tokens in one self-attention pool. Deterministic regression learned the average
-        of demos — a trajectory that matched none of them. Dead language encoder wasting 262MB.
-        Unfrozen ViT overfitting on 83 episodes.
+        All tokens sat in one self-attention pool. Deterministic regression learned the average
+        of the demos, so it produced a trajectory that matched none of them. A dead language encoder
+        wasted 262MB. The unfrozen ViT overfitted on 83 episodes.
       </div>
     </div>
     <div class="evo-card">
       <div class="evo-version" style="color:var(--accent-v2)">Version 2</div>
       <div class="evo-title">Flow matching + cross-attention</div>
       <div class="evo-desc">
-        Encoder-decoder split. Action queries cross-attend to visual context instead of
-        competing with it. Flow matching with correlated noise handles multimodal actions.
-        Frozen ViT-Tiny. Rolling inpainting for smooth chunk transitions.
+        I split it into an encoder and a decoder. Action queries cross-attend to visual context
+        instead of competing with it. Flow matching with correlated noise handles multimodal actions.
+        I used a frozen ViT-Tiny and rolling inpainting for smooth chunk transitions.
       </div>
     </div>
     <div class="evo-card">
       <div class="evo-version" style="color:var(--accent-v3)">Version 3</div>
       <div class="evo-title">DINOv2 self-supervised vision</div>
       <div class="evo-desc">
-        Same flow matching decoder as v2, but DINOv2 ViT-S/14 replaces ViT-Tiny.
-        Self-supervised spatial features encode where objects are, not just what they are.
-        384d embeddings, 256 tokens per camera. Smoother, more generalizable.
+        I kept the same flow matching decoder as v2, but DINOv2 ViT-S/14 replaces ViT-Tiny.
+        Self-supervised spatial features encode where objects are, not only what they are.
+        384d embeddings and 256 tokens per camera. The result is smoother and generalizes better.
       </div>
     </div>
   </div>
@@ -280,19 +280,19 @@
 <div class="divider"></div>
 
 <section class="section" id="v1">
-  <div class="eyebrow">Version 1 — Baseline</div>
+  <div class="eyebrow">Version 1: Baseline</div>
   <div class="two-col">
     <div>
       <span class="version-tag tag-v1">PRANA v1</span>
       <h2 class="section-title">The one that<br/><em>almost worked</em></h2>
       <p class="body-text">
-        83 teleoperation episodes. ViT-Tiny vision encoder, PaliGemma tokenizer
-        (receiving zeros), 4-layer self-attention transformer, 50-step action chunking
-        with L1 loss. It reached for the screwdriver but couldn't grasp consistently.
+        I trained this on 83 teleoperation episodes. It used a ViT-Tiny vision encoder, a PaliGemma tokenizer
+        (which received zeros), a 4 layer self-attention transformer, and 50 step action chunking
+        with L1 loss. It reached for the screwdriver but could not grasp it consistently.
       </p>
       <p class="body-text">
-        The failures were instructive: self-attention let action queries contaminate
-        each other before seeing the scene. Deterministic regression averaged out
+        The failures taught me a lot. Self-attention let the action queries contaminate
+        each other before they saw the scene. Deterministic regression averaged out
         the multimodal demonstrations. The unfrozen backbone overfitted in 2000 steps.
       </p>
     </div>
@@ -302,7 +302,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
-      <div class="video-caption">v1 — reaches but struggles to grasp</div>
+      <div class="video-caption">v1: reaches but struggles to grasp</div>
     </div>
   </div>
 </section>
@@ -310,24 +310,24 @@
 <div class="divider"></div>
 
 <section class="section" id="v2">
-  <div class="eyebrow">Version 2 — Flow Matching</div>
+  <div class="eyebrow">Version 2: Flow Matching</div>
   <span class="version-tag tag-v2">PRANA v2</span>
   <h2 class="section-title">Iterative denoising with<br/><em>correlated noise</em></h2>
   <p class="body-text" style="margin-bottom:48px">
     Instead of predicting one average trajectory, the model starts from noise shaped
-    like real robot motions and iteratively refines it into precise actions. Cross-attention
-    so the decoder actually looks at the scene before deciding what to do.
+    like real robot motions and refines it step by step into precise actions. I added cross-attention
+    so the decoder looks at the scene before it decides what to do.
   </p>
 
   <img src="../assets/prana_v2_architecture.png" alt="PRANA v2 Architecture" class="arch-img"/>
-  <div class="video-caption" style="margin-bottom:48px">v2 architecture — context encoder + cross-attention action decoder with flow matching</div>
+  <div class="video-caption" style="margin-bottom:48px">v2 architecture: context encoder plus cross-attention action decoder with flow matching</div>
 
   <div class="two-col">
     <div>
       <ul class="detail-list">
-        <li>Frozen ViT-Tiny with camera-ID embeddings</li>
-        <li>4-layer context encoder (self-attention over vision + state)</li>
-        <li>7-layer action decoder (cross-attention to context)</li>
+        <li>Frozen ViT-Tiny with camera ID embeddings</li>
+        <li>4 layer context encoder (self-attention over vision plus state)</li>
+        <li>7 layer action decoder (cross-attention to context)</li>
         <li>Flow matching: 10 Euler denoising steps at inference</li>
         <li>Correlated noise from Cholesky decomposition of action covariance</li>
         <li>Rolling inpainting: execute 40, save 10 for smooth transitions</li>
@@ -341,7 +341,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
-      <div class="video-caption">v2 — picks up screwdriver and places in box</div>
+      <div class="video-caption">v2: picks up screwdriver and places in box</div>
     </div>
   </div>
 </section>
@@ -349,23 +349,23 @@
 <div class="divider"></div>
 
 <section class="section" id="v3">
-  <div class="eyebrow">Version 3 — DINOv2 Vision</div>
+  <div class="eyebrow">Version 3: DINOv2 Vision</div>
   <span class="version-tag tag-v3">PRANA v3</span>
   <h2 class="section-title">Same decoder.<br/><em>Better eyes.</em></h2>
   <p class="body-text" style="margin-bottom:48px">
-    DINOv2 ViT-S/14 replaces ViT-Tiny. Self-supervised pretraining on 142M images
-    means the backbone encodes where objects are spatially, not just what class they are.
-    384-dimensional embeddings, 256 tokens per camera — 2.6x more visual information.
+    DINOv2 ViT-S/14 replaces ViT-Tiny. Its self-supervised pretraining on 142M images
+    means the backbone encodes where objects are in space, not only what class they are.
+    It gives 384 dimensional embeddings and 256 tokens per camera, which is 2.6x more visual information.
   </p>
 
   <img src="../assets/prana_v3_architecture.png" alt="PRANA v3 Architecture" class="arch-img"/>
-  <div class="video-caption" style="margin-bottom:48px">v3 architecture — DINOv2 backbone with 512 visual tokens feeding the same flow matching decoder</div>
+  <div class="video-caption" style="margin-bottom:48px">v3 architecture: DINOv2 backbone with 512 visual tokens feeding the same flow matching decoder</div>
 
   <div class="two-col">
     <div>
       <ul class="detail-list">
         <li>DINOv2 ViT-S/14 frozen backbone (22M params)</li>
-        <li>384d embeddings → 256 tokens per camera (vs 192d / 197 tokens)</li>
+        <li>384d embeddings → 256 tokens per camera (vs 192d, 197 tokens)</li>
         <li>512 total visual tokens (vs 394 in v2)</li>
         <li>Same flow matching decoder, same correlated noise</li>
         <li>Smoother trajectories, better generalization to object placement</li>
@@ -379,7 +379,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
-      <div class="video-caption">v3 — smoother grasp, better generalization with DINOv2</div>
+      <div class="video-caption">v3: smoother grasp, better generalization with DINOv2</div>
     </div>
   </div>
 </section>
@@ -454,7 +454,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
-      <div class="video-caption">v2 — ViT-Tiny + flow matching</div>
+      <div class="video-caption">v2: ViT-Tiny plus flow matching</div>
     </div>
     <div>
       <div class="video-wrap">
@@ -462,7 +462,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>
       </div>
-      <div class="video-caption">v3 — DINOv2 + flow matching</div>
+      <div class="video-caption">v3: DINOv2 plus flow matching</div>
     </div>
   </div>
 </section>
@@ -473,7 +473,7 @@
   <div class="eyebrow">Links</div>
   <h2 class="section-title">Open source.<br/><em>Everything.</em></h2>
   <p class="body-text">
-    Architecture, training scripts, deployment code, model weights, dataset, and the mistakes along the way.
+    I released the architecture, the training scripts, the deployment code, the model weights, the dataset, and the mistakes along the way.
   </p>
   <div class="links-row">
     <a href="https://github.com/siddarth09/PRANA" target="_blank" class="link-btn">GitHub →</a>

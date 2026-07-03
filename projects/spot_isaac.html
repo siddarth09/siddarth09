@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quadruped Locomotion — SpaceData Inc.</title>
+  <title>Quadruped Locomotion: SpaceData Inc.</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -420,9 +420,9 @@
       <em>the wreckage</em>
     </h1>
     <p class="hero-sub">
-      A multi-terrain locomotion policy for quadruped robots, trained in
-      Isaac Lab and tested in GPS-denied indoor environments built to
-      simulate post-disaster scenarios.
+      I trained a multi terrain locomotion policy for quadruped robots in
+      Isaac Lab and tested it in indoor environments without GPS, built to
+      simulate post disaster scenarios.
     </p>
     <div class="hero-meta-row">
       <div class="hero-meta">
@@ -449,9 +449,9 @@
 <div class="statement">
   <div class="statement-inner reveal">
     <p class="statement-text">
-      When a building collapses, the first 72 hours are when most survivors
-      are found. Sending humans into unstable debris is dangerous. Wheeled
-      robots get stuck. Drones can't carry sensors close to the ground.
+      When a building collapses, most survivors are found in the first 72
+      hours. Sending humans into unstable debris is dangerous, wheeled
+      robots get stuck, and drones cannot carry sensors close to the ground.
       <em>Legged robots can go where nothing else can.</em>
     </p>
   </div>
@@ -471,20 +471,20 @@
     <div class="reveal">
       <p class="body-text">
         After earthquakes, explosions, or structural failures, the operating
-        conditions are unlike anything a standard robot is designed for.
-        Floors are uneven. Corridors are blocked. There is no GPS. Lighting
-        is unpredictable. And every second of delay matters.
+        conditions are not like anything a standard robot is designed for.
+        Floors are uneven, corridors are blocked, there is no GPS, and
+        lighting is unpredictable. Every second of delay matters.
       </p>
       <p class="body-text">
         Wheeled platforms lose traction on rubble and cannot climb over
-        obstacles more than a few centimetres tall. Aerial robots struggle
-        with endurance and cannot get close enough to debris piles to be
-        useful. Legged robots are different. They can step over obstacles,
-        maintain balance on uneven ground, navigate narrow passages, and
-        carry sensor payloads deep into environments no human should enter.
+        obstacles more than a few centimetres tall. Aerial robots have short
+        endurance and cannot get close enough to debris piles to be useful.
+        Legged robots are different. They can step over obstacles, keep
+        balance on uneven ground, move through narrow passages, and carry
+        sensor payloads deep into environments no human should enter.
       </p>
       <p class="body-text">
-        The challenge is making them autonomous enough to do this reliably
+        The hard part is making them autonomous enough to do this reliably
         without constant operator input. That is what this project worked toward.
       </p>
     </div>
@@ -525,7 +525,7 @@
     <div class="spec-cell">
       <div class="spec-label">Platform</div>
       <div class="spec-val">Quadruped robot</div>
-      <div class="spec-sub">Four-legged platform, step climbing, dynamic balancing, sensor payload capacity</div>
+      <div class="spec-sub">Four legged platform, step climbing, dynamic balancing, sensor payload capacity</div>
     </div>
   </div>
 </section>
@@ -535,10 +535,10 @@
   <div class="nda-notice reveal">
     <div class="nda-dot"></div>
     <div class="nda-text">
-      The multi-terrain policy trained during this internship is subject to
+      The multi terrain policy I trained during this internship is under
       an NDA with SpaceData Inc. and cannot be shown publicly. The video
-      below demonstrates the flat terrain locomotion baseline that the
-      work extended from.
+      below shows the flat terrain locomotion baseline that I extended
+      the work from.
     </div>
   </div>
   <div class="video-wrap reveal">
@@ -564,23 +564,23 @@
         <em>from scratch</em>
       </h2>
       <p class="body-text" style="margin-top:24px">
-        At SpaceData Inc. I was tasked with extending a flat terrain
-        locomotion policy to handle the kinds of surfaces a robot would
-        actually encounter in a disaster zone. That meant training a
-        reinforcement learning policy in Isaac Lab that could maintain
-        stable locomotion across rubble, slopes, steps, and irregular
-        ground without pre-mapping the terrain.
+        At SpaceData Inc. my job was to extend a flat terrain locomotion
+        policy so it could handle the kinds of surfaces a robot would
+        really meet in a disaster zone. To do this I trained a
+        reinforcement learning policy in Isaac Lab that keeps stable
+        locomotion across rubble, slopes, steps, and irregular ground
+        without pre mapping the terrain.
       </p>
     </div>
     <div class="reveal">
       <ul class="detail-list">
         <li>Trained quadruped locomotion policy using RL in Isaac Lab</li>
-        <li>Multi-terrain curriculum across flat ground, rubble, slopes, and steps</li>
+        <li>Multi terrain curriculum across flat ground, rubble, slopes, and steps</li>
         <li>Reward shaping for stability, smooth motion, and disturbance recovery</li>
         <li>Policy outputs velocity commands compatible with ROS 2 Nav2</li>
         <li>Navigation stack integrated with Isaac Sim for full autonomy pipeline</li>
-        <li>Disaster-inspired indoor environments built in Isaac Sim for validation</li>
-        <li>GPS-denied localisation using onboard SLAM</li>
+        <li>Disaster style indoor environments built in Isaac Sim for validation</li>
+        <li>Localisation without GPS using onboard SLAM</li>
         <li>Deployment architecture designed to run on physical hardware</li>
       </ul>
     </div>
@@ -602,18 +602,18 @@
     </div>
     <div class="reveal">
       <p class="body-text">
-        The multi-terrain policy reaches its navigation goals reliably
-        across the simulation environments I built. The next step is
-        validating it on physical hardware, tightening the navigation
-        integration for tighter corridors, and improving recovery
-        behaviors after unexpected falls.
+        The multi terrain policy reaches its navigation goals reliably
+        across the simulation environments I built. The next steps are to
+        validate it on physical hardware, tighten the navigation
+        integration for narrow corridors, and improve recovery behaviors
+        after unexpected falls.
       </p>
       <p class="body-text">
         Most of the detailed results from this internship are under NDA.
         What I can say is that this was the first time I had to build
-        something with an actual operational constraint — not a research
-        demo, but a system someone would actually deploy in the field.
-        That changes how you think about every design decision.
+        something with a real operational constraint. It was not a research
+        demo. It was a system someone would actually deploy in the field,
+        and that changes how you think about every design decision.
       </p>
     </div>
   </div>

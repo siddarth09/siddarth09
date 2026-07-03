@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Franka Panda — Manipulation</title>
+  <title>Franka Panda: Manipulation</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -627,9 +627,9 @@
       Manipulation
     </h1>
     <p class="hero-sub">
-      A classical robotics pipeline built from scratch on a real 7-DoF arm.
-      HSV perception, Jacobian IK, and RRTConnect motion planning working
-      together to pick and place objects autonomously.
+      I built a classical robotics pipeline from scratch on a real 7-DoF arm.
+      HSV perception, Jacobian IK, and RRTConnect motion planning work
+      together to pick and place objects on their own.
     </p>
     <div class="hero-telem">
       <div class="telem-cell">
@@ -711,16 +711,16 @@
     </div>
     <div>
       <p class="body-text">
-        The goal was to build a pick and place system on a real 7-DoF Franka Panda
-        arm using nothing but classical robotics tools. No end-to-end learning,
-        no pretrained policies. Just perception, planning, and control working
-        together cleanly.
+        I wanted to build a pick and place system on a real 7-DoF Franka Panda
+        arm using only classical robotics tools. I used no end to end learning
+        and no pretrained policies. It is just perception, planning, and control
+        working together.
       </p>
       <p class="body-text">
-        The pipeline has three stages that are deliberately decoupled. Perception
-        finds the object. Planning computes a collision-free path to it.
-        The IK controller executes that path on the real joints.
-        Each stage is replaceable without touching the others.
+        The pipeline has three stages, and I kept them separate on purpose.
+        Perception finds the object. Planning computes a collision free path to it.
+        The IK controller runs that path on the real joints. I can replace any
+        stage without touching the others.
       </p>
     </div>
   </div>
@@ -738,17 +738,17 @@
         <span class="blue">One robot.</span>
       </h2>
       <p class="body-text" style="margin-top:8px">
-        Separating planning from execution was the key design decision.
-        When something breaks you know exactly which stage to look at.
-        That matters on real hardware more than anything else.
+        My main design choice was to keep planning separate from execution.
+        When something breaks, I know exactly which stage to look at.
+        On real hardware that matters a lot.
       </p>
       <div class="holo-panel" style="margin-top:28px">
         <div class="holo-title">Autonomy Stack</div>
         <div class="holo-body">
           Camera → Perception → 3D Pose → Planner → IK → Joint Commands
           <br/><br/>
-          Every stage exposes a clean ROS 2 interface. Swapping HSV
-          detection for a neural detector requires zero changes downstream.
+          Every stage exposes a clean ROS 2 interface. If I swap HSV
+          detection for a neural detector, nothing downstream has to change.
         </div>
       </div>
     </div>
@@ -760,9 +760,9 @@
             <div class="pipe-title">HSV Perception</div>
             <div class="pipe-desc">
               I convert each RGB frame to HSV and threshold it to isolate
-              the target object by color. The dominant contour gives me a
-              2D centroid via image moments. I back-project that to 3D
-              using the known camera intrinsics and ROS 2 TF to transform
+              the target object by color. The largest contour gives me a
+              2D centroid from image moments. I back project that to 3D
+              using the known camera intrinsics, and I use ROS 2 TF to move
               it into the robot base frame.
             </div>
           </div>
@@ -777,9 +777,9 @@
             <div class="pipe-title">RRTConnect Motion Planner</div>
             <div class="pipe-desc">
               Planning runs in the 7-DoF configuration space. RRTConnect
-              grows two random trees simultaneously from the start and goal
-              configurations until they connect. The result is a
-              collision-free joint trajectory that gets time-parameterised
+              grows two random trees at the same time, one from the start and
+              one from the goal configuration, until they connect. The result
+              is a collision free joint trajectory, and I time parameterise it
               before execution.
             </div>
           </div>
@@ -793,10 +793,10 @@
           <div class="pipe-content">
             <div class="pipe-title">Jacobian IK via Pinocchio</div>
             <div class="pipe-desc">
-              Each waypoint in the planned trajectory gets resolved into
-              joint angles using damped least-squares IK. Pinocchio gives
-              me analytical Jacobians so the computation is fast enough
-              to run in the real-time control loop without drift.
+              I resolve each waypoint in the planned trajectory into joint
+              angles with damped least squares IK. Pinocchio gives me
+              analytical Jacobians, so the computation is fast enough to run
+              in the real time control loop without drift.
             </div>
           </div>
           <div class="pipe-tag">Pinocchio &nbsp; Damped J⁺</div>
@@ -809,10 +809,10 @@
           <div class="pipe-content">
             <div class="pipe-title">State Machine Execution</div>
             <div class="pipe-desc">
-              A simple state machine sequences the full pick and place task.
-              Reach, grasp, lift, move, place, retreat. Each transition
-              calls the planner and IK controller with a new target pose.
-              Failure detection at every step.
+              A simple state machine runs the full pick and place task in order:
+              reach, grasp, lift, move, place, retreat. Each transition calls
+              the planner and IK controller with a new target pose. I check for
+              failure at every step.
             </div>
           </div>
           <div class="pipe-tag">ROS 2 &nbsp; Franka Interface</div>
@@ -834,14 +834,14 @@
         <span class="blue">Locate it.</span>
       </h2>
       <p class="body-text">
-        I chose HSV segmentation deliberately. It is simple, transparent,
-        and every failure mode is visible — you can literally see the mask
-        and know what went wrong. For this task it is the right tool.
+        I chose HSV segmentation on purpose. It is simple and clear, and I can
+        see every failure mode. I can look at the mask directly and know what
+        went wrong. For this task it is the right tool.
       </p>
       <p class="body-text">
-        The centroid computation uses image moments, which gives sub-pixel
+        The centroid computation uses image moments, which gives sub pixel
         accuracy. The depth reading at that pixel plus the camera
-        intrinsics gives a 3D point in camera frame.
+        intrinsics gives a 3D point in the camera frame.
         ROS 2 TF handles the rest.
       </p>
 
@@ -903,15 +903,15 @@ cy = M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>]
       </h2>
       <p class="body-text">
         The Franka Panda has 7 joints, so the configuration space is
-        7-dimensional. RRTConnect builds two trees simultaneously,
+        7-dimensional. RRTConnect builds two trees at the same time,
         one from the current joint configuration and one from the goal.
-        They grow toward each other with random samples until a bridge is found.
+        They grow toward each other with random samples until they meet.
       </p>
       <p class="body-text">
-        The bidirectional approach converges significantly faster than a
-        single tree on high-DoF arms, which matters when the robot is
-        waiting to execute. The resulting path is time-parameterised
-        for smooth velocity profiles before it goes to the IK controller.
+        The two way approach converges much faster than a single tree on
+        high-DoF arms, which matters when the robot is waiting to execute.
+        I then time parameterise the resulting path for smooth velocity
+        profiles before it goes to the IK controller.
       </p>
 
       <div class="eq-card">
@@ -924,13 +924,13 @@ cy = M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>]
 
     <div>
       <ul class="detail-list">
-        <li>Configuration space is ℝ⁷ — one dimension per joint</li>
-        <li>RRTConnect grows bidirectional trees for faster convergence on high-DoF arms</li>
+        <li>Configuration space is ℝ⁷, one dimension per joint</li>
+        <li>RRTConnect grows two way trees for faster convergence on high-DoF arms</li>
         <li>Full collision checking at every sample against scene geometry</li>
-        <li>Path is time-parameterised for smooth velocity profiles</li>
-        <li>OMPL handles sampling, nearest-neighbour queries, and tree extension</li>
+        <li>Path is time parameterised for smooth velocity profiles</li>
+        <li>OMPL handles sampling, nearest neighbour queries, and tree extension</li>
         <li>Integrates with MoveIt 2 for the ROS 2 planning scene</li>
-        <li>Replanning triggered automatically if a collision is detected mid-execution</li>
+        <li>Replanning starts automatically if a collision is detected during execution</li>
       </ul>
     </div>
   </div>
@@ -948,17 +948,17 @@ cy = M[<span class="hl2">'m01'</span>] / M[<span class="hl2">'m00'</span>]
         from a <span class="blue">pose</span>
       </h2>
       <p class="body-text">
-        Forward kinematics gives you the end-effector pose from joint
-        angles. IK inverts that. For a 7-DoF arm the problem is
-        redundant — there are infinitely many joint configurations
-        that reach the same pose — so I use the damped pseudoinverse
-        Jacobian to find the minimum-norm solution.
+        Forward kinematics gives you the end-effector pose from the joint
+        angles. IK does the reverse. For a 7-DoF arm the problem is
+        redundant. There are infinitely many joint configurations that
+        reach the same pose, so I use the damped pseudoinverse Jacobian
+        to find the minimum norm solution.
       </p>
       <p class="body-text">
-        The damping factor λ keeps the solution stable near singularities
-        where the plain pseudoinverse would blow up. Pinocchio provides
-        the analytical Jacobian at each configuration so the loop runs
-        fast enough for real-time control.
+        The damping factor λ keeps the solution stable near singularities,
+        where the plain pseudoinverse would blow up. Pinocchio gives me
+        the analytical Jacobian at each configuration, so the loop runs
+        fast enough for real time control.
       </p>
 
       <div class="eq-card">
@@ -1005,11 +1005,11 @@ publish_joint_cmd(q)
   <div class="footnote-inner">
     <div class="footnote-tag">Side note</div>
     <p class="footnote-body">
-      After getting the classical pipeline working I also trained a PPO-based
-      policy in MuJoCo to see how a learned approach compared on the same task.
-      The classical system is more interpretable and easier to debug on hardware.
-      The RL policy generalises better to object position variation once trained.
-      Both have their place — I just found the planning work more interesting to build.
+      After the classical pipeline was working, I also trained a PPO policy
+      in MuJoCo to see how a learned approach did on the same task.
+      The classical system is easier to read and easier to debug on hardware.
+      Once trained, the RL policy handles object position changes better.
+      Both are useful. I just found the planning work more interesting to build.
     </p>
   </div>
 </div>
