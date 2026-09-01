@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/sid/projects25/src/HANUMAN/**)"
+    ]
+  }
+}

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZERO: one policy, different robots</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#fff; --ink:#111; --body:#333; --muted:#6b6b6b; --faint:#a2a2a2;
+    --rule:#e8e8e8; --wash:#f7f7f5;
+  }
+  html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
+  body {
+    background:var(--bg); color:var(--body);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:19px; font-weight:400; line-height:1.62;
+  }
+  a { color:inherit; }
+  iframe { display:block; }
+
+  nav {
+    position:sticky; top:0; z-index:50; display:flex; align-items:center;
+    justify-content:space-between; padding:18px 40px;
+    background:rgba(255,255,255,0.93); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--rule);
+  }
+  .brand { font-size:15px; font-weight:600; color:var(--ink); }
+  nav a { font-size:15px; color:var(--muted); text-decoration:none; }
+  nav a:hover { color:var(--ink); }
+
+  .wrap { max-width:1000px; margin:0 auto; padding:0 40px; }
+
+  header { padding:96px 0 56px; }
+  h1 {
+    font-size:62px; line-height:1.06; font-weight:500;
+    letter-spacing:-0.03em; color:var(--ink); margin-bottom:24px;
+  }
+  .lede { font-size:23px; line-height:1.5; font-weight:300; max-width:680px; }
+
+  .facts { display:flex; flex-wrap:wrap; gap:52px; margin-top:44px; }
+  .fact-n { font-size:34px; font-weight:500; color:var(--ink); letter-spacing:-0.02em; }
+  .fact-l { font-size:14px; color:var(--muted); margin-top:2px; }
+
+  section { padding:56px 0; border-top:1px solid var(--rule); }
+  h2 {
+    font-size:16px; font-weight:600; color:var(--ink);
+    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:26px;
+  }
+  p { max-width:680px; margin-bottom:16px; }
+  p:last-child { margin-bottom:0; }
+  strong { font-weight:600; color:var(--ink); }
+
+  /* full-width break-out: the players are the first thing anyone looks at, so give them room */
+  .bleed { width:100vw; margin-left:calc(50% - 50vw); padding:56px 0; }
+  .bleed-inner { max-width:1500px; margin:0 auto; padding:0 40px; }
+  .video-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .vid { position:relative; padding-bottom:56.25%; background:var(--wash); border-radius:4px; overflow:hidden; }
+  .vid iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+  .cap { font-size:15px; color:var(--muted); margin-top:10px; }
+
+  table { border-collapse:collapse; width:100%; font-size:17px; }
+  th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  th { font-size:13px; font-weight:600; color:var(--faint); letter-spacing:0.06em; text-transform:uppercase; }
+  td.k { color:var(--ink); font-weight:500; white-space:nowrap; }
+  .yes { color:var(--ink); }
+  .no { color:var(--faint); }
+
+  .rows { display:flex; flex-direction:column; }
+  .row { display:grid; grid-template-columns:260px 1fr; gap:28px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .row:last-child { border-bottom:none; }
+  .row-k { font-weight:600; color:var(--ink); font-size:17px; }
+  .row-v { font-size:17px; color:var(--body); }
+
+  .links { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn { font-size:15px; padding:11px 20px; border:1px solid var(--rule); border-radius:3px; color:var(--ink); text-decoration:none; }
+  .btn:hover { border-color:var(--ink); }
+
+  footer { padding:36px 0 64px; border-top:1px solid var(--rule); font-size:14px; color:var(--faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+
+  @media (max-width:780px) {
+    h1 { font-size:40px; }
+    .lede { font-size:19px; }
+    .bleed-inner { padding:0 22px; }
+    .row-k, .row-v, table { font-size:16px; }
+    .video-grid { grid-template-columns:1fr; }
+    .row { grid-template-columns:1fr; gap:4px; }
+    .wrap { padding:0 22px; }
+    nav { padding:14px 22px; }
+    .facts { gap:32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">ZERO</span>
+  <a href="../index.html">All projects</a>
+</nav>
+
+<div class="wrap">
+
+<header>
+  <h1>One policy.<br/>Different robots.</h1>
+  <p class="lede">
+    I recorded a two-armed handover 82 times by hand, trained a model on it, then ran that same model on
+    a robot with different arms, grippers and reach. No retraining.
+  </p>
+  <div class="facts">
+    <div><div class="fact-n">82</div><div class="fact-l">Demonstrations</div></div>
+    <div><div class="fact-n">3</div><div class="fact-l">Robots, one model</div></div>
+    <div><div class="fact-n">0</div><div class="fact-l">Retraining steps</div></div>
+    <div><div class="fact-n">4 / 6</div><div class="fact-l">Stages transferred</div></div>
+  </div>
+</header>
+
+<section class="bleed">
+  <div class="bleed-inner">
+  <div class="video-grid">
+    <div>
+      <div class="vid">
+        <iframe src="https://www.youtube.com/embed/FpKpFlR_5qM?autoplay=1&mute=1&loop=1&playsinline=1&rel=0&modestbranding=1&playlist=FpKpFlR_5qM"
+          title="reBot rollout" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="cap">reBot: the robot I recorded on.</div>
+    </div>
+    <div>
+      <div class="vid">
+        <iframe src="https://www.youtube.com/embed/lUAk3kDJyCo?autoplay=1&mute=1&loop=1&playsinline=1&rel=0&modestbranding=1&playlist=lUAk3kDJyCo"
+          title="ViperX 300s rollout" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="cap">ViperX 300s: same model, nothing retrained.</div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section>
+  <h2>The idea</h2>
+  <p>
+    Don't record motor angles, they only mean something on one machine. Record
+    <strong>where the hands were</strong> on the table: position, orientation, grip. Twenty numbers that
+    describe the job, not the robot. Any arm that can reach solves its own joint angles.
+  </p>
+</section>
+
+<section>
+  <h2>Result</h2>
+  <table>
+    <tr><th>Stage</th><th>reBot</th><th>ViperX 300s</th></tr>
+    <tr><td class="k">Reach</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td class="k">Grip</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td class="k">Carry across</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td class="k">Hands meet</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+    <tr><td class="k">Second hand closes</td><td class="yes">Yes</td><td class="no">Not yet</td></tr>
+    <tr><td class="k">Place on tray</td><td class="yes">Yes</td><td class="no">Not yet</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>What actually broke</h2>
+  <p style="margin-bottom:24px">Almost none of it was the model. Each one was a hidden disagreement between the two robots.</p>
+  <div class="rows">
+    <div class="row">
+      <div class="row-k">Gripper faced backwards</div>
+      <div class="row-v">Derived its facing from the fingertip position instead of measuring the jaw. Every orientation mirrored by 180&deg;.</div>
+    </div>
+    <div class="row">
+      <div class="row-k">Closed wasn't the smaller number</div>
+      <div class="row-v">One jaw's joint grows as it closes, the other shrinks. Assuming one sign pinned a hand shut permanently.</div>
+    </div>
+    <div class="row">
+      <div class="row-k">Wrist camera 15 mm too close</div>
+      <div class="row-v">Same mount, different grip point. Pushed the object out of frame exactly when the second hand needed to see it.</div>
+    </div>
+    <div class="row">
+      <div class="row-k">More grip force did nothing</div>
+      <div class="row-v">20, 40, 80 and 150 N all gave <strong>7.6 N</strong>. The force ceiling was never the limit, the gain was. Raising it: <strong>36.6 N</strong>.</div>
+    </div>
+    <div class="row">
+      <div class="row-k">Object twisted out, not slid</div>
+      <div class="row-v">Gripped 24 mm below the rim of a 115 mm cylinder, so it rotates out. Torsional friction mattered, sliding friction didn't.</div>
+    </div>
+    <div class="row">
+      <div class="row-k">One decision per handover</div>
+      <div class="row-v">The model plans 2.5 s ahead. The handover window is <strong>2.4 s</strong>. And the horizon silently caps at the trained value, so every experiment raising it was a no-op.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Next: ZERO v2</h2>
+  <p style="margin-bottom:24px">SmolVLA backbone, with the pieces that worked in <a href="prana.html" style="color:var(--ink)">PRANA v2</a>.</p>
+  <div class="rows">
+    <div class="row">
+      <div class="row-k">Cholesky-correlated noise</div>
+      <div class="row-v">
+        Flow matching from independent per-step noise gives trajectories that are right on average and
+        jittery in practice. Build a temporal covariance over the chunk, take its <strong>Cholesky
+        factor</strong>, and sample noise through it so nearby timesteps move together. Every sample is a
+        smooth trajectory instead of smooth-on-average. This is what fixed multimodal demos in PRANA v2.
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-k">Rolling chunk overlap</div>
+      <div class="row-v">
+        Last 10 actions of a chunk seed the first 10 of the next, so plans are conditioned on each other
+        rather than stitched at a seam. Directly targets the handover, where the seam currently lands
+        mid-transfer.
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-k">Depth input</div>
+      <div class="row-v">
+        Everything that broke was metric: standoff, clearance, where the object sits in the jaw. RGB makes
+        that ambiguous across robots, depth doesn't. The cameras already publish it.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Stack</h2>
+  <p style="margin-bottom:24px">
+    SmolVLA from LeRobot &middot; MuJoCo &middot; ROS 2 Jazzy &middot;.
+  </p>
+  <div class="links">
+    <a class="btn" href="https://github.com/siddarth09" target="_blank">GitHub</a>
+    <a class="btn" href="prana.html">PRANA</a>
+    <a class="btn" href="../index.html">All projects</a>
+  </div>
+</section>
+
+<footer>
+  <span>&copy; 2026 Siddarth Dayasagar</span>
+  <span>Northeastern University</span>
+</footer>
+
+</div>
+</body>
+</html>
