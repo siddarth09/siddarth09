@@ -402,10 +402,20 @@
     .project-card.featured { grid-column: span 2; }
     .project-card.featured .project-media { aspect-ratio: 21/9; }
 
-    /* clip shot in portrait, so give it a real 9:16 box instead of letterboxing it */
-    .project-card.portrait .project-media {
-      aspect-ratio: 9/16; max-width: 300px; margin: 0 auto;
+    /* portrait clip: lay the card out sideways so the 9:16 box does not stretch the row */
+    .project-card.featured.portrait {
+      grid-column: span 3;
+      flex-direction: row; align-items: stretch;
     }
+    .project-card.featured.portrait .project-media {
+      aspect-ratio: 9/16; width: 260px; max-height: 462px;
+      flex-shrink: 0; align-self: center; margin: 36px 0 36px 36px;
+    }
+    .project-card.featured.portrait .project-body {
+      justify-content: center; padding: 36px 44px;
+    }
+    .project-card.featured.portrait .project-title { font-size: 26px; letter-spacing: -0.02em; }
+    .project-card.featured.portrait .project-desc { font-size: 15px; max-width: 620px; }
 
     .project-media {
       position: relative;
@@ -562,7 +572,12 @@
       .projects-grid { grid-template-columns: 1fr; }
       .project-card.featured { grid-column: span 1; }
       .project-card.featured .project-media { aspect-ratio: 16/9; }
-      .project-card.portrait .project-media { max-width: 260px; }
+      .project-card.featured.portrait { grid-column: span 1; flex-direction: column; }
+      .project-card.featured.portrait .project-title { font-size: 17px; }
+      .project-card.featured.portrait .project-body { padding: 20px 20px 24px; }
+      .project-card.featured.portrait .project-media {
+        width: 200px; max-height: 356px; margin: 20px auto 0;
+      }
       .project-body { padding: 20px 20px 24px; }
       .project-title { font-size: 15px; }
       .skills-list li { flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -706,7 +721,7 @@
   <div class="projects-grid">
 
     <!-- PLUTO -->
-    <div class="project-card reveal portrait">
+    <div class="project-card reveal featured portrait">
       <div class="project-media">
         <iframe
           src="https://www.youtube.com/embed/7JCcLDtJiNU?autoplay=1&mute=1&loop=1&playlist=7JCcLDtJiNU&controls=0&modestbranding=1&rel=0&playsinline=1"
