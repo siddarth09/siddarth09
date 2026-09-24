@@ -108,11 +108,45 @@
 
   /* portrait clip: give it its own column and put the text beside it, rather than
      stranding a narrow strip in the middle of a full-width section */
+  /* full-viewport hero, same pattern as f1tenth.html: video cover-cropped behind
+     the title. iframe is sized 9:16 to match the source, then oversized to cover. */
+  .hero { position:relative; width:100%; height:100svh; min-height:620px; overflow:hidden; }
+  .hero-video-wrap { position:absolute; inset:0; overflow:hidden; }
+  .hero-video-wrap iframe {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:100vw; height:177.78vw; min-height:100vh; min-width:56.25vh;
+    border:none; pointer-events:none; filter:brightness(0.38) saturate(0.85);
+  }
+  .hero-overlay {
+    position:absolute; inset:0;
+    background:
+      linear-gradient(105deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 45%, transparent 72%),
+      linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 30%, rgba(0,0,0,0.65) 70%, #000 100%);
+  }
+  .hero-bar { position:absolute; bottom:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--ink), rgba(255,255,255,0.25), transparent); }
+  .hero-content {
+    position:absolute; inset:0; z-index:2; left:0; right:0;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    max-width:1400px; margin:0 auto; padding:0 64px 72px;
+  }
+  .hero-eyebrow {
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:20px; display:flex; align-items:center; gap:12px;
+  }
+  .hero-eyebrow::before { content:''; display:block; width:28px; height:2px; background:var(--ink); }
+  .hero h1 { margin-bottom:24px; }
+  .hero .lede { color:rgba(255,255,255,0.68); max-width:520px; margin-bottom:44px; font-size:19px; }
+  .hero .facts { margin-top:0; border-top:1px solid var(--rule); padding-top:24px; }
+
   .stage { padding:56px 0; border-top:1px solid var(--rule); }
   .stage-grid { display:grid; grid-template-columns:320px 1fr; gap:48px; align-items:center; }
   .stage-text .cap { margin-top:0; margin-bottom:18px; font-size:16px; }
   .stage-text p { max-width:520px; }
   @media (max-width:780px) {
+    .hero-content { padding:0 22px 48px; }
+    .hero .lede { font-size:17px; margin-bottom:32px; }
     .stage-grid { grid-template-columns:1fr; gap:28px; }
     .vid.portrait { max-width:320px; margin:0 auto; }
   }
@@ -125,9 +159,15 @@
   <a href="../index.html">All projects</a>
 </nav>
 
-<div class="wrap">
-
-<header>
+<div class="hero">
+  <div class="hero-video-wrap">
+    <iframe src="https://www.youtube.com/embed/7JCcLDtJiNU?autoplay=1&mute=1&loop=1&playlist=7JCcLDtJiNU&controls=0&modestbranding=1&rel=0&playsinline=1"
+      allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-bar"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">System Identification &nbsp; Sim-to-Real &nbsp; 2026</div>
   <h1>Measured the robot.<br/>Then trained on it.</h1>
   <p class="lede">
     I measured the leg joints on a real Unitree G1, corrected the simulator to match, and trained
@@ -141,9 +181,13 @@
     <div><div class="fact-n">76&ndash;95%</div><div class="fact-l">Torque actually delivered</div></div>
     <div><div class="fact-n">0.29&deg;</div><div class="fact-l">Repeatability floor</div></div>
   </div>
-</header>
+  </div>
+</div>
 
-<section class="stage">
+<div class="wrap">
+
+<section class="stage" style="border-top:none">
+  <div class="hero-eyebrow" style="margin-bottom:28px">Walking, uncut</div>
   <div class="stage-grid">
     <div>
       <div class="vid portrait">
