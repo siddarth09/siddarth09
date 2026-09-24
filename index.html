@@ -402,6 +402,11 @@
     .project-card.featured { grid-column: span 2; }
     .project-card.featured .project-media { aspect-ratio: 21/9; }
 
+    /* clip shot in portrait, so give it a real 9:16 box instead of letterboxing it */
+    .project-card.portrait .project-media {
+      aspect-ratio: 9/16; max-width: 300px; margin: 0 auto;
+    }
+
     .project-media {
       position: relative;
       aspect-ratio: 16/9; overflow: hidden;
@@ -557,6 +562,7 @@
       .projects-grid { grid-template-columns: 1fr; }
       .project-card.featured { grid-column: span 1; }
       .project-card.featured .project-media { aspect-ratio: 16/9; }
+      .project-card.portrait .project-media { max-width: 260px; }
       .project-body { padding: 20px 20px 24px; }
       .project-title { font-size: 15px; }
       .skills-list li { flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -698,6 +704,30 @@
 
 <div style="max-width:1400px; margin:0 auto; padding:0 80px 100px">
   <div class="projects-grid">
+
+    <!-- PLUTO -->
+    <div class="project-card reveal portrait">
+      <div class="project-media">
+        <iframe
+          src="https://www.youtube.com/embed/7JCcLDtJiNU?autoplay=1&mute=1&loop=1&playlist=7JCcLDtJiNU&controls=0&modestbranding=1&rel=0&playsinline=1"
+          allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
+      </div>
+      <div class="project-body">
+        <div class="project-tag">System Identification &nbsp; Sim-to-Real &nbsp; 2026</div>
+        <div class="project-title">PLUTO: Measured the Robot, Then Trained on It</div>
+        <p class="project-desc">
+          I measured a real Unitree G1's leg joints against its simulator and found
+          the biggest error was a parameter the standard tooling never fits: the robot
+          only delivers 82&ndash;95% of the torque the model assumes. Correcting it beat
+          rotor inertia, damping and friction combined. I also worked out which
+          parameters the data genuinely determines and which are noise, and used that
+          to size the randomisation. The policy trained on that model walks at
+          0.6 m/s and drives from the keyboard.
+        </p>
+        <a href="projects/pluto.html" class="project-link">View project →</a>
+      </div>
+    </div>
 
     <!-- ZERO, hero -->
     <div class="project-card reveal featured">
