@@ -104,7 +104,18 @@
   ::selection { background:var(--ink); color:var(--bg); }
   .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.9em; }
   /* vertical (9:16) clip, so it is not letterboxed in the 16:9 .vid box */
-  .vid.portrait { padding-bottom:177.78%; max-width:360px; margin:0 auto; }
+  .vid.portrait { padding-bottom:177.78%; }
+
+  /* portrait clip: give it its own column and put the text beside it, rather than
+     stranding a narrow strip in the middle of a full-width section */
+  .stage { padding:56px 0; border-top:1px solid var(--rule); }
+  .stage-grid { display:grid; grid-template-columns:320px 1fr; gap:48px; align-items:center; }
+  .stage-text .cap { margin-top:0; margin-bottom:18px; font-size:16px; }
+  .stage-text p { max-width:520px; }
+  @media (max-width:780px) {
+    .stage-grid { grid-template-columns:1fr; gap:28px; }
+    .vid.portrait { max-width:320px; margin:0 auto; }
+  }
 </style>
 </head>
 <body>
@@ -132,9 +143,8 @@
   </div>
 </header>
 
-<section class="bleed">
-  <div class="bleed-inner">
-  <div class="video-grid" style="grid-template-columns:1fr">
+<section class="stage">
+  <div class="stage-grid">
     <div>
       <div class="vid portrait">
         <iframe src="https://www.youtube.com/embed/7JCcLDtJiNU?autoplay=1&mute=1&loop=1&playsinline=1&rel=0&modestbranding=1&controls=0&playlist=7JCcLDtJiNU"
@@ -142,9 +152,15 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
           referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
-      <div class="cap">Walking at 0.6 m/s, driven from the keyboard. Hoist strap slack as a catch.</div>
     </div>
-  </div>
+    <div class="stage-text">
+      <div class="cap">Walking at 0.6&nbsp;m/s, driven from the keyboard. The hoist strap is slack, there as a catch.</div>
+      <p>
+        Commands go over the Unitree SDK at 50&nbsp;Hz. The policy sees only the IMU and the joint
+        encoders, and it was trained entirely in a simulator I had corrected against measurements
+        of this exact robot.
+      </p>
+    </div>
   </div>
 </section>
 
