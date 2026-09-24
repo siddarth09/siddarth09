@@ -732,13 +732,14 @@
         <div class="project-tag">System Identification &nbsp; Sim-to-Real &nbsp; 2026</div>
         <div class="project-title">PLUTO: Measured the Robot, Then Trained on It</div>
         <p class="project-desc">
-          I measured a real Unitree G1's leg joints against its simulator and found
-          the biggest error was a parameter the standard tooling never fits: the robot
-          only delivers 82&ndash;95% of the torque the model assumes. Correcting it beat
-          rotor inertia, damping and friction combined. I also worked out which
-          parameters the data genuinely determines and which are noise, and used that
-          to size the randomisation. The policy trained on that model walks at
-          0.6 m/s and drives from the keyboard.
+          I measured the leg joints on a real Unitree G1, corrected its simulator to
+          match, and trained a walking policy on the corrected model. The fit found the
+          actuator gain was wrong, which is the one parameter these tools assume is
+          exact: the joints deliver 76&ndash;95% of the torque the model expects. Fixing
+          that mattered more than rotor inertia, damping and friction combined. I also
+          checked which fitted parameters the data could actually determine, and used
+          that to size the domain randomisation. Trained in mjlab, deployed over Unitree
+          SDK2, walks at 0.6 m/s on keyboard commands.
         </p>
         <a href="projects/pluto.html" class="project-link">View project →</a>
       </div>

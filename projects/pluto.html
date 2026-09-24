@@ -119,16 +119,16 @@
 <header>
   <h1>Measured the robot.<br/>Then trained on it.</h1>
   <p class="lede">
-    A walking policy is only as good as the simulator it was trained in. So I measured a real
-    Unitree G1's leg joints, found the largest error was a parameter the standard tooling never
-    fits, fixed it, and trained on the corrected model. The robot walks, and I drive it from the
-    keyboard.
+    I measured the leg joints on a real Unitree G1, corrected the simulator to match, and trained
+    a walking policy on the corrected model. The largest error turned out to be a parameter the
+    standard identification tools don't fit at all. The robot walks at 0.6&nbsp;m/s and I drive it
+    from the keyboard.
   </p>
   <div class="facts">
-    <div><div class="fact-n">1.46&times;</div><div class="fact-l">Held-out prediction error</div></div>
+    <div><div class="fact-n">1.46&times;</div><div class="fact-l">Better on data it never saw</div></div>
     <div><div class="fact-n">0.6 m/s</div><div class="fact-l">Walking on hardware</div></div>
-    <div><div class="fact-n">82&ndash;95%</div><div class="fact-l">Torque actually delivered</div></div>
-    <div><div class="fact-n">0.29&deg;</div><div class="fact-l">Robot's own repeatability</div></div>
+    <div><div class="fact-n">76&ndash;95%</div><div class="fact-l">Torque actually delivered</div></div>
+    <div><div class="fact-n">0.29&deg;</div><div class="fact-l">Repeatability floor</div></div>
   </div>
 </header>
 
@@ -149,27 +149,26 @@
 </section>
 
 <section>
-  <h2>The idea</h2>
+  <h2>How it works</h2>
   <p>
-    The simulator already knows the robot's shape and mass &mdash; that comes from CAD. What it
-    doesn't know is what happens inside each joint: the motor's own spinning inertia, amplified
-    by a gearbox; a viscous resistance that grows with speed; and dry friction that fights you
-    the same whether you move fast or slow.
+    The simulator gets the robot's shape and mass from CAD, so those are already right. What it
+    doesn't get is what happens inside each joint: the motor's own spinning inertia multiplied up
+    by the gearbox, a viscous drag that grows with speed, and dry friction that resists the same
+    at any speed.
   </p>
   <p>
-    You can't measure any of that with a meter, because it's a sealed gearbox. So you wiggle the
-    robot in a pattern you designed, record what its joints actually did, then make the simulator
-    perform the same wiggle and adjust the numbers until simulated motion matches the recording.
-    You're not measuring the parameters; you're finding the values that make the model reproduce
-    reality.
+    None of it can be measured directly through a sealed gearbox. So I drive the joints through a
+    motion I designed, record what they actually did, replay the same commands in the simulator,
+    and adjust the parameters until the simulated joints move like the recording. The parameters
+    never get measured directly. They come out as whatever values make the model match the data.
   </p>
 </section>
 
 <section>
   <h2>Result</h2>
   <p style="margin-bottom:24px">
-    Start the simulator from the robot's initial state, feed it the same 30 seconds of commands,
-    never correct it, and measure the drift. On data the fit never saw:
+    I start the simulator from the robot's initial state, feed it the same 30 seconds of commands,
+    never correct it along the way, and measure how far it drifts. On data the fit never saw:
   </p>
   <div class="rows">
     <div class="row">
@@ -178,109 +177,112 @@
     </div>
     <div class="row">
       <div class="row-k">Identified model</div>
-      <div class="row-v">0.0251 rad &mdash; <strong>1.44&deg;</strong></div>
+      <div class="row-v">0.0251 rad &mdash; <strong>1.44&deg;</strong>, a 1.46&times; improvement</div>
     </div>
     <div class="row">
       <div class="row-k">Second held-out set, at double the servo gains</div>
-      <div class="row-v">0.0246 rad. It generalises across operating points, not just to more of the same data.</div>
+      <div class="row-v">0.0246 rad. So it holds at a different operating point, not just on more of the same data.</div>
     </div>
     <div class="row">
       <div class="row-k">Run-to-run repeatability</div>
-      <div class="row-v">0.0051 rad. I ran the identical command twice; this is the floor no model can beat.</div>
+      <div class="row-v">0.0051 rad. I ran the identical command twice. No model can do better than this.</div>
     </div>
   </div>
 </section>
 
 <section>
-  <h2>The thing the pipeline doesn't fit</h2>
+  <h2>The actuator gain</h2>
   <p>
-    Identification tools fit rotor inertia, damping and friction, and treat the actuator gain as a
-    known constant. It isn't. I cross-checked the actuator model by regressing the robot's own
-    reported torque against the commanded <span class="mono">Kp&thinsp;(q_des &minus; q) &minus; Kd&thinsp;q&#775;</span>
-    &mdash; the one signal in the dataset that doesn't come from the position trajectory the fit
-    was already minimising.
+    These tools fit rotor inertia, damping and friction, and treat the actuator gain as a known
+    constant. It isn't one. I checked it by regressing the robot's own reported torque against the
+    commanded <span class="mono">Kp&thinsp;(q_des &minus; q) &minus; Kd&thinsp;q&#775;</span>. That
+    torque signal is the only thing in the dataset that doesn't come from the position trajectory
+    the fit was already minimising, so it's an independent check rather than the same number twice.
   </p>
   <p>
-    The robot delivers <strong>76&ndash;95%</strong> of the torque the model assumes. Correcting it
-    moved held-out error more than rotor inertia, damping and friction combined &mdash; a
+    The joints deliver <strong>76&ndash;95%</strong> of the torque the model assumes. Correcting
+    that moved held-out error more than rotor inertia, damping and friction combined: a
     <strong>30&times;</strong> cost reduction on a single-joint fit, against 6% from all three
     dynamics parameters together.
   </p>
   <p>
-    The root cause was in the gain design: <span class="mono">Kp = I&thinsp;&omega;&sup2;</span> had been
-    applied with <em>I</em> as the rotor inertia, while the inertia the joint actually accelerates is
-    2&ndash;84&times; larger. An intended 7&nbsp;Hz critically-damped servo is really
-    <strong>0.77&nbsp;Hz at &zeta;&nbsp;=&nbsp;0.22</strong> &mdash; strongly underdamped, and exactly
-    the 1&nbsp;Hz resonance visible in the before/after plots. The same formula is in the upstream
-    simulator's own asset config.
+    The cause is in how the gains were picked. <span class="mono">Kp = I&thinsp;&omega;&sup2;</span>
+    was applied with <em>I</em> as the rotor inertia, but the inertia the joint actually has to
+    accelerate is 2&ndash;84&times; bigger. So a servo meant to be critically damped at 7&nbsp;Hz is
+    really <strong>0.77&nbsp;Hz at &zeta;&nbsp;=&nbsp;0.22</strong>, badly underdamped. That is the
+    1&nbsp;Hz ringing you can see in the before and after plots. The same formula is sitting in the
+    upstream simulator's asset config.
   </p>
 </section>
 
 <section>
-  <h2>Which numbers to believe</h2>
+  <h2>Which parameters are real</h2>
   <p style="margin-bottom:24px">
-    A fitted number is only a measurement if the data could determine it. Three checks, all
-    independent of the optimiser's own cost:
+    A fitted number is only a measurement if the data was capable of determining it. I used three
+    checks, none of which rely on the optimiser's own cost going down:
   </p>
   <div class="rows">
     <div class="row">
       <div class="row-k">Left/right symmetry</div>
       <div class="row-v">
-        The two legs use identical motors, so mirrored joints must match. Damping agrees within
-        <strong>14%</strong> &mdash; a real measurement. Rotor inertia disagrees by
-        <strong>6&ndash;60&times;</strong> &mdash; noise. Two legs measuring the same physical
-        quantity and landing that far apart settles it.
+        Both legs use identical motors, so mirrored joints have to come out the same. Damping
+        agrees within <strong>14%</strong>, so that one is real. Rotor inertia disagrees by
+        <strong>6&ndash;60&times;</strong>, so that one is noise. Two fits of the same physical
+        quantity landing that far apart settles it.
       </div>
     </div>
     <div class="row">
       <div class="row-k">Refitting under different settings</div>
       <div class="row-v">
-        Coulomb friction came out 0.001, 0.115, 0.18, 1.16 and 0.53&nbsp;N&middot;m across five fits
-        &mdash; three orders of magnitude &mdash; with under <strong>3%</strong> change in predictive
-        accuracy. Unidentifiable. So I measured it a different way: hang the robot, drop all torque,
-        and record which gravity torque each joint holds before it slides. 0.16&ndash;0.85&nbsp;N&middot;m,
+        Coulomb friction came out 0.001, 0.115, 0.18, 1.16 and 0.53&nbsp;N&middot;m across five
+        fits. That's three orders of magnitude, and predictive accuracy changed by under
+        <strong>3%</strong> between them, so the data can't pin it down at all. I measured it a
+        different way instead: hang the robot, cut all torque, and record how much gravity torque
+        each joint holds before it starts sliding. That gives 0.16&ndash;0.85&nbsp;N&middot;m
         against the model's flat 0.3 guess.
       </div>
     </div>
     <div class="row">
       <div class="row-k">Held-out scoring</div>
       <div class="row-v">
-        Fitting link masses improved training error and made held-out error <em>worse than doing
-        nothing</em>. The cause is exact collinearity: rotor inertia and link inertia are the same
-        column of the Jacobian, so adding one makes the system singular.
+        Fitting link masses improved training error and made held-out error <em>worse than not
+        fitting them at all</em>. The reason is exact collinearity: rotor inertia and link inertia
+        produce the same column in the Jacobian, so fitting both makes the system singular.
       </div>
     </div>
   </div>
   <p style="margin-top:24px">
-    That analysis is what sizes the domain randomisation for the RL: &plusmn;5% on the parameter I
-    could pin down, 0.2&ndash;2.0&nbsp;N&middot;m on the one I couldn't. Identification centres the
-    distribution; randomisation covers what's left. Randomising around a biased centre doesn't help
-    &mdash; a systematic 18% torque error points the same way every sample, so the real robot sits
-    outside the training distribution no matter how wide you make the rest.
+    This is what sets the domain randomisation for the RL, instead of me guessing the ranges:
+    &plusmn;5% on the parameter I could pin down, 0.2&ndash;2.0&nbsp;N&middot;m on the one I
+    couldn't. Identification puts the centre of the distribution in the right place, and
+    randomisation covers the spread that's left. Widening the randomisation around a wrong centre
+    doesn't fix it, because a systematic 18% torque error is wrong in the same direction on every
+    sample. The real robot stays outside the training distribution however wide you make it.
   </p>
 </section>
 
 <section>
-  <h2>Four things I got wrong</h2>
+  <h2>What I got wrong</h2>
   <p style="margin-bottom:24px">
-    Each proposed, then killed by a measurement rather than abandoned.
+    Four things I believed and then had to drop. Each one was killed by a measurement, not by me
+    changing my mind about it.
   </p>
   <div class="rows">
     <div class="row">
       <div class="row-k">Unmodelled actuator delay</div>
-      <div class="row-v">Fitted a delay parameter; it landed in the interior and the cost got <em>worse</em>.</div>
+      <div class="row-v">I fitted a delay parameter. It landed inside its range and the cost got <em>worse</em>.</div>
     </div>
     <div class="row">
       <div class="row-k">A mechanically jammed ankle</div>
-      <div class="row-v">Built on the same number appearing in two experiments. It was under-driven: 0.101 &rarr; 0.652 rad with more amplitude.</div>
+      <div class="row-v">I had the same suspicious number show up in two experiments. The joint was just under-driven: 0.101 &rarr; 0.652 rad once I gave it more amplitude.</div>
     </div>
     <div class="row">
       <div class="row-k">High-frequency excitation for inertia</div>
-      <div class="row-v">Constant amplitude gives acceleration &prop; f&sup2; &mdash; true, and useless at four times the real servo bandwidth.</div>
+      <div class="row-v">At constant amplitude, acceleration goes as f&sup2;. True, and useless at four times the servo's actual bandwidth.</div>
     </div>
     <div class="row">
       <div class="row-k">Overestimated link inertia</div>
-      <div class="row-v">Rejected on held-out data and on parameters pinning at their bounds.</div>
+      <div class="row-v">Rejected by held-out data, and by parameters pinning themselves at their bounds.</div>
     </div>
   </div>
 </section>
@@ -289,25 +291,26 @@
   <h2>On the robot</h2>
   <p>
     PPO in MuJoCo on the identified model, 32k iterations, then deployed over the Unitree SDK at
-    50&nbsp;Hz. The policy's entire input is IMU and joint encoders &mdash; no state estimator, no
-    contact sensors, no terrain scan, because none of those exist on the hardware. It stands for a
-    minute with torques at 3&ndash;31% of limits, and walks at 0.6&nbsp;m/s.
+    50&nbsp;Hz. The policy's whole input is the IMU and the joint encoders. No state estimator, no
+    contact sensors, no terrain scan, because the hardware doesn't have any of them. It stands for
+    a minute with torques at 3&ndash;31% of limits, and walks at 0.6&nbsp;m/s.
   </p>
   <p>
-    It also runs with <strong>60&ndash;80&nbsp;ms</strong> of measured command latency against the
-    0&ndash;20&nbsp;ms it was trained for &mdash; three to four times the mismatch, which it
-    tolerates better than I predicted.
+    It also runs with <strong>60&ndash;80&nbsp;ms</strong> of measured command latency when it was
+    only trained for 0&ndash;20&nbsp;ms. That's three to four times the mismatch, and it handles it
+    better than I expected it to.
   </p>
 </section>
 
 <section>
-  <h2>What this doesn't cover</h2>
+  <h2>Limits</h2>
   <p>
-    Flat ground, with a hoist strap slack as a catch. Every parameter was measured with the base
-    welded and the legs hanging, so it covers joint and actuator dynamics and says nothing about
-    contact modelling &mdash; which is the largest untested part of the model. Below roughly
-    0.4&nbsp;m/s the policy deliberately stands still: the tracking reward makes standing worth 85%
-    of maximum at a 0.2&nbsp;m/s command. That's the reward function, not a failure.
+    This is flat ground, with a hoist strap left slack as a catch. Every parameter was measured
+    with the base welded and the legs hanging in the air, so all of it is joint and actuator
+    dynamics. It says nothing about contact, which is the biggest untested part of the model.
+    Below roughly 0.4&nbsp;m/s the policy just stands there, because the tracking reward makes
+    standing worth 85% of maximum at a 0.2&nbsp;m/s command. That's the reward function doing what
+    I told it to, not a failure.
   </p>
 </section>
 
